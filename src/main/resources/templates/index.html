@@ -1,10 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Hello</title>
-</head>
+<head th:include="header.html"></head>
+<!-- Navbar -->
 <body>
-    <h1>Hello world!</h1>
+<!-- Main container-->
+<div class="container-fluid">
+    <div class="container-fluid">
+        <div class="col-md-2">
+            <div class="list-group">
+                <a href="/addEmployee" class="list-group-item list-group-item-action">Add employee</a>
+                <a href="/allEmployees" class="list-group-item list-group-item-action">All employees</a>
+            </div>
+        </div>
+    </div>
+    <!-- End of side panel -->
+    <!-- Content of Index -->
+    <div class="container-fluid">
+        <h1 class="display-4 text-center mt-5">Welcome to the Employee Manager</h1>
+    </div>
+
+</div>
+
+<!-- Footer-->
+<div th:include="footer.html"></div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
