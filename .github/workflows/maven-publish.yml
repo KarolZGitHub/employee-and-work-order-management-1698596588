@@ -32,5 +32,5 @@ jobs:
         run: |
           sudo pkill -f "java -jar" || true # Ignore errors
           sleep 5 # Wait for 5 seconds
-          sudo java -jar /home/ubuntu/actions-runner/_work/EmployeeAndWorkOrderManagement/EmployeeAndWorkOrderManagement/target/EmployeeAndWorkOrderManagement-0.0.1-SNAPSHOT.jar &
+          sudo java -jar /home/ubuntu/_work/employee-and-work-order-management-1698596588/employee-and-work-order-management-1698596588/target/EmployeeAndWorkOrderManagement-0.0.1-SNAPSHOT.jar &
           echo "Application started successfully"
