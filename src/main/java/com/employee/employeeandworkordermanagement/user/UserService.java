@@ -25,13 +25,13 @@ public class UserService implements IUserService{
     public User registerUser(RegistrationRequest request) {
         Optional<User> user = this.findByEmail(request.email());
         if (user.isPresent()) {
-            throw new UserAlreadyExistsException("User with email" + request.email() + " already exists.");
+            throw new UserAlreadyExistsException("User with email " + request.email() + " already exists.", "USER_ALREADY_EXISTS");
         }
         var newUser = new User();
         newUser.setFirstName(request.firstName());
         newUser.setLastName(request.lastName());
         newUser.setEmail(request.email());
-        newUser.setRole(request.role());
+        newUser.setRole("USER");
         newUser.setPassword(passwordEncoder.encode(request.password()));
         return userRepository.save(newUser);
     }

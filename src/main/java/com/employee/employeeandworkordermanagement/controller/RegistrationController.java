@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -18,11 +20,16 @@ public class RegistrationController {
     private final UserService userService;
     private final ApplicationEventPublisher publisher;
 
-    @PostMapping
-    public String registerUser(RegistrationRequest registrationRequest, final HttpServletRequest request) {
+    @PostMapping("/user")
+    public String registerUserHandle(RegistrationRequest registrationRequest, final HttpServletRequest request) {
         User user = userService.registerUser(registrationRequest);
         publisher.publishEvent(new RegistrationCompleteEvent(user, applicationUrl(request)));
         return "successRegister";
+    }
+    @GetMapping("/user")
+    public String showRegistrationForm(Model model) {
+        model.addAttribute("user", new User());
+        return "registration";
     }
 
     public String applicationUrl(HttpServletRequest request) {
