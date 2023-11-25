@@ -1,6 +1,8 @@
 package com.employee.employeeandworkordermanagement.user;
 
 import com.employee.employeeandworkordermanagement.Registration.RegistrationRequest;
+import com.employee.employeeandworkordermanagement.Registration.token.VerificationToken;
+import com.employee.employeeandworkordermanagement.Registration.token.VerificationTokenRepository;
 import com.employee.employeeandworkordermanagement.exception.UserAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,6 +15,7 @@ import java.util.Optional;
 public class UserService implements IUserService{
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final VerificationTokenRepository verificationTokenRepository;
     @Override
     public List<User> getUsers() {
         return userRepository.findAll();
@@ -36,5 +39,10 @@ public class UserService implements IUserService{
     @Override
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    public void saveUserVerificationToken(User theUser, String token) {
+        VerificationToken verificationToken = new VerificationToken(token,theUser);
+        verificationTokenRepository.save(verificationToken);
     }
 }
