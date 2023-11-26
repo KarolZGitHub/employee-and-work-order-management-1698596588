@@ -5,17 +5,22 @@ import com.employee.employeeandworkordermanagement.Registration.token.Verificati
 import com.employee.employeeandworkordermanagement.Registration.token.VerificationTokenRepository;
 import com.employee.employeeandworkordermanagement.exception.UserAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
-public class UserService implements IUserService{
+public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final VerificationTokenRepository verificationTokenRepository;
+
     @Override
     public List<User> getUsers() {
         return userRepository.findAll();
@@ -42,7 +47,22 @@ public class UserService implements IUserService{
     }
 
     public void saveUserVerificationToken(User theUser, String token) {
-        VerificationToken verificationToken = new VerificationToken(token,theUser);
+        VerificationToken verificationToken = new VerificationToken(token, theUser);
         verificationTokenRepository.save(verificationToken);
+    }
+
+    @Override
+    public String validateToken(String theToken) {
+        VerificationToken verificationToken = verificationTokenRepository.findByToken(theToken).orElse(
+                new VerificationToken());
+        User user = verificationToken.getUser();
+        Calendar calendar = Calendar.getInstance();
+        if (verificationToken.getExpirationTime().getTime() - calendar.getTime().getTime() <= 0) {
+            verificationTokenRepository.delete(verificationToken);
+           return "token expired";
+        }
+        user.setEnabled(true);
+        userRepository.save(user);
+        return "valid";
     }
 }
