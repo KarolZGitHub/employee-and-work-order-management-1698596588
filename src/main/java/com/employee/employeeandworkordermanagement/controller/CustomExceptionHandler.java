@@ -1,5 +1,6 @@
 package com.employee.employeeandworkordermanagement.controller;
 
+import com.employee.employeeandworkordermanagement.exception.NotFoundException;
 import com.employee.employeeandworkordermanagement.exception.UserAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
@@ -17,5 +18,13 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         model.addAttribute("errorCode", ex.getErrorCode());
         model.addAttribute("errorMessage", ex.getReason());
         return "error/emailError";
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handle404(NotFoundException ex, Model model) {
+        model.addAttribute("errorCode", ex.getErrorCode());
+        model.addAttribute("errorMessage", ex.getReason());
+        return "error/404Error";
     }
 }
