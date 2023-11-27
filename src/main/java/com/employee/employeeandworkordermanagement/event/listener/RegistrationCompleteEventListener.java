@@ -46,7 +46,7 @@ public class RegistrationCompleteEventListener implements ApplicationListener<Re
 
     public void sendVerificationEmail(String url) throws MessagingException, UnsupportedEncodingException {
         String subject = "Email Verification";
-        String senderName = "User Registration Portal Service";
+        String senderName = "Employee Manager registration";
         String mailContent = "<p> Hi, " + theUser.getFirstName() + ", </p>" +
                 "<p>Thank you for registering at Employee Manager," + "" +
                 "Please, follow the link below to complete your registration.</p>" +
@@ -54,7 +54,7 @@ public class RegistrationCompleteEventListener implements ApplicationListener<Re
                 "<p> Thank you <br> Employee Manager.";
         MimeMessage message = mailSender.createMimeMessage();
         var messageHelper = new MimeMessageHelper(message);
-        messageHelper.setFrom("dailycodework@gmail.com", senderName);
+        messageHelper.setFrom("javadeveloper2509@gmail.com", senderName);
         messageHelper.setTo(theUser.getEmail());
         messageHelper.setSubject(subject);
         messageHelper.setText(mailContent, true);
