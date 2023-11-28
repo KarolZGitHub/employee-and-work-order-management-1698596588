@@ -12,4 +12,6 @@ public interface IUserService {
     Optional<User> findByEmail(String email);
 
     String validateToken(String theToken);
+
+    void createPasswordResetTokenForUser(User user, String passwordToken);
 }

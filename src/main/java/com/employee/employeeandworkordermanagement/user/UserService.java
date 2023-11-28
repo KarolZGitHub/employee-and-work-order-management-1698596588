@@ -4,6 +4,8 @@ import com.employee.employeeandworkordermanagement.Registration.RegistrationRequ
 import com.employee.employeeandworkordermanagement.Registration.token.VerificationToken;
 import com.employee.employeeandworkordermanagement.Registration.token.VerificationTokenRepository;
 import com.employee.employeeandworkordermanagement.exception.UserAlreadyExistsException;
+import com.employee.employeeandworkordermanagement.password.PasswordResetTokenRepository;
+import com.employee.employeeandworkordermanagement.password.PasswordResetTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,7 +22,7 @@ public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final VerificationTokenRepository verificationTokenRepository;
-
+    private final PasswordResetTokenService passwordResetTokenService;
     @Override
     public List<User> getUsers() {
         return userRepository.findAll();
@@ -64,5 +66,10 @@ public class UserService implements IUserService {
         user.setEnabled(true);
         userRepository.save(user);
         return "valid";
+    }
+
+    @Override
+    public void createPasswordResetTokenForUser(User user, String passwordToken) {
+        passwordResetTokenService.createPasswordResetTokenForUser(user,passwordToken);
     }
 }

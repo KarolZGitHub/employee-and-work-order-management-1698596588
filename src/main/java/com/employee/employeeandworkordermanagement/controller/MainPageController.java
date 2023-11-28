@@ -20,7 +20,7 @@ public class MainPageController {
             return "index";
         }
         String email = authentication.getName();
-        User user = userService.findByEmail(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User does not exist"));
+        User user = userService.findByEmail(email).get();
         model.addAttribute("user", user);
         return "index";
     }
