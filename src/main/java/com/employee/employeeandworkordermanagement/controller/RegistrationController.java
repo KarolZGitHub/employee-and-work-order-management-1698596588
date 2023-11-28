@@ -4,6 +4,8 @@ import com.employee.employeeandworkordermanagement.Registration.RegistrationRequ
 import com.employee.employeeandworkordermanagement.Registration.token.VerificationToken;
 import com.employee.employeeandworkordermanagement.Registration.token.VerificationTokenService;
 import com.employee.employeeandworkordermanagement.event.RegistrationCompleteEvent;
+import com.employee.employeeandworkordermanagement.event.ResetPasswordEvent;
+import com.employee.employeeandworkordermanagement.password.PasswordResetRequest;
 import com.employee.employeeandworkordermanagement.user.User;
 import com.employee.employeeandworkordermanagement.user.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -53,8 +57,24 @@ public class RegistrationController {
         return "registration";
     }
 
+    @GetMapping("/password-reset-request")
+    public String showResetPasswordForm(Model model) {
+        model.addAttribute("passwordResetRequest", new PasswordResetRequest());
+        return "/password/resetPasswordRequest";
+    }
+
+    @PostMapping("/password-reset-request")
+    public String resetPasswordRequest(PasswordResetRequest passwordResetRequest,
+                                       final HttpServletRequest request) {
+        Optional<User> user = userService.findByEmail(passwordResetRequest.getEmail());
+        if (user.isPresent()) {
+            publisher.publishEvent(new ResetPasswordEvent(user.get(), applicationUrl(request)));
+            return "password/passwordTokenSent";
+        }
+        return "password/wrongEmail";
+    }
+
     public String applicationUrl(HttpServletRequest request) {
         return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
     }
-
 }
