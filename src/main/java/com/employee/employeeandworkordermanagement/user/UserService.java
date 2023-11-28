@@ -4,13 +4,10 @@ import com.employee.employeeandworkordermanagement.Registration.RegistrationRequ
 import com.employee.employeeandworkordermanagement.Registration.token.VerificationToken;
 import com.employee.employeeandworkordermanagement.Registration.token.VerificationTokenRepository;
 import com.employee.employeeandworkordermanagement.exception.UserAlreadyExistsException;
-import com.employee.employeeandworkordermanagement.password.PasswordResetTokenRepository;
 import com.employee.employeeandworkordermanagement.password.PasswordResetTokenService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Calendar;
 import java.util.List;
@@ -23,6 +20,7 @@ public class UserService implements IUserService {
     private final PasswordEncoder passwordEncoder;
     private final VerificationTokenRepository verificationTokenRepository;
     private final PasswordResetTokenService passwordResetTokenService;
+
     @Override
     public List<User> getUsers() {
         return userRepository.findAll();
@@ -61,7 +59,7 @@ public class UserService implements IUserService {
         Calendar calendar = Calendar.getInstance();
         if (verificationToken.getExpirationTime().getTime() - calendar.getTime().getTime() <= 0) {
             verificationTokenRepository.delete(verificationToken);
-           return "token expired";
+            return "token expired";
         }
         user.setEnabled(true);
         userRepository.save(user);
@@ -70,6 +68,6 @@ public class UserService implements IUserService {
 
     @Override
     public void createPasswordResetTokenForUser(User user, String passwordToken) {
-        passwordResetTokenService.createPasswordResetTokenForUser(user,passwordToken);
+        passwordResetTokenService.createPasswordResetTokenForUser(user, passwordToken);
     }
 }
