@@ -19,7 +19,7 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 public class ResetPasswordListener implements ApplicationListener<ResetPasswordEvent> {
-    private final PasswordResetTokenService passwordResetTokenService;
+    private final UserService userService;
 
     private final JavaMailSender mailSender;
     private User theUser;
@@ -31,7 +31,7 @@ public class ResetPasswordListener implements ApplicationListener<ResetPasswordE
         //2. Create a verification token for the user
         String resetPasswordToken = UUID.randomUUID().toString();
         //3. Save the verification token for the user
-        passwordResetTokenService.createPasswordResetTokenForUser(theUser,resetPasswordToken);
+        userService.createPasswordResetTokenForUser(theUser,resetPasswordToken);
         //4 Build the verification url to be sent to the user
         String url = event.getApplicationUrl() + "/register/reset-password?token=" + resetPasswordToken;
         //5. Send the email.

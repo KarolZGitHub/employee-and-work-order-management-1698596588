@@ -4,6 +4,8 @@ import com.employee.employeeandworkordermanagement.Registration.RegistrationRequ
 import com.employee.employeeandworkordermanagement.Registration.token.VerificationToken;
 import com.employee.employeeandworkordermanagement.Registration.token.VerificationTokenRepository;
 import com.employee.employeeandworkordermanagement.exception.UserAlreadyExistsException;
+import com.employee.employeeandworkordermanagement.password.PasswordResetToken;
+import com.employee.employeeandworkordermanagement.password.PasswordResetTokenRepository;
 import com.employee.employeeandworkordermanagement.password.PasswordResetTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +22,7 @@ public class UserService implements IUserService {
     private final PasswordEncoder passwordEncoder;
     private final VerificationTokenRepository verificationTokenRepository;
     private final PasswordResetTokenService passwordResetTokenService;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
 
     @Override
     public List<User> getUsers() {
@@ -67,7 +70,41 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public String validateResetPasswordToken(String theToken) {
+        PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByToken(theToken).orElse(
+                new PasswordResetToken());
+        User user = passwordResetToken.getUser();
+        Calendar calendar = Calendar.getInstance();
+        if (passwordResetToken.getExpirationTime().getTime() - calendar.getTime().getTime() <= 0) {
+            passwordResetTokenRepository.delete(passwordResetToken);
+            return "token expired";
+        }
+        user.setEnabled(true);
+        userRepository.save(user);
+        return "valid";
+    }
+
+    @Override
+    public void saveUser(User user, String password, String repeatedPassword) {
+        if (password.equals(repeatedPassword)) {
+            user.setPassword(passwordEncoder.encode(password));
+            userRepository.save(user);
+        }
+    }
+
+    @Override
     public void createPasswordResetTokenForUser(User user, String passwordToken) {
         passwordResetTokenService.createPasswordResetTokenForUser(user, passwordToken);
+    }
+
+    @Override
+    public String changePasswordProcess(User user, String password, String repeatPassword) {
+        User theUser = user;
+        if (password.equalsIgnoreCase(repeatPassword)) {
+            theUser.setPassword(password);
+            userRepository.save(theUser);
+            return "Success";
+        }
+        return "Passwords are different";
     }
 }

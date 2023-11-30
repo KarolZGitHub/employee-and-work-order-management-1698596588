@@ -2,7 +2,9 @@ package com.employee.employeeandworkordermanagement.password;
 
 import com.employee.employeeandworkordermanagement.user.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Calendar;
 
@@ -15,6 +17,12 @@ public class PasswordResetTokenService {
     public void createPasswordResetTokenForUser(User user, String passwordToken) {
         PasswordResetToken passwordResetToken = new PasswordResetToken(passwordToken, user);
         passwordResetTokenRepository.save(passwordResetToken);
+    }
+
+    public PasswordResetToken getToken(String token) {
+        PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByToken(token).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Token doesn't exist"));
+        return passwordResetToken;
     }
 
     public String validatePasswordResetToken(String theToken) {
