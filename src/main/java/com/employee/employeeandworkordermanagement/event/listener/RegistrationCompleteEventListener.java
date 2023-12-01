@@ -4,9 +4,10 @@ import com.employee.employeeandworkordermanagement.event.RegistrationCompleteEve
 import com.employee.employeeandworkordermanagement.user.User;
 import com.employee.employeeandworkordermanagement.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
-
 import java.util.UUID;
 
 @Component
@@ -14,7 +15,7 @@ import java.util.UUID;
 
 public class RegistrationCompleteEventListener implements ApplicationListener<RegistrationCompleteEvent> {
     private final UserService userService;
-
+    private static final Logger log = LoggerFactory.getLogger(RegistrationCompleteEventListener.class);
     @Override
     public void onApplicationEvent(RegistrationCompleteEvent event) {
         //Get user from event
@@ -24,7 +25,7 @@ public class RegistrationCompleteEventListener implements ApplicationListener<Re
         //Save token
         userService.saveUserVerificationToken(theUser, verificationToken);
         //Build verification token for user
-        String url = event.getApplicationUrl() + "register/verifyEmail?token" + verificationToken;
-
+        String url = event.getApplicationUrl()+"/register/verifyEmail?token="+verificationToken;
+        log.info("Click the link to verify your registration :  {}", url);
     }
 }
