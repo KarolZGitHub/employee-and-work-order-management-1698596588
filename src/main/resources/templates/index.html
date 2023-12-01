@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-<head th:include="header.html"></head>
+<head th:insert="~{header.html}">
+    <title>Main Page</title>
+</head>
 <!-- Navbar -->
 <body>
 <!-- Main container-->
@@ -18,12 +20,10 @@
     <div class="container-fluid">
         <h1 class="display-4 text-center mt-5">Welcome to the Employee Manager</h1>
     </div>
-
 </div>
-
+</body>
 <!-- Footer-->
-<div th:include="footer.html"></div>
+<div th:insert="~{footer.html}"></div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
 </html>
