@@ -18,19 +18,23 @@ public class UserRegistrationSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/**", "/home", "/register").permitAll()
-                        .requestMatchers("/css/**").permitAll()
-                        .requestMatchers("/js/**").permitAll()
-                        .anyRequest().authenticated()
-                )
-                .formLogin((form) -> form
-                        .loginPage("/login")
-                        .permitAll()
-                )
-                .logout((logout) -> logout.logoutUrl("/logout").permitAll());
-
-        return http.build();
+        return http.cors()
+                .and().csrf().disable()
+                .authorizeHttpRequests()
+                .requestMatchers("/register/**")
+                .permitAll()
+                .and()
+                .authorizeHttpRequests()
+                .requestMatchers("/css/**","/js/**")
+                .permitAll()
+                .and()
+                .authorizeHttpRequests()
+                .requestMatchers("/")
+                .permitAll()
+                .and()
+                .authorizeHttpRequests()
+                .requestMatchers("/users/**")
+                .hasAnyAuthority("USER", "ADMIN")
+                .and().formLogin().and().build();
     }
 }
