@@ -1,5 +1,6 @@
 package com.employee.employeeandworkordermanagement.user;
 
+import com.employee.employeeandworkordermanagement.data.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,6 +21,7 @@ public class User {
     private String password;
     @NaturalId(mutable = true)
     private String email;
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
     private boolean isEnabled = false;
 }

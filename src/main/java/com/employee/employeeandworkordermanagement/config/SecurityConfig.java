@@ -1,4 +1,4 @@
-package com.employee.employeeandworkordermanagement.security;
+package com.employee.employeeandworkordermanagement.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +10,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-public class UserRegistrationSecurityConfig {
+public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -25,7 +25,7 @@ public class UserRegistrationSecurityConfig {
                 .permitAll()
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/css/**","/js/**")
+                .requestMatchers("/css/**", "/js/**")
                 .permitAll()
                 .and()
                 .authorizeHttpRequests()
@@ -34,7 +34,12 @@ public class UserRegistrationSecurityConfig {
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/users/**")
-                .hasAnyAuthority("USER", "ADMIN")
-                .and().formLogin().and().build();
+                .hasAnyAuthority("USER", "ADMIN", "OPERATOR", "DESIGNER")
+                .and()
+                .authorizeHttpRequests()
+                .requestMatchers("/admin/**")
+                .hasRole("ADMIN")
+                .and()
+                .formLogin().and().build();
     }
 }

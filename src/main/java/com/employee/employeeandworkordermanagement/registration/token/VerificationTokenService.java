@@ -1,4 +1,4 @@
-package com.employee.employeeandworkordermanagement.Registration.token;
+package com.employee.employeeandworkordermanagement.registration.token;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

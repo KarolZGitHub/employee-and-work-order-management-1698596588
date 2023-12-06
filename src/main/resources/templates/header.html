@@ -27,6 +27,9 @@
                 <li>
                     <a class="nav-link" href="/register/password-reset-request">Change password</a>
                 </li>
+                <li th:if="${user != null and user.role == 'ADMIN'}" class="nav-item">
+                    <a class="nav-link" href="/admin/panel">Admin Panel</a>
+                </li>
             </ul>
         </div>
     </nav>

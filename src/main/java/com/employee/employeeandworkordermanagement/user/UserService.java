@@ -1,8 +1,9 @@
 package com.employee.employeeandworkordermanagement.user;
 
-import com.employee.employeeandworkordermanagement.Registration.RegistrationRequest;
-import com.employee.employeeandworkordermanagement.Registration.token.VerificationToken;
-import com.employee.employeeandworkordermanagement.Registration.token.VerificationTokenRepository;
+import com.employee.employeeandworkordermanagement.data.Role;
+import com.employee.employeeandworkordermanagement.registration.RegistrationRequest;
+import com.employee.employeeandworkordermanagement.registration.token.VerificationToken;
+import com.employee.employeeandworkordermanagement.registration.token.VerificationTokenRepository;
 import com.employee.employeeandworkordermanagement.exception.UserAlreadyExistsException;
 import com.employee.employeeandworkordermanagement.password.PasswordResetToken;
 import com.employee.employeeandworkordermanagement.password.PasswordResetTokenRepository;
@@ -39,7 +40,7 @@ public class UserService implements IUserService {
         newUser.setFirstName(request.firstName());
         newUser.setLastName(request.lastName());
         newUser.setEmail(request.email());
-        newUser.setRole("USER");
+        newUser.setRole(Role.USER);
         newUser.setPassword(passwordEncoder.encode(request.password()));
         return userRepository.save(newUser);
     }

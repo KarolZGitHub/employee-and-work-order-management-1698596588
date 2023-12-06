@@ -1,6 +1,6 @@
 package com.employee.employeeandworkordermanagement.user;
 
-import com.employee.employeeandworkordermanagement.Registration.RegistrationRequest;
+import com.employee.employeeandworkordermanagement.registration.RegistrationRequest;
 
 import java.util.List;
 import java.util.Optional;

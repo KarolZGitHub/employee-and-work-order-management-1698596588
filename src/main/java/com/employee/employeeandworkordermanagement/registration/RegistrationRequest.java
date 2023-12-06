@@ -1,4 +1,4 @@
-package com.employee.employeeandworkordermanagement.Registration;
+package com.employee.employeeandworkordermanagement.registration;
 
 public record RegistrationRequest(
         String firstName,
