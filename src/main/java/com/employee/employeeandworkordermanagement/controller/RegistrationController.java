@@ -1,8 +1,8 @@
 package com.employee.employeeandworkordermanagement.controller;
 
-import com.employee.employeeandworkordermanagement.Registration.RegistrationRequest;
-import com.employee.employeeandworkordermanagement.Registration.token.VerificationToken;
-import com.employee.employeeandworkordermanagement.Registration.token.VerificationTokenService;
+import com.employee.employeeandworkordermanagement.registration.RegistrationRequest;
+import com.employee.employeeandworkordermanagement.registration.token.VerificationToken;
+import com.employee.employeeandworkordermanagement.registration.token.VerificationTokenService;
 import com.employee.employeeandworkordermanagement.event.RegistrationCompleteEvent;
 import com.employee.employeeandworkordermanagement.event.ResetPasswordEvent;
 import com.employee.employeeandworkordermanagement.password.PasswordResetProcess;
