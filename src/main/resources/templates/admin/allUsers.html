@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:insert="~{header.html}">
+    <title>All Users</title>
+</head>
+<body>
+<h1>User List</h1>
+
+<div class="container">
+    <h1 class="mt-5">User List</h1>
+
+    <table class="table mt-3">
+        <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Last name</th>
+            <th>Role</th>
+            <th>Change role</th>
+            <!-- Add other columns as needed -->
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${userPage.content}">
+            <td th:text="${user.id}"></td>
+            <td th:text="${user.firstName}"></td>
+            <td th:text="${user.lastName}"></td>
+            <td th:text="${user.role}"></td>
+            <td>
+                <form th:action="@{'/admin/change-role/' + ${user.id}}" method="post">
+                    <select name="role" class="form-control">
+                        <option th:each="enumValue : ${T(com.employee.employeeandworkordermanagement.data.Role).values()}"
+                                th:value="${enumValue.name()}"
+                                th:text="${enumValue.name()}"></option>
+                    </select>
+                    <button type="submit" class="btn btn-primary mt-2">Change Role</button>
+                </form>
+            </td>
+            <!-- Add other columns as needed -->
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="mt-3">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <li class="page-item" th:each="pageNumber : ${#numbers.sequence(0, userPage.totalPages - 1)}">
+                    <a class="page-link"
+                       th:href="@{'/admin/allUsers?page=' + ${pageNumber} + '&size=' + ${userPage.size}}"
+                       th:text="${pageNumber + 1}"></a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+</body>
+<!-- Footer-->
+<div th:insert="~{footer.html}"></div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</html>

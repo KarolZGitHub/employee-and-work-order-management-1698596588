@@ -1,13 +1,14 @@
 package com.employee.employeeandworkordermanagement.user;
 
+import com.employee.employeeandworkordermanagement.data.Role;
 import com.employee.employeeandworkordermanagement.registration.RegistrationRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface IUserService {
-    List<User> getUsers();
-
     User registerUser(RegistrationRequest request);
 
     Optional<User> findByEmail(String email);
@@ -18,4 +19,7 @@ public interface IUserService {
 
     void createPasswordResetTokenForUser(User user, String passwordToken);
     String changePasswordProcess(User user, String password, String repeatPassword);
+    Page<User> getAllUsers(PageRequest pageRequest);
+    User findById(Long id);
+    void editUserRole(User user,Role role);
 }

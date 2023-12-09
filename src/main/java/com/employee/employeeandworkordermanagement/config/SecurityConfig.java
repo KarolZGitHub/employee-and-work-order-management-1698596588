@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/admin/**")
-                .hasRole("ADMIN")
+                .hasAuthority("ADMIN")
                 .and()
                 .formLogin().and().build();
     }

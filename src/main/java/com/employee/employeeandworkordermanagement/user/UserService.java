@@ -1,19 +1,22 @@
 package com.employee.employeeandworkordermanagement.user;
 
 import com.employee.employeeandworkordermanagement.data.Role;
-import com.employee.employeeandworkordermanagement.registration.RegistrationRequest;
-import com.employee.employeeandworkordermanagement.registration.token.VerificationToken;
-import com.employee.employeeandworkordermanagement.registration.token.VerificationTokenRepository;
 import com.employee.employeeandworkordermanagement.exception.UserAlreadyExistsException;
 import com.employee.employeeandworkordermanagement.password.PasswordResetToken;
 import com.employee.employeeandworkordermanagement.password.PasswordResetTokenRepository;
 import com.employee.employeeandworkordermanagement.password.PasswordResetTokenService;
+import com.employee.employeeandworkordermanagement.registration.RegistrationRequest;
+import com.employee.employeeandworkordermanagement.registration.token.VerificationToken;
+import com.employee.employeeandworkordermanagement.registration.token.VerificationTokenRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Calendar;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -26,8 +29,8 @@ public class UserService implements IUserService {
     private final PasswordResetTokenRepository passwordResetTokenRepository;
 
     @Override
-    public List<User> getUsers() {
-        return userRepository.findAll();
+    public Page<User> getAllUsers(PageRequest pageRequest) {
+        return userRepository.findAll(pageRequest);
     }
 
     @Override
@@ -107,5 +110,21 @@ public class UserService implements IUserService {
             return "Success";
         }
         return "Passwords are different";
+    }
+
+    @Override
+    public User findById(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"User of this ID has not been found"));
+        return user;
+    }
+
+    @Override
+    public void editUserRole(User user,Role role) {
+        if (user != null && userRepository.existsById(Long.valueOf(user.getId()))) {
+            user.setRole(role);
+            userRepository.save(user);
+        } else {
+            throw new RuntimeException("User not found or invalid user object");
+        }
     }
 }
