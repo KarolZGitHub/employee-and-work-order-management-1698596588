@@ -1,6 +1,7 @@
 package com.employee.employeeandworkordermanagement.user;
 
 import com.employee.employeeandworkordermanagement.data.Role;
+import com.employee.employeeandworkordermanagement.dto.UserDTO;
 import com.employee.employeeandworkordermanagement.exception.UserAlreadyExistsException;
 import com.employee.employeeandworkordermanagement.password.PasswordResetToken;
 import com.employee.employeeandworkordermanagement.password.PasswordResetTokenRepository;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -114,17 +116,28 @@ public class UserService implements IUserService {
 
     @Override
     public User findById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"User of this ID has not been found"));
+        User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User of this ID has not been found"));
         return user;
     }
 
     @Override
-    public void editUserRole(User user,Role role) {
+    public void editUserRole(User user, Role role) {
         if (user != null && userRepository.existsById(Long.valueOf(user.getId()))) {
             user.setRole(role);
             userRepository.save(user);
         } else {
             throw new RuntimeException("User not found or invalid user object");
         }
+    }
+
+    @Override
+    public UserDTO convertUserToUserDTO(User user) {
+        return new UserDTO(user.getFirstName(), user.getLastName(), user.getEmail(), user.getRole());
+    }
+
+    @Override
+    public UserDTO getUser(Authentication authentication) {
+        User user = findByEmail(authentication.getName()).orElseThrow(() -> new RuntimeException("User not found"));
+        return convertUserToUserDTO(user);
     }
 }

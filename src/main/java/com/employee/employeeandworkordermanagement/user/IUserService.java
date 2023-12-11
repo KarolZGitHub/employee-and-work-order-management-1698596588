@@ -1,9 +1,11 @@
 package com.employee.employeeandworkordermanagement.user;
 
 import com.employee.employeeandworkordermanagement.data.Role;
+import com.employee.employeeandworkordermanagement.dto.UserDTO;
 import com.employee.employeeandworkordermanagement.registration.RegistrationRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,4 +24,6 @@ public interface IUserService {
     Page<User> getAllUsers(PageRequest pageRequest);
     User findById(Long id);
     void editUserRole(User user,Role role);
+    UserDTO convertUserToUserDTO(User user);
+    UserDTO getUser(Authentication authentication);
 }

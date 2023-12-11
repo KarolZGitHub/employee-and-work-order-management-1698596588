@@ -16,6 +16,9 @@
                     <a class="nav-link" href="/">Main page</a>
                 </li>
                 <li th:if="${user != null}" class="nav-item">
+                    <a class="nav-link" href="/profile/my-profile">My profile</a>
+                </li>
+                <li th:if="${user != null}" class="nav-item">
                     <a class="nav-link" href="/logout">Logout</a>
                 </li>
                 <li th:if="${user == null}" class="nav-item">

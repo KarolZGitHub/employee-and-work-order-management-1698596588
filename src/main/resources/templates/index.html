@@ -6,11 +6,19 @@
 <!-- Navbar -->
 <body>
 <!-- Main container-->
-<div class="container-fluid">
+<div th:if="${user != null}" class="container-fluid">
     <div class="container-fluid">
-        <h1 class="display-4 text-center mt-5">Welcome to the Employee Manager</h1>
+        <<h1 th:text="'Welcome to the Employee Manager ' + ${user.firstName}" class="display-4 text-center mt-5"></h1>
+
+    </div>
+
+</div>
+<div th:if="${user == null}" class="container-fluid">
+    <div class="container-fluid">
+        <h1 class="display-4 text-center mt-5">Welcome to the Employee Manager guest.</h1>
     </div>
 </div>
+
 </body>
 <!-- Footer-->
 <div th:insert="~{footer.html}"></div>
