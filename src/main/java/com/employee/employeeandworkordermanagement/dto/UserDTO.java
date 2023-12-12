@@ -16,4 +16,5 @@ public class UserDTO {
     private String email;
     @Enumerated(EnumType.STRING)
     private Role role;
+    private String profilePicturePath;
 }

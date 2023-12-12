@@ -35,5 +35,10 @@
                 </li>
             </ul>
         </div>
+        <div id="userImage" class="ml-3">
+            <img id="uploadedImage" th:if="${user != null && user.profilePicturePath != null}" th:src="${user.profilePicturePath}" class="img-fluid" alt="User Image">
+            <img id="defaultImage" th:unless="${user != null && user.profilePicturePath != null}" src="/image/defaultImage.png" class="img-fluid" alt="Default Image">
+        </div>
+
     </nav>
 </head>

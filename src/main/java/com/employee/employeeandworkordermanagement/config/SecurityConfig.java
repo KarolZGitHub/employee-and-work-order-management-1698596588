@@ -25,7 +25,7 @@ public class SecurityConfig {
                 .permitAll()
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/css/**", "/js/**")
+                .requestMatchers("/css/**", "/js/**","/image/**")
                 .permitAll()
                 .and()
                 .authorizeHttpRequests()
@@ -43,6 +43,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers("/admin/**")
                 .hasAuthority("ADMIN")
+                .and()
+                .authorizeHttpRequests()
+                .requestMatchers("/upload/**")
+                .hasAnyAuthority("USER", "ADMIN", "OPERATOR", "DESIGNER")
                 .and()
                 .formLogin().and().build();
     }

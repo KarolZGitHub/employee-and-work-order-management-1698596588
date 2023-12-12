@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface IUserService {
@@ -16,14 +15,22 @@ public interface IUserService {
     Optional<User> findByEmail(String email);
 
     String validateToken(String theToken);
+
     String validateResetPasswordToken(String theToken);
-    void saveUser(User user,String password, String repeatedPassword);
+
+    void saveUser(User user, String password, String repeatedPassword);
 
     void createPasswordResetTokenForUser(User user, String passwordToken);
+
     String changePasswordProcess(User user, String password, String repeatPassword);
+
     Page<User> getAllUsers(PageRequest pageRequest);
+
     User findById(Long id);
-    void editUserRole(User user,Role role);
+
+    void editUserRole(User user, Role role);
+
     UserDTO convertUserToUserDTO(User user);
+
     UserDTO getUser(Authentication authentication);
 }

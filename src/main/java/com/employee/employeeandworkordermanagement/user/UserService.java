@@ -132,7 +132,7 @@ public class UserService implements IUserService {
 
     @Override
     public UserDTO convertUserToUserDTO(User user) {
-        return new UserDTO(user.getFirstName(), user.getLastName(), user.getEmail(), user.getRole());
+        return new UserDTO(user.getFirstName(), user.getLastName(), user.getEmail(), user.getRole(), user.getProfilePicturePath());
     }
 
     @Override
