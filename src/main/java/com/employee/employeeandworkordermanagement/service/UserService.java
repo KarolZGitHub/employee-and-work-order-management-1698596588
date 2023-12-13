@@ -4,12 +4,12 @@ import com.employee.employeeandworkordermanagement.data.Role;
 import com.employee.employeeandworkordermanagement.dto.UserDTO;
 import com.employee.employeeandworkordermanagement.exception.UserAlreadyExistsException;
 import com.employee.employeeandworkordermanagement.password.PasswordResetToken;
-import com.employee.employeeandworkordermanagement.repository.PasswordResetTokenRepository;
 import com.employee.employeeandworkordermanagement.registration.RegistrationRequest;
 import com.employee.employeeandworkordermanagement.registration.token.VerificationToken;
+import com.employee.employeeandworkordermanagement.repository.PasswordResetTokenRepository;
+import com.employee.employeeandworkordermanagement.repository.UserRepository;
 import com.employee.employeeandworkordermanagement.repository.VerificationTokenRepository;
 import com.employee.employeeandworkordermanagement.user.User;
-import com.employee.employeeandworkordermanagement.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -140,5 +140,16 @@ public class UserService implements IUserService {
     public UserDTO getUser(Authentication authentication) {
         User user = findByEmail(authentication.getName()).orElseThrow(() -> new RuntimeException("User not found"));
         return convertUserToUserDTO(user);
+    }
+
+    @Override
+    public boolean changePassword(User user, String password, String repeatPassword) {
+        if (password.equals(repeatPassword)) {
+            user.setPassword(password);
+            userRepository.save(user);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

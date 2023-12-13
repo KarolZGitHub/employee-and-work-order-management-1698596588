@@ -34,4 +34,5 @@ public interface IUserService {
     UserDTO convertUserToUserDTO(User user);
 
     UserDTO getUser(Authentication authentication);
+    boolean changePassword(User user, String password, String repeatPassword);
 }
