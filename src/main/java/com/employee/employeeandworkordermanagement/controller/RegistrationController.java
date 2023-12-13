@@ -2,15 +2,15 @@ package com.employee.employeeandworkordermanagement.controller;
 
 import com.employee.employeeandworkordermanagement.registration.RegistrationRequest;
 import com.employee.employeeandworkordermanagement.registration.token.VerificationToken;
-import com.employee.employeeandworkordermanagement.registration.token.VerificationTokenService;
+import com.employee.employeeandworkordermanagement.service.VerificationTokenService;
 import com.employee.employeeandworkordermanagement.event.RegistrationCompleteEvent;
 import com.employee.employeeandworkordermanagement.event.ResetPasswordEvent;
 import com.employee.employeeandworkordermanagement.password.PasswordResetProcess;
 import com.employee.employeeandworkordermanagement.password.PasswordResetRequest;
 import com.employee.employeeandworkordermanagement.password.PasswordResetToken;
-import com.employee.employeeandworkordermanagement.password.PasswordResetTokenService;
+import com.employee.employeeandworkordermanagement.service.PasswordResetTokenService;
 import com.employee.employeeandworkordermanagement.user.User;
-import com.employee.employeeandworkordermanagement.user.UserService;
+import com.employee.employeeandworkordermanagement.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;

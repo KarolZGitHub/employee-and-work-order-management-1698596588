@@ -1,5 +1,6 @@
-package com.employee.employeeandworkordermanagement.password;
+package com.employee.employeeandworkordermanagement.repository;
 
+import com.employee.employeeandworkordermanagement.password.PasswordResetToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

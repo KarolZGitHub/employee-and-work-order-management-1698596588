@@ -1,14 +1,15 @@
-package com.employee.employeeandworkordermanagement.user;
+package com.employee.employeeandworkordermanagement.service;
 
 import com.employee.employeeandworkordermanagement.data.Role;
 import com.employee.employeeandworkordermanagement.dto.UserDTO;
 import com.employee.employeeandworkordermanagement.exception.UserAlreadyExistsException;
 import com.employee.employeeandworkordermanagement.password.PasswordResetToken;
-import com.employee.employeeandworkordermanagement.password.PasswordResetTokenRepository;
-import com.employee.employeeandworkordermanagement.password.PasswordResetTokenService;
+import com.employee.employeeandworkordermanagement.repository.PasswordResetTokenRepository;
 import com.employee.employeeandworkordermanagement.registration.RegistrationRequest;
 import com.employee.employeeandworkordermanagement.registration.token.VerificationToken;
-import com.employee.employeeandworkordermanagement.registration.token.VerificationTokenRepository;
+import com.employee.employeeandworkordermanagement.repository.VerificationTokenRepository;
+import com.employee.employeeandworkordermanagement.user.User;
+import com.employee.employeeandworkordermanagement.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

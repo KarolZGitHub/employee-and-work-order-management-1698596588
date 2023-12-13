@@ -1,4 +1,4 @@
-package com.employee.employeeandworkordermanagement.security;
+package com.employee.employeeandworkordermanagement.config;
 
 import com.employee.employeeandworkordermanagement.user.User;
 import lombok.Data;

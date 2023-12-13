@@ -1,5 +1,6 @@
-package com.employee.employeeandworkordermanagement.user;
+package com.employee.employeeandworkordermanagement.repository;
 
+import com.employee.employeeandworkordermanagement.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

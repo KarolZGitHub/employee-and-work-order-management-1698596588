@@ -2,7 +2,7 @@ package com.employee.employeeandworkordermanagement.event.listener;
 
 import com.employee.employeeandworkordermanagement.event.RegistrationCompleteEvent;
 import com.employee.employeeandworkordermanagement.user.User;
-import com.employee.employeeandworkordermanagement.user.UserService;
+import com.employee.employeeandworkordermanagement.service.UserService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
