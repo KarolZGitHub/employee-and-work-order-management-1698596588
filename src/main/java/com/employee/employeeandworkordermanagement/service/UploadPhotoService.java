@@ -20,11 +20,21 @@ import java.nio.file.Paths;
 public class UploadPhotoService {
 
     private final UserRepository userRepository;
+
     private static String createUploadDirectory() {
         String userHome = System.getProperty("user.home");
         Path uploadPath = Paths.get(userHome, "uploads");
+
+        if (!Files.exists(uploadPath)) {
+            try {
+                Files.createDirectories(uploadPath);
+            } catch (IOException e) {
+                throw new RuntimeException("Could not create the upload directory: " + uploadPath, e);
+            }
+        }
         return uploadPath.toString();
     }
+
     public void uploadImage(MultipartFile file, Authentication authentication, Model model) throws IOException {
         System.out.println("Upload directory: " + createUploadDirectory());
 
