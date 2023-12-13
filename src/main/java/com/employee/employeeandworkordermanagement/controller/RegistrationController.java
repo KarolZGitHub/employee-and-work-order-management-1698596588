@@ -1,5 +1,6 @@
 package com.employee.employeeandworkordermanagement.controller;
 
+import com.employee.employeeandworkordermanagement.dto.UserDTO;
 import com.employee.employeeandworkordermanagement.registration.RegistrationRequest;
 import com.employee.employeeandworkordermanagement.registration.token.VerificationToken;
 import com.employee.employeeandworkordermanagement.service.VerificationTokenService;
@@ -14,6 +15,7 @@ import com.employee.employeeandworkordermanagement.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -62,7 +64,11 @@ public class RegistrationController {
     }
 
     @GetMapping("/password-reset-request")
-    public String showResetPasswordForm(Model model) {
+    public String showResetPasswordForm(Model model, Authentication authentication) {
+        if(authentication.isAuthenticated()){
+            UserDTO userDTO = userService.convertUserToUserDTO(userService.findByEmail(authentication.getName()).get());
+            model.addAttribute("user",userDTO);
+        }
         model.addAttribute("passwordResetRequest", new PasswordResetRequest());
         return "/password/resetPasswordRequest";
     }
