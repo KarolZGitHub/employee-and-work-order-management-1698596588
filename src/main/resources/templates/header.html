@@ -4,7 +4,6 @@
     <title>Employee manager</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/style.css">
-
     <nav class="navbar navbar-expand-md navbar-light">
         <a class="navbar-brand text-white" href="#">Employee manager</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
@@ -36,9 +35,10 @@
             </ul>
         </div>
         <div id="userImage" class="ml-3">
-            <img id="uploadedImage" th:if="${user != null && user.profilePicturePath != null}" th:src="${user.profilePicturePath}" class="img-fluid" alt="User Image">
+            <img id="uploadedImage" th:if="${user != null && user.profilePicturePath != null}" th:src="@{${user.profilePicturePath}}" class="img-fluid" alt="User Image">
             <img id="defaultImage" th:unless="${user != null && user.profilePicturePath != null}" src="/image/defaultImage.png" class="img-fluid" alt="Default Image">
         </div>
+
 
     </nav>
 </head>

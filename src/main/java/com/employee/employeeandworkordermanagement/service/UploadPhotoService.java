@@ -10,6 +10,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,29 +26,43 @@ public class UploadPhotoService {
     private final UserRepository userRepository;
 
     private static String createUploadDirectory() {
-        String userHome = System.getProperty("user.home");
-        Path uploadPath = Paths.get(userHome, "uploads");
-
-        if (!Files.exists(uploadPath)) {
-            try {
-                Files.createDirectories(uploadPath);
-            } catch (IOException e) {
-                throw new RuntimeException("Could not create the upload directory: " + uploadPath, e);
-            }
-        }
-        return uploadPath.toString();
+        return System.getProperty("user.dir") + "/src/main/resources/static/image";
     }
 
+    private static String convertToRelativePath(String basePath, String fullPath) {
+        Path basePathObject = Paths.get(basePath);
+        Path fullPathObject = Paths.get(fullPath);
+        Path relativePath = basePathObject.relativize(fullPathObject);
+        return relativePath.toString();
+    }
+
+    private static byte[] resizeImage(byte[] originalImageBytes, int targetWidth, int targetHeight) throws IOException {
+        ByteArrayInputStream bis = new ByteArrayInputStream(originalImageBytes);
+        BufferedImage originalImage = ImageIO.read(bis);
+
+        BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, originalImage.getType());
+        resizedImage.createGraphics().drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ImageIO.write(resizedImage, "png", bos);
+        return bos.toByteArray();
+    }
+
+
     public void uploadImage(MultipartFile file, Authentication authentication, Model model) throws IOException {
-        System.out.println("Upload directory: " + createUploadDirectory());
+        String basePath = System.getProperty("user.dir") + "/src/main/resources/static";
+        String uploadDirectory = createUploadDirectory();
+        System.out.println("Upload directory: " + uploadDirectory);
 
         StringBuilder fileNames = new StringBuilder();
-        Path fileNameAndPath = Paths.get(createUploadDirectory(), file.getOriginalFilename());
+        Path fileNameAndPath = Paths.get(uploadDirectory, file.getOriginalFilename());
         fileNames.append(file.getOriginalFilename());
-        Files.write(fileNameAndPath, file.getBytes());
+        Files.write(fileNameAndPath, resizeImage(file.getBytes(), 60, 60)); // Resize image to 60x60 pixels
+
         User user = userRepository.findByEmail(authentication.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not been found."));
         if (user != null) {
-            user.setProfilePicturePath(fileNameAndPath.toString());
+            String relativePath = convertToRelativePath(basePath, fileNameAndPath.toString());
+            user.setProfilePicturePath("/" + relativePath);
             userRepository.save(user);
             model.addAttribute("msg", "Uploaded images: " + fileNames.toString() + " for user: " + user.getFirstName());
         } else {
