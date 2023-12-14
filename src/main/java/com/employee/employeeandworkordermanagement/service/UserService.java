@@ -126,7 +126,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public UserDTO getUser(Authentication authentication) {
+    public UserDTO getUserDTO(Authentication authentication) {
         User user = findByEmail(authentication.getName()).orElseThrow(() -> new RuntimeException("User not found"));
         return convertUserToUserDTO(user);
     }
@@ -140,5 +140,17 @@ public class UserService implements IUserService {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public void changeFirstName(User user, String firstName) {
+        user.setFirstName(firstName);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void changeLastName(User user, String lastName) {
+        user.setLastName(lastName);
+        userRepository.save(user);
     }
 }

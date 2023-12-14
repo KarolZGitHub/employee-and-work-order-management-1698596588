@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:insert="~{header.html}">
+    <title>Change Last Name</title>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h2 class="text-center">Change last name.</h2>
+
+            <form th:object="${changeFirstOrLastName}" th:action="@{/profile/change-last-name}" method="post">
+                <div class="form-group">
+                    <label for="firstOrLastName">Last name:</label>
+                    <input type="text" class="form-control" id="firstOrLastName"
+                           th:field="*{firstOrLastName}" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+<!-- Footer-->
+<div th:insert="~{footer.html}"></div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</html>

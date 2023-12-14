@@ -18,7 +18,7 @@ public class MainPageController {
         if (authentication == null) {
             return "index";
         }
-        UserDTO userDTO = userService.getUser(authentication);
+        UserDTO userDTO = userService.getUserDTO(authentication);
         model.addAttribute("user", userDTO);
         return "index";
     }

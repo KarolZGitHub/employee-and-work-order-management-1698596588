@@ -20,7 +20,7 @@ public class AdminController {
 
     @GetMapping("/panel")
     public String showAdminPanel(Authentication authentication, Model model) {
-        UserDTO userDTO = userService.getUser(authentication);
+        UserDTO userDTO = userService.getUserDTO(authentication);
         model.addAttribute("user", userDTO);
         return "admin/adminPanel";
     }
@@ -31,7 +31,7 @@ public class AdminController {
             @RequestParam(required = false, defaultValue = "50") int size,
             Model model, Authentication authentication) {
         Page<User> userPage = userService.getAllUsers(PageRequest.of(page, size));
-        UserDTO userDTO = userService.getUser(authentication);
+        UserDTO userDTO = userService.getUserDTO(authentication);
         model.addAttribute("user", userDTO);
         model.addAttribute("userPage", userPage);
         return "admin/allUsers";

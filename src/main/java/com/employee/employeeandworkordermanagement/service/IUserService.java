@@ -31,6 +31,8 @@ public interface IUserService {
 
     UserDTO convertUserToUserDTO(User user);
 
-    UserDTO getUser(Authentication authentication);
+    UserDTO getUserDTO(Authentication authentication);
     boolean changePassword(User user, String password, String repeatPassword);
+    void changeFirstName(User user,String firstName);
+    void changeLastName(User user,String lastName);
 }
