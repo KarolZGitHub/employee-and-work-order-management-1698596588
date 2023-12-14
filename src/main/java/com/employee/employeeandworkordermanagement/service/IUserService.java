@@ -23,8 +23,6 @@ public interface IUserService {
 
     void createPasswordResetTokenForUser(User user, String passwordToken);
 
-    String changePasswordProcess(User user, String password, String repeatPassword);
-
     Page<User> getAllUsers(PageRequest pageRequest);
 
     User findById(Long id);

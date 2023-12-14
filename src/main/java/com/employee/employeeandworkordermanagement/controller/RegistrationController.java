@@ -1,17 +1,17 @@
 package com.employee.employeeandworkordermanagement.controller;
 
 import com.employee.employeeandworkordermanagement.dto.UserDTO;
-import com.employee.employeeandworkordermanagement.registration.RegistrationRequest;
-import com.employee.employeeandworkordermanagement.registration.token.VerificationToken;
-import com.employee.employeeandworkordermanagement.service.VerificationTokenService;
 import com.employee.employeeandworkordermanagement.event.RegistrationCompleteEvent;
 import com.employee.employeeandworkordermanagement.event.ResetPasswordEvent;
 import com.employee.employeeandworkordermanagement.password.PasswordResetProcess;
 import com.employee.employeeandworkordermanagement.password.PasswordResetRequest;
 import com.employee.employeeandworkordermanagement.password.PasswordResetToken;
+import com.employee.employeeandworkordermanagement.registration.RegistrationRequest;
+import com.employee.employeeandworkordermanagement.registration.token.VerificationToken;
 import com.employee.employeeandworkordermanagement.service.PasswordResetTokenService;
-import com.employee.employeeandworkordermanagement.user.User;
 import com.employee.employeeandworkordermanagement.service.UserService;
+import com.employee.employeeandworkordermanagement.service.VerificationTokenService;
+import com.employee.employeeandworkordermanagement.user.User;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -65,9 +65,13 @@ public class RegistrationController {
 
     @GetMapping("/password-reset-request")
     public String showResetPasswordForm(Model model, Authentication authentication) {
-        if(authentication.isAuthenticated()){
+        if (authentication == null) {
+            model.addAttribute("passwordResetRequest", new PasswordResetRequest());
+            return "/password/resetPasswordRequest";
+        }
+        if (authentication.isAuthenticated()) {
             UserDTO userDTO = userService.convertUserToUserDTO(userService.findByEmail(authentication.getName()).get());
-            model.addAttribute("user",userDTO);
+            model.addAttribute("user", userDTO);
         }
         model.addAttribute("passwordResetRequest", new PasswordResetRequest());
         return "/password/resetPasswordRequest";

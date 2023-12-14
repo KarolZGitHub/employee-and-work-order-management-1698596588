@@ -105,17 +105,6 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public String changePasswordProcess(User user, String password, String repeatPassword) {
-        User theUser = user;
-        if (password.equalsIgnoreCase(repeatPassword)) {
-            theUser.setPassword(password);
-            userRepository.save(theUser);
-            return "Success";
-        }
-        return "Passwords are different";
-    }
-
-    @Override
     public User findById(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User of this ID has not been found"));
         return user;
@@ -145,7 +134,7 @@ public class UserService implements IUserService {
     @Override
     public boolean changePassword(User user, String password, String repeatPassword) {
         if (password.equals(repeatPassword)) {
-            user.setPassword(password);
+            user.setPassword(passwordEncoder.encode(password));
             userRepository.save(user);
             return true;
         } else {
