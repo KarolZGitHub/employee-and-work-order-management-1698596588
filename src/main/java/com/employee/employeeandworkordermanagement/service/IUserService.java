@@ -35,4 +35,5 @@ public interface IUserService {
     boolean changePassword(User user, String password, String repeatPassword);
     void changeFirstName(User user,String firstName);
     void changeLastName(User user,String lastName);
+    void saveEmailForUser(User user,String email);
 }

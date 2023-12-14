@@ -26,7 +26,7 @@
                 <li th:if="${user == null}" class="nav-item">
                     <a class="nav-link" href="/register/user">Register</a>
                 </li>
-                <li>
+                <li th:if="${user == null}" class="nav-item">
                     <a class="nav-link" href="/register/password-reset-request">Reset password</a>
                 </li>
                 <li th:if="${user != null and user.role == T(com.employee.employeeandworkordermanagement.data.Role).ADMIN}" class="nav-item">

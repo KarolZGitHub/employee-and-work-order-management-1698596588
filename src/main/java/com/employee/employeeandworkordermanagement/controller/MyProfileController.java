@@ -1,11 +1,16 @@
 package com.employee.employeeandworkordermanagement.controller;
 
 import com.employee.employeeandworkordermanagement.dto.UserDTO;
+import com.employee.employeeandworkordermanagement.event.ChangeEmailEvent;
 import com.employee.employeeandworkordermanagement.password.PasswordResetProcess;
+import com.employee.employeeandworkordermanagement.profile.ChangeEmailRequest;
 import com.employee.employeeandworkordermanagement.profile.ChangeFirstOrLastName;
+import com.employee.employeeandworkordermanagement.service.ChangeEmailResetTokenService;
 import com.employee.employeeandworkordermanagement.service.UserService;
 import com.employee.employeeandworkordermanagement.user.User;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -13,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
 @Controller
@@ -20,6 +26,8 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/profile")
 public class MyProfileController {
     private final UserService userService;
+    private final ApplicationEventPublisher publisher;
+    private final ChangeEmailResetTokenService changeEmailResetTokenService;
 
 
     @GetMapping("/my-profile")
@@ -87,5 +95,51 @@ public class MyProfileController {
         userService.changeLastName(user, changeFirstOrLastName.getFirstOrLastName());
         model.addAttribute("user", user);
         return "redirect:/profile/my-profile";
+    }
+
+    @GetMapping("/email-change-request")
+    public String showEmailChangeForm(Model model, Authentication authentication, final HttpServletRequest request) {
+        UserDTO userDTO = userService.getUserDTO(authentication);
+        model.addAttribute("user", userDTO);
+        User user = userService.findByEmail(authentication.getName()).get();
+        publisher.publishEvent(new ChangeEmailEvent(user, applicationUrl(request)));
+        return "myProfile/emailTokenSent";
+    }
+
+    @GetMapping("/email-change-request-process")
+    public String verifyChangeEmailToken(@RequestParam("token") String token,
+                                         Model model,
+                                         Authentication authentication,
+                                         ChangeEmailRequest changeEmailRequest
+    ) {
+        UserDTO userDTO = userService.getUserDTO(authentication);
+        model.addAttribute("user", userDTO);
+        String verificationResult = changeEmailResetTokenService.validatePasswordResetToken(token);
+        if (verificationResult.equalsIgnoreCase("token expired")) {
+            return "token/tokenExpired";
+        }
+        if (verificationResult.equalsIgnoreCase("valid")) {
+            model.addAttribute("changeEmailRequest", changeEmailRequest);
+            return "myProfile/changeEmailForm";
+        }
+        return "token/tokenDoesntExist";
+    }
+
+    @PostMapping("/email-change-request-process")
+    public String handleEmailChangeProcess(Model model, Authentication authentication,
+                                           ChangeEmailRequest changeEmailRequest) {
+        UserDTO userDTO = userService.getUserDTO(authentication);
+        model.addAttribute("user", userDTO);
+        if (changeEmailRequest.getEmail().equals(changeEmailRequest.getConfirmEmail())) {
+            User user = userService.findByEmail(authentication.getName()).get();
+            userService.saveEmailForUser(user, changeEmailRequest.getEmail());
+            return "redirect:/logout";
+        } else {
+            return "myProfile/emailDoesntMatch";
+        }
+    }
+
+    public String applicationUrl(HttpServletRequest request) {
+        return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
     }
 }

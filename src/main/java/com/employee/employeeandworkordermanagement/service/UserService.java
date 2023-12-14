@@ -6,9 +6,7 @@ import com.employee.employeeandworkordermanagement.exception.UserAlreadyExistsEx
 import com.employee.employeeandworkordermanagement.password.PasswordResetToken;
 import com.employee.employeeandworkordermanagement.registration.RegistrationRequest;
 import com.employee.employeeandworkordermanagement.registration.token.VerificationToken;
-import com.employee.employeeandworkordermanagement.repository.PasswordResetTokenRepository;
-import com.employee.employeeandworkordermanagement.repository.UserRepository;
-import com.employee.employeeandworkordermanagement.repository.VerificationTokenRepository;
+import com.employee.employeeandworkordermanagement.repository.*;
 import com.employee.employeeandworkordermanagement.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -151,6 +149,12 @@ public class UserService implements IUserService {
     @Override
     public void changeLastName(User user, String lastName) {
         user.setLastName(lastName);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void saveEmailForUser(User user, String email) {
+        user.setEmail(email);
         userRepository.save(user);
     }
 }
