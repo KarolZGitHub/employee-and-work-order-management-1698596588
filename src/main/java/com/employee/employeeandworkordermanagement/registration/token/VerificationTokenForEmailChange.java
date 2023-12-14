@@ -1,4 +1,4 @@
-package com.employee.employeeandworkordermanagement.Registration.token;
+package com.employee.employeeandworkordermanagement.registration.token;
 
 import com.employee.employeeandworkordermanagement.user.User;
 import jakarta.persistence.*;
@@ -12,8 +12,8 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "verfication_token")
-public class VerificationToken {
+@Table(name = "verfication_email_token")
+public class VerificationTokenForEmailChange {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,7 +24,7 @@ public class VerificationToken {
     private User user;
     private static final int EXPIRATION_TIME = 15;
 
-    public VerificationToken(String token,User user) {
+    public VerificationTokenForEmailChange(String token,User user) {
         this.token = token;
         this.user = user;
         this.expirationTime = getTokenExpirationTime();

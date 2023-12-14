@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:insert="~{header.html}">
+    <title>My profile</title>
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h3>User Information</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="card-title">First Name:</h5>
+                    <p class="card-text" th:text="${user.firstName}"></p>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="card-title">Last Name:</h5>
+                    <p class="card-text" th:text="${user.lastName}"></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="card-title">Email:</h5>
+                    <p class="card-text" th:text="${user.email}"></p>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="card-title">Role:</h5>
+                    <p class="card-text" th:text="${user.role}"></p>
+                </div>
+                <div class="mt-3">
+                    <a href="/upload/upload-image" class="btn btn-primary">Upload Image</a>
+                </div>
+                <div class="mt-3">
+                    <a href="/profile/change-password" class="btn btn-primary">Change Password</a>
+                </div>
+                <div class="mt-3">
+                    <a href="/profile/change-first-name" class="btn btn-primary">Change First Name</a>
+                </div>
+                <div class="mt-3">
+                    <a href="/profile/change-last-name" class="btn btn-primary">Change Last Name</a>
+                </div>
+                <div class="mt-3">
+                    <a href="/profile/email-change-request" class="btn btn-primary">Change E-mail</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<!-- Footer-->
+<div th:insert="~{footer.html}"></div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</html>

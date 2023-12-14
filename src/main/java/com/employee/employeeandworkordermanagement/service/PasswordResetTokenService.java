@@ -1,5 +1,7 @@
-package com.employee.employeeandworkordermanagement.password;
+package com.employee.employeeandworkordermanagement.service;
 
+import com.employee.employeeandworkordermanagement.password.PasswordResetToken;
+import com.employee.employeeandworkordermanagement.repository.PasswordResetTokenRepository;
 import com.employee.employeeandworkordermanagement.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

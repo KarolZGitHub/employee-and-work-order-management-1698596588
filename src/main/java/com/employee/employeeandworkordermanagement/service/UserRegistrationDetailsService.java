@@ -1,6 +1,7 @@
-package com.employee.employeeandworkordermanagement.security;
+package com.employee.employeeandworkordermanagement.service;
 
-import com.employee.employeeandworkordermanagement.user.UserRepository;
+import com.employee.employeeandworkordermanagement.repository.UserRepository;
+import com.employee.employeeandworkordermanagement.config.UserRegistrationDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

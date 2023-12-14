@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:insert="~{header.html}">
+    <title>Upload Image Information</title>
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Upload Status</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text" th:text="${msg}"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<!-- Footer-->
+<div th:insert="~{footer.html}"></div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</html>

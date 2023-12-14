@@ -4,7 +4,6 @@
     <title>Employee manager</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/style.css">
-
     <nav class="navbar navbar-expand-md navbar-light">
         <a class="navbar-brand text-white" href="#">Employee manager</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
@@ -16,6 +15,9 @@
                     <a class="nav-link" href="/">Main page</a>
                 </li>
                 <li th:if="${user != null}" class="nav-item">
+                    <a class="nav-link" href="/profile/my-profile">My profile</a>
+                </li>
+                <li th:if="${user != null}" class="nav-item">
                     <a class="nav-link" href="/logout">Logout</a>
                 </li>
                 <li th:if="${user == null}" class="nav-item">
@@ -24,13 +26,20 @@
                 <li th:if="${user == null}" class="nav-item">
                     <a class="nav-link" href="/register/user">Register</a>
                 </li>
-                <li>
+                <li th:if="${user == null}" class="nav-item">
                     <a class="nav-link" href="/register/password-reset-request">Reset password</a>
                 </li>
                 <li th:if="${user != null and user.role == T(com.employee.employeeandworkordermanagement.data.Role).ADMIN}" class="nav-item">
                     <a class="nav-link" href="/admin/panel">Admin Panel</a>
                 </li>
+                <li th:if="${user != null}" class="nav-item">
+                    <span class="nav-link">Role: <span th:text="${user.role}"></span></span>
+                </li>
             </ul>
+        </div>
+        <div id="userImage" class="ml-3">
+            <img id="uploadedImage" th:if="${user != null && user.profilePicturePath != null}" th:src="@{${user.profilePicturePath}}" class="img-fluid" alt="User Image">
+            <img id="defaultImage" th:unless="${user != null && user.profilePicturePath != null}" src="/image/defaultImage.png" class="img-fluid" alt="Default Image">
         </div>
     </nav>
 </head>

@@ -1,5 +1,7 @@
-package com.employee.employeeandworkordermanagement.Registration.token;
+package com.employee.employeeandworkordermanagement.service;
 
+import com.employee.employeeandworkordermanagement.registration.token.VerificationToken;
+import com.employee.employeeandworkordermanagement.repository.VerificationTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

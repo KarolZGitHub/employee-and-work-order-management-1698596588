@@ -8,10 +8,12 @@ import lombok.Setter;
 
 import java.util.Calendar;
 import java.util.Date;
+
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "password_reset_token")
 public class PasswordResetToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

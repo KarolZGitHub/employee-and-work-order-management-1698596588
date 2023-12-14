@@ -1,7 +1,7 @@
 package com.employee.employeeandworkordermanagement.controller;
 
-import com.employee.employeeandworkordermanagement.user.User;
-import com.employee.employeeandworkordermanagement.user.UserService;
+import com.employee.employeeandworkordermanagement.dto.UserDTO;
+import com.employee.employeeandworkordermanagement.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -18,9 +18,8 @@ public class MainPageController {
         if (authentication == null) {
             return "index";
         }
-        String email = authentication.getName();
-        User user = userService.findByEmail(email).get();
-        model.addAttribute("user", user);
+        UserDTO userDTO = userService.getUserDTO(authentication);
+        model.addAttribute("user", userDTO);
         return "index";
     }
 }

@@ -1,17 +1,19 @@
-package com.employee.employeeandworkordermanagement.user;
+package com.employee.employeeandworkordermanagement.service;
 
 import com.employee.employeeandworkordermanagement.data.Role;
+import com.employee.employeeandworkordermanagement.dto.UserDTO;
 import com.employee.employeeandworkordermanagement.exception.UserAlreadyExistsException;
-import com.employee.employeeandworkordermanagement.password.PasswordResetToken;
-import com.employee.employeeandworkordermanagement.password.PasswordResetTokenRepository;
-import com.employee.employeeandworkordermanagement.password.PasswordResetTokenService;
 import com.employee.employeeandworkordermanagement.registration.RegistrationRequest;
 import com.employee.employeeandworkordermanagement.registration.token.VerificationToken;
-import com.employee.employeeandworkordermanagement.registration.token.VerificationTokenRepository;
+import com.employee.employeeandworkordermanagement.repository.PasswordResetTokenRepository;
+import com.employee.employeeandworkordermanagement.repository.UserRepository;
+import com.employee.employeeandworkordermanagement.repository.VerificationTokenRepository;
+import com.employee.employeeandworkordermanagement.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -74,21 +76,6 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public String validateResetPasswordToken(String theToken) {
-        PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByToken(theToken).orElse(
-                new PasswordResetToken());
-        User user = passwordResetToken.getUser();
-        Calendar calendar = Calendar.getInstance();
-        if (passwordResetToken.getExpirationTime().getTime() - calendar.getTime().getTime() <= 0) {
-            passwordResetTokenRepository.delete(passwordResetToken);
-            return "token expired";
-        }
-        user.setEnabled(true);
-        userRepository.save(user);
-        return "valid";
-    }
-
-    @Override
     public void saveUser(User user, String password, String repeatedPassword) {
         if (password.equals(repeatedPassword)) {
             user.setPassword(passwordEncoder.encode(password));
@@ -102,29 +89,58 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public String changePasswordProcess(User user, String password, String repeatPassword) {
-        User theUser = user;
-        if (password.equalsIgnoreCase(repeatPassword)) {
-            theUser.setPassword(password);
-            userRepository.save(theUser);
-            return "Success";
-        }
-        return "Passwords are different";
-    }
-
-    @Override
     public User findById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"User of this ID has not been found"));
+        User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User of this ID has not been found"));
         return user;
     }
 
     @Override
-    public void editUserRole(User user,Role role) {
+    public void editUserRole(User user, Role role) {
         if (user != null && userRepository.existsById(Long.valueOf(user.getId()))) {
             user.setRole(role);
             userRepository.save(user);
         } else {
             throw new RuntimeException("User not found or invalid user object");
         }
+    }
+
+    @Override
+    public UserDTO convertUserToUserDTO(User user) {
+        return new UserDTO(user.getFirstName(), user.getLastName(), user.getEmail(), user.getRole(), user.getProfilePicturePath());
+    }
+
+    @Override
+    public UserDTO getUserDTO(Authentication authentication) {
+        User user = findByEmail(authentication.getName()).orElseThrow(() -> new RuntimeException("User not found"));
+        return convertUserToUserDTO(user);
+    }
+
+    @Override
+    public boolean changePassword(User user, String password, String repeatPassword) {
+        if (password.equals(repeatPassword)) {
+            user.setPassword(passwordEncoder.encode(password));
+            userRepository.save(user);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public void changeFirstName(User user, String firstName) {
+        user.setFirstName(firstName);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void changeLastName(User user, String lastName) {
+        user.setLastName(lastName);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void saveEmailForUser(User user, String email) {
+        user.setEmail(email);
+        userRepository.save(user);
     }
 }

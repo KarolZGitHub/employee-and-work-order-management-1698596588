@@ -1,8 +1,9 @@
 package com.employee.employeeandworkordermanagement.controller;
 
 import com.employee.employeeandworkordermanagement.data.Role;
+import com.employee.employeeandworkordermanagement.dto.UserDTO;
 import com.employee.employeeandworkordermanagement.user.User;
-import com.employee.employeeandworkordermanagement.user.UserService;
+import com.employee.employeeandworkordermanagement.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,9 +20,8 @@ public class AdminController {
 
     @GetMapping("/panel")
     public String showAdminPanel(Authentication authentication, Model model) {
-        String email = authentication.getName();
-        User user = userService.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
-        model.addAttribute("user", user);
+        UserDTO userDTO = userService.getUserDTO(authentication);
+        model.addAttribute("user", userDTO);
         return "admin/adminPanel";
     }
 
@@ -31,9 +31,8 @@ public class AdminController {
             @RequestParam(required = false, defaultValue = "50") int size,
             Model model, Authentication authentication) {
         Page<User> userPage = userService.getAllUsers(PageRequest.of(page, size));
-        String email = authentication.getName();
-        User user = userService.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
-        model.addAttribute("user", user);
+        UserDTO userDTO = userService.getUserDTO(authentication);
+        model.addAttribute("user", userDTO);
         model.addAttribute("userPage", userPage);
         return "admin/allUsers";
     }
