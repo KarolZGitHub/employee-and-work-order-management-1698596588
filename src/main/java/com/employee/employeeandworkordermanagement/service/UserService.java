@@ -3,10 +3,11 @@ package com.employee.employeeandworkordermanagement.service;
 import com.employee.employeeandworkordermanagement.data.Role;
 import com.employee.employeeandworkordermanagement.dto.UserDTO;
 import com.employee.employeeandworkordermanagement.exception.UserAlreadyExistsException;
-import com.employee.employeeandworkordermanagement.password.PasswordResetToken;
 import com.employee.employeeandworkordermanagement.registration.RegistrationRequest;
 import com.employee.employeeandworkordermanagement.registration.token.VerificationToken;
-import com.employee.employeeandworkordermanagement.repository.*;
+import com.employee.employeeandworkordermanagement.repository.PasswordResetTokenRepository;
+import com.employee.employeeandworkordermanagement.repository.UserRepository;
+import com.employee.employeeandworkordermanagement.repository.VerificationTokenRepository;
 import com.employee.employeeandworkordermanagement.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -67,21 +68,6 @@ public class UserService implements IUserService {
         Calendar calendar = Calendar.getInstance();
         if (verificationToken.getExpirationTime().getTime() - calendar.getTime().getTime() <= 0) {
             verificationTokenRepository.delete(verificationToken);
-            return "token expired";
-        }
-        user.setEnabled(true);
-        userRepository.save(user);
-        return "valid";
-    }
-
-    @Override
-    public String validateResetPasswordToken(String theToken) {
-        PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByToken(theToken).orElse(
-                new PasswordResetToken());
-        User user = passwordResetToken.getUser();
-        Calendar calendar = Calendar.getInstance();
-        if (passwordResetToken.getExpirationTime().getTime() - calendar.getTime().getTime() <= 0) {
-            passwordResetTokenRepository.delete(passwordResetToken);
             return "token expired";
         }
         user.setEnabled(true);

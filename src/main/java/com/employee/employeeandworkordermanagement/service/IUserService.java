@@ -17,8 +17,6 @@ public interface IUserService {
 
     String validateToken(String theToken);
 
-    String validateResetPasswordToken(String theToken);
-
     void saveUser(User user, String password, String repeatedPassword);
 
     void createPasswordResetTokenForUser(User user, String passwordToken);
