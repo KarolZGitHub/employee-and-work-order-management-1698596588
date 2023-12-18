@@ -11,4 +11,8 @@ public class LogOutController {
         SecurityContextHolder.getContext().setAuthentication(null);
         return "index";
     }
+    @GetMapping("/logout-success")
+    public String handleSuccessLogout(){
+        return "logout/successfulLogOut";
+    }
 }
