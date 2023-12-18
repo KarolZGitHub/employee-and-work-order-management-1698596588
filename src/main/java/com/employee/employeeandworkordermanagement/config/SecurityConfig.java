@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .permitAll()
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/")
+                .requestMatchers("/**")
                 .permitAll()
                 .and()
                 .authorizeHttpRequests()
@@ -48,6 +48,13 @@ public class SecurityConfig {
                 .requestMatchers("/upload/**")
                 .hasAnyAuthority("USER", "ADMIN", "OPERATOR", "DESIGNER")
                 .and()
-                .formLogin().and().build();
+                .formLogin()
+                .defaultSuccessUrl("/login-success")
+                .and()
+                .logout()
+                .logoutSuccessUrl("/logout-success")
+                .permitAll()
+                .and()
+                .build();
     }
 }
