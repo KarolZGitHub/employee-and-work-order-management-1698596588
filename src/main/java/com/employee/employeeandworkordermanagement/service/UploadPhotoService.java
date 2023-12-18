@@ -14,7 +14,9 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -24,17 +26,6 @@ import java.nio.file.Paths;
 public class UploadPhotoService {
 
     private final UserRepository userRepository;
-
-    private static String createUploadDirectory() {
-        return System.getProperty("user.dir") + "/src/main/resources/static/image";
-    }
-
-    private static String convertToRelativePath(String basePath, String fullPath) {
-        Path basePathObject = Paths.get(basePath);
-        Path fullPathObject = Paths.get(fullPath);
-        Path relativePath = basePathObject.relativize(fullPathObject);
-        return relativePath.toString();
-    }
 
     private static byte[] resizeImage(byte[] originalImageBytes, int targetWidth, int targetHeight) throws IOException {
         ByteArrayInputStream bis = new ByteArrayInputStream(originalImageBytes);
@@ -48,9 +39,8 @@ public class UploadPhotoService {
         return bos.toByteArray();
     }
 
-
     public void uploadImage(MultipartFile file, Authentication authentication, Model model) throws IOException {
-        String basePath = System.getProperty("user.dir") + "/src/main/resources/static";
+        String basePath = System.getProperty("user.dir") + "/src/main/resources/static/image";
         String uploadDirectory = createUploadDirectory();
         System.out.println("Upload directory: " + uploadDirectory);
 
@@ -68,5 +58,16 @@ public class UploadPhotoService {
         } else {
             model.addAttribute("msg", "User not found!");
         }
+    }
+
+    private String createUploadDirectory() {
+        // Using FileSystems to get separator depending on operating system.
+        String separator = FileSystems.getDefault().getSeparator();
+        return System.getProperty("user.dir") + separator + "src" + separator + "main" + separator + "resources" + separator + "static";
+    }
+
+    private String convertToRelativePath(String basePath, String fullPath) {
+        String relativePath = fullPath.substring(basePath.length());
+        return relativePath.startsWith(File.separator) ? relativePath.substring(1) : relativePath;
     }
 }

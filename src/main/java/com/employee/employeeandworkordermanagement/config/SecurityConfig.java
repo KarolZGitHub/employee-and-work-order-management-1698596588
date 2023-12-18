@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .permitAll()
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/**")
+                .requestMatchers("/","/login-success","/logout-success","/error")
                 .permitAll()
                 .and()
                 .authorizeHttpRequests()
