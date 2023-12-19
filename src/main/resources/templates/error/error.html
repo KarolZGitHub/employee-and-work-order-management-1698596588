@@ -4,6 +4,7 @@
     <title>Error</title>
 </head>
 <body class="bg-light">
+<body class="bg-light">
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
@@ -12,14 +13,24 @@
                     <h4 class="mb-0">An Error Occurred</h4>
                 </div>
                 <div class="card-body">
-                    <p th:text="${errorCode}"></p>
-                    <p th:text="${errorMessage}"></p>
+                    <th:block th:if="${errorCode}"> <!-- Sprawdzenie, czy istnieje pojedynczy błąd -->
+                        <p th:text="${errorCode}"></p>
+                        <p th:text="${errorMessage}"></p>
+                    </th:block>
+
+                    <th:block th:if="${errorList}"> <!-- Sprawdzenie, czy istnieje lista błędów -->
+                        <ul>
+                            <li th:each="error : ${errorList}" th:text="${error}"></li>
+                        </ul>
+                    </th:block>
+
                     <a class="btn btn-primary" href="/">Home Page</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+</body>
 </body>
 <!-- Footer-->
 <div th:insert="~{footer}"></div>

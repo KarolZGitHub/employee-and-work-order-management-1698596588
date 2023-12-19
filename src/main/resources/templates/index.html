@@ -12,6 +12,10 @@
 
     </div>
 
+    <div th:if="${user != null}" class="container mt-5">
+        <a th:href="@{/task/add}" class="btn btn-primary">Add Task</a>
+    </div>
+
 </div>
 <div th:if="${user == null}" class="container-fluid">
     <div class="container-fluid">
