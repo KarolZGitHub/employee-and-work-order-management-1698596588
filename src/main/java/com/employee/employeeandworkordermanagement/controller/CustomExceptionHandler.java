@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
@@ -14,17 +15,19 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(UserAlreadyExistsException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public String handleUserAlreadyExists(UserAlreadyExistsException ex, Model model) {
-        model.addAttribute("errorCode", ex.getErrorCode());
-        model.addAttribute("errorMessage", ex.getReason());
-        return "error/emailError";
+    public ModelAndView handleUserAlreadyExists(UserAlreadyExistsException ex, Model model) {
+        ModelAndView modelAndView = new ModelAndView("error/emailError");
+        modelAndView.addObject("errorCode", ex.getErrorCode());
+        modelAndView.addObject("errorMessage", ex.getReason());
+        return modelAndView;
     }
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handle404(NotFoundException ex, Model model) {
-        model.addAttribute("errorCode", ex.getErrorCode());
-        model.addAttribute("errorMessage", ex.getReason());
-        return "error/404Error";
+    public ModelAndView handle404(NotFoundException ex, Model model) {
+        ModelAndView modelAndView = new ModelAndView("error/404Error");
+        modelAndView.addObject("errorCode", ex.getErrorCode());
+        modelAndView.addObject("errorMessage", ex.getReason());
+        return modelAndView;
     }
 }
