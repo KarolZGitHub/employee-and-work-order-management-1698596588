@@ -34,4 +34,6 @@ public class Task {
     @NotNull(message = "Created at date cannot be null")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt = new Date();
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date editedAt;
 }
