@@ -1,6 +1,7 @@
 package com.employee.employeeandworkordermanagement.entity;
 
 import com.employee.employeeandworkordermanagement.data.TaskStatus;
+import com.employee.employeeandworkordermanagement.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -27,7 +28,7 @@ public class Task {
     @NotNull(message = "Assigned designer cannot be null")
     @ManyToOne
     @JoinColumn(name = "assigned_designer_id")
-    private Designer designer;
+    private User designer;
     @NotNull(message = "Task status cannot be null")
     @Enumerated(EnumType.STRING)
     private TaskStatus taskStatus = TaskStatus.ACTIVE;

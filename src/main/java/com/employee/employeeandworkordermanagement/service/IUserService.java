@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface IUserService {
@@ -34,4 +35,6 @@ public interface IUserService {
     void changeFirstName(User user,String firstName);
     void changeLastName(User user,String lastName);
     void saveEmailForUser(User user,String email);
+    List<User> getDesigners();
+    Page<User> designerPage(PageRequest pageRequest);
 }

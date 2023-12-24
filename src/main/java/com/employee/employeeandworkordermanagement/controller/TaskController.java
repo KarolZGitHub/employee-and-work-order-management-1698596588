@@ -1,11 +1,10 @@
 package com.employee.employeeandworkordermanagement.controller;
 
 import com.employee.employeeandworkordermanagement.dto.UserDTO;
-import com.employee.employeeandworkordermanagement.entity.Designer;
 import com.employee.employeeandworkordermanagement.entity.Task;
-import com.employee.employeeandworkordermanagement.service.DesignerService;
 import com.employee.employeeandworkordermanagement.service.TaskService;
 import com.employee.employeeandworkordermanagement.service.UserService;
+import com.employee.employeeandworkordermanagement.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,7 +22,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/task")
 public class TaskController {
-    private final DesignerService designerService;
     private final TaskService taskService;
     private final UserService userService;
 
@@ -37,13 +35,12 @@ public class TaskController {
     }
 
     @ModelAttribute("designers")
-    public List<Designer> getDesigners() {
-        return designerService.findAll();
+    public List<User> getDesigners() {
+        return userService.getDesigners();
     }
 
     @GetMapping("/add")
     public String showAddTaskForm(Task task, Model model) {
-        model.addAttribute("designers", designerService.findAll());
         model.addAttribute("task", task);
         return "task/addTaskForm";
     }
