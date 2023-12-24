@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -36,7 +37,7 @@ public class TaskRestController {
     }
 
     @PostMapping
-    public ModelAndView createTask(@Valid Task task, BindingResult result) {
+    public ModelAndView createTask(@Valid Task task, BindingResult result, Authentication authentication) {
         ModelAndView modelAndView = new ModelAndView();
 
         if (result.hasErrors()) {
@@ -45,7 +46,7 @@ public class TaskRestController {
             modelAndView.addObject("errorList", result.getAllErrors());
         } else {
             try {
-                taskService.createTask(task);
+                taskService.createTask(task, authentication);
 
                 modelAndView.setViewName("task/success");
                 modelAndView.addObject("status", HttpStatus.CREATED.value());

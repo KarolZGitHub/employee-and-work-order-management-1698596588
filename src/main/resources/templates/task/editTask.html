@@ -28,7 +28,7 @@
             </select>
             <small th:if="${#fields.hasErrors('designer')}" class="form-text text-danger"
                    th:errors="designers"></small>
-            <button class="btn btn-primary">Edit</button>
+            <button class="btn btn-primary" onclick="return confirm('Are you sure you want to edit?')">Edit</button>
         </div>
     </form>
 </div>

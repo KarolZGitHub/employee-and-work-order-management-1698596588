@@ -29,7 +29,6 @@ public class UserService implements IUserService {
     private final PasswordEncoder passwordEncoder;
     private final VerificationTokenRepository verificationTokenRepository;
     private final PasswordResetTokenService passwordResetTokenService;
-    private final PasswordResetTokenRepository passwordResetTokenRepository;
 
     @Override
     public Page<User> getAllUsers(PageRequest pageRequest) {

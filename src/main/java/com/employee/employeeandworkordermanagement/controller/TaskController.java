@@ -54,12 +54,13 @@ public class TaskController {
     }
 
     @PostMapping("/edit-task")
-    public String handleEditTask(@RequestParam Long id, Task task, BindingResult bindingResult, Model model) {
+    public String handleEditTask(@RequestParam Long id, Task task, BindingResult bindingResult, Model model,
+                                 Authentication authentication) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("errorList", bindingResult.getAllErrors());
             return "error/error";
         }
-        taskService.editTask(task);
+        taskService.editTask(task, authentication);
         return "redirect:/task/all-tasks";
     }
 
@@ -73,15 +74,17 @@ public class TaskController {
 
     @GetMapping("/delete-task")
     public String deleteTask(@RequestParam(name = "id") Long id) {
-        taskService.deleteTask(taskService.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                "Task has not been found.")));
+        taskService.deleteTask(taskService.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Task has not been found.")));
         return "redirect:/task/all-tasks";
     }
 
     @GetMapping("/close-task")
     public String closeTask(@RequestParam(name = "id") Long id) {
-        taskService.closeTask(taskService.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                "Task has not been found.")));
+        taskService.closeTask(taskService.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Task has not been found.")));
         return "redirect:/task/all-tasks";
     }
 }
