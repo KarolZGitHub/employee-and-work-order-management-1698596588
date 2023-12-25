@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Calendar;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -28,7 +29,6 @@ public class UserService implements IUserService {
     private final PasswordEncoder passwordEncoder;
     private final VerificationTokenRepository verificationTokenRepository;
     private final PasswordResetTokenService passwordResetTokenService;
-    private final PasswordResetTokenRepository passwordResetTokenRepository;
 
     @Override
     public Page<User> getAllUsers(PageRequest pageRequest) {
@@ -45,7 +45,7 @@ public class UserService implements IUserService {
         newUser.setFirstName(request.firstName());
         newUser.setLastName(request.lastName());
         newUser.setEmail(request.email());
-        newUser.setRole(Role.USER);
+        newUser.setRole(Role.DESIGNER);
         newUser.setPassword(passwordEncoder.encode(request.password()));
         return userRepository.save(newUser);
     }
@@ -142,5 +142,15 @@ public class UserService implements IUserService {
     public void saveEmailForUser(User user, String email) {
         user.setEmail(email);
         userRepository.save(user);
+    }
+
+    @Override
+    public List<User> getDesigners() {
+        return userRepository.findByRole(Role.DESIGNER);
+    }
+
+    @Override
+    public Page<User> designerPage(PageRequest pageRequest) {
+        return userRepository.findByRole(Role.DESIGNER, pageRequest);
     }
 }
