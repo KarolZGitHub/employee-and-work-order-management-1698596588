@@ -31,3 +31,10 @@ footer {
     padding: 10px 0;
     text-align: center;
 }
+.normal-font {
+    font-weight: normal;
+}
+
+.bold-font {
+    font-weight: bold;
+}

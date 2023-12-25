@@ -8,9 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -36,6 +34,22 @@ public class MessageController {
                 userService.findByEmail(authentication.getName()).get());
         model.addAttribute("messages", messageList);
         return "message/allMessages";
+    }
+
+    @PostMapping("/delete")
+    public String deleteMessage(@RequestParam(name = "id") Long id) {
+        Message message = messageService.findById(id);
+        messageService.deleteMessage(message);
+        return "redirect:/message/all-messages";
+    }
+
+    @GetMapping("view")
+    public String showSingleMessage(@RequestParam(name = "id") Long id, Model model) {
+        Message message = messageService.findById(id);
+        message.setRead(true);
+        messageService.saveMessage(message);
+        model.addAttribute("message", message);
+        return "message/singleMessage";
     }
 }
 //TODO: single message view, delete message feature, change all messages view

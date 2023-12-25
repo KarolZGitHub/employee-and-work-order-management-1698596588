@@ -5,7 +5,9 @@ import com.employee.employeeandworkordermanagement.entity.Task;
 import com.employee.employeeandworkordermanagement.repository.MessageRepository;
 import com.employee.employeeandworkordermanagement.user.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -28,5 +30,12 @@ public class MessageService {
         message.setReceiver(designer);
         message.setSender(sender);
         messageRepository.save(message);
+    }
+    public void deleteMessage(Message message){
+        messageRepository.delete(message);
+    }
+    public Message findById(Long id){
+        return messageRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                "Message has not been found."));
     }
 }

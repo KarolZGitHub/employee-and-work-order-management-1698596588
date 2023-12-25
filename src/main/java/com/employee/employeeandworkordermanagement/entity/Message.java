@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Entity
 @Data
+@Table(name="message")
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,4 +16,5 @@ public class Message {
     private User receiver;
     @ManyToOne
     private User sender;
+    private boolean isRead=false;
 }
