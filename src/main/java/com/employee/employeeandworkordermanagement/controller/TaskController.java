@@ -73,18 +73,18 @@ public class TaskController {
     }
 
     @GetMapping("/delete-task")
-    public String deleteTask(@RequestParam(name = "id") Long id) {
+    public String deleteTask(@RequestParam(name = "id") Long id, Authentication authentication) {
         taskService.deleteTask(taskService.findById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Task has not been found.")));
+                        "Task has not been found.")), authentication);
         return "redirect:/task/all-tasks";
     }
 
     @GetMapping("/close-task")
-    public String closeTask(@RequestParam(name = "id") Long id) {
+    public String closeTask(@RequestParam(name = "id") Long id, Authentication authentication) {
         taskService.closeTask(taskService.findById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Task has not been found.")));
+                        "Task has not been found.")), authentication);
         return "redirect:/task/all-tasks";
     }
 }

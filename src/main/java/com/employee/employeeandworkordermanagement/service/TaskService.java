@@ -29,27 +29,32 @@ public class TaskService {
         return taskRepository.findById(id);
     }
 
-    public void createTask(Task task,Authentication authentication) {
+    public void createTask(Task task, Authentication authentication) {
         User theUser = task.getDesigner();
-        messageService.notifyDesigner(task.getDesigner(), userService.findByEmail(authentication.getName()).get(),
+        messageService.notifyDesignerIfAssignedToTask(task.getDesigner(), userService.findByEmail(authentication.getName()).get(),
                 task);
         taskRepository.save(task);
     }
 
     public void editTask(Task task, Authentication authentication) {
         User theUser = task.getDesigner();
-        messageService.notifyDesigner(task.getDesigner(), userService.findByEmail(authentication.getName()).get(),
+        messageService.notifyDesignerIfTaskIsEdited(task.getDesigner(), userService.findByEmail(authentication.getName()).get(),
                 task);
         task.setEditedAt(new Date());
         taskRepository.save(task);
     }
 
-    public void closeTask(Task task) {
+    public void closeTask(Task task, Authentication authentication) {
+        User user = task.getDesigner();
+        messageService.notifyDesignerIfClosedTask(task.getDesigner(), userService.findByEmail(authentication.getName()).get(),
+                task);
         task.setTaskStatus(TaskStatus.CLOSED);
         taskRepository.save(task);
     }
 
-    public void deleteTask(Task task) {
+    public void deleteTask(Task task, Authentication authentication) {
+        User user = task.getDesigner();
+        messageService.notifyDesignerIfTaskIsDeleted(user, userService.findByEmail(authentication.getName()).get(), task);
         taskRepository.delete(task);
     }
 
