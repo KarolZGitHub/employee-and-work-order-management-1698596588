@@ -30,14 +30,12 @@ public class TaskService {
     }
 
     public void createTask(Task task, Authentication authentication) {
-        User theUser = task.getDesigner();
         messageService.notifyDesignerIfAssignedToTask(task.getDesigner(), userService.findByEmail(authentication.getName()).get(),
                 task);
         taskRepository.save(task);
     }
 
     public void editTask(Task task, Authentication authentication) {
-        User theUser = task.getDesigner();
         messageService.notifyDesignerIfTaskIsEdited(task.getDesigner(), userService.findByEmail(authentication.getName()).get(),
                 task);
         task.setEditedAt(new Date());
@@ -45,7 +43,6 @@ public class TaskService {
     }
 
     public void closeTask(Task task, Authentication authentication) {
-        User user = task.getDesigner();
         messageService.notifyDesignerIfClosedTask(task.getDesigner(), userService.findByEmail(authentication.getName()).get(),
                 task);
         task.setTaskStatus(TaskStatus.CLOSED);
@@ -56,6 +53,9 @@ public class TaskService {
         User user = task.getDesigner();
         messageService.notifyDesignerIfTaskIsDeleted(user, userService.findByEmail(authentication.getName()).get(), task);
         taskRepository.delete(task);
+    }
+    public void saveTask(Task task){
+        taskRepository.save(task);
     }
 
     public Page<Task> getAllTasks(PageRequest pageRequest) {

@@ -15,7 +15,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(UserAlreadyExistsException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ModelAndView handleUserAlreadyExists(UserAlreadyExistsException ex, Model model) {
+    public ModelAndView handleUserAlreadyExists(UserAlreadyExistsException ex) {
         ModelAndView modelAndView = new ModelAndView("error/emailError");
         modelAndView.addObject("errorCode", ex.getErrorCode());
         modelAndView.addObject("errorMessage", ex.getReason());
@@ -24,7 +24,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ModelAndView handle404(NotFoundException ex, Model model) {
+    public ModelAndView handle404(NotFoundException ex) {
         ModelAndView modelAndView = new ModelAndView("error/404Error");
         modelAndView.addObject("errorCode", ex.getErrorCode());
         modelAndView.addObject("errorMessage", ex.getReason());

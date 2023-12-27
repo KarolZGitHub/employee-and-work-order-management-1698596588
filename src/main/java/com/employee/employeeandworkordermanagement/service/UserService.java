@@ -5,7 +5,6 @@ import com.employee.employeeandworkordermanagement.dto.UserDTO;
 import com.employee.employeeandworkordermanagement.exception.UserAlreadyExistsException;
 import com.employee.employeeandworkordermanagement.registration.RegistrationRequest;
 import com.employee.employeeandworkordermanagement.registration.token.VerificationToken;
-import com.employee.employeeandworkordermanagement.repository.PasswordResetTokenRepository;
 import com.employee.employeeandworkordermanagement.repository.UserRepository;
 import com.employee.employeeandworkordermanagement.repository.VerificationTokenRepository;
 import com.employee.employeeandworkordermanagement.user.User;

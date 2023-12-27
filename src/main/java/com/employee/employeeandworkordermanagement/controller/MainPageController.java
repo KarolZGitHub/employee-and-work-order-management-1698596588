@@ -5,21 +5,25 @@ import com.employee.employeeandworkordermanagement.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 @Controller
 @RequiredArgsConstructor
 public class MainPageController {
     private final UserService userService;
 
-    @GetMapping("/")
-    public String showMainPage(Model model, Authentication authentication) {
-        if (authentication == null) {
-            return "index";
+    @ModelAttribute("user")
+    public UserDTO userDTO(Authentication authentication) {
+        if (authentication != null) {
+            return userService.getUserDTO(authentication);
+        } else {
+            return null;
         }
-        UserDTO userDTO = userService.getUserDTO(authentication);
-        model.addAttribute("user", userDTO);
+    }
+
+    @GetMapping("/")
+    public String showMainPage() {
         return "index";
     }
 }

@@ -1,7 +1,10 @@
 package com.employee.employeeandworkordermanagement.controller;
 
 import com.employee.employeeandworkordermanagement.dto.UserDTO;
+import com.employee.employeeandworkordermanagement.entity.ArchivedTask;
 import com.employee.employeeandworkordermanagement.entity.Task;
+import com.employee.employeeandworkordermanagement.feedback.FeedbackRequest;
+import com.employee.employeeandworkordermanagement.service.ArchivedTaskService;
 import com.employee.employeeandworkordermanagement.service.TaskService;
 import com.employee.employeeandworkordermanagement.service.UserService;
 import com.employee.employeeandworkordermanagement.user.User;
@@ -24,6 +27,7 @@ import java.util.List;
 public class TaskController {
     private final TaskService taskService;
     private final UserService userService;
+    private final ArchivedTaskService archivedTaskService;
 
     @ModelAttribute("user")
     public UserDTO userDTO(Authentication authentication) {
@@ -43,25 +47,6 @@ public class TaskController {
     public String showAddTaskForm(Task task, Model model) {
         model.addAttribute("task", task);
         return "task/addTaskForm";
-    }
-
-    @GetMapping("/edit-task")
-    public String editTaskDetails(@RequestParam Long id, Model model) {
-        Task task = taskService.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                "Task has not been found."));
-        model.addAttribute("task", task);
-        return "task/editTask";
-    }
-
-    @PostMapping("/edit-task")
-    public String handleEditTask(@RequestParam Long id, Task task, BindingResult bindingResult, Model model,
-                                 Authentication authentication) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("errorList", bindingResult.getAllErrors());
-            return "error/error";
-        }
-        taskService.editTask(task, authentication);
-        return "redirect:/task/all-tasks";
     }
 
     @GetMapping("/all-tasks")
@@ -87,4 +72,44 @@ public class TaskController {
                         "Task has not been found.")), authentication);
         return "redirect:/task/all-tasks";
     }
+
+    @GetMapping("/archived-tasks")
+    public String showAllArchivedTasks(@RequestParam(required = false, defaultValue = "0") int page,
+                                       @RequestParam(required = false, defaultValue = "50") int size,
+                                       Model model) {
+        Page<ArchivedTask> archivedTaskPage = archivedTaskService.getAllArchivedTasks(PageRequest.of(page, size));
+        model.addAttribute("archivedTaskPage", archivedTaskPage);
+        return "task/archivedTasks";
+    }
+
+    @GetMapping("/archive-task")
+    public String archiveTask(@RequestParam(name = "id") Long id, Authentication authentication) {
+        Task task = taskService.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                "Task has not been found"));
+        archivedTaskService.archiveTask(task);
+        taskService.deleteTask(task, authentication);
+        return "redirect:/task/archived-tasks";
+    }
+
+    @PostMapping("/task-feedback")
+    public String handleFeedback(@RequestParam(name = "id") Long id, @ModelAttribute FeedbackRequest feedbackRequest,
+                                 BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("errorList", bindingResult.getAllErrors());
+            return "error/error";
+        }
+        ArchivedTask archivedTask = archivedTaskService.findById(id);
+        archivedTask.setFeedback(feedbackRequest.getFeedback());
+        archivedTask.setDifficulty(feedbackRequest.getDifficulty());
+        archivedTaskService.saveArchivedTask(archivedTask);
+        return "redirect:/task/archived-tasks";
+    }
+
+    @GetMapping("/task-feedback")
+    public String showFeedbackForm(@RequestParam(name = "id") Long id, FeedbackRequest feedbackRequest,Model model) {
+        model.addAttribute("id",id);
+        model.addAttribute("feedbackRequest",feedbackRequest);
+        return ("task/feedbackForm");
+    }
 }
+//TODO "edit" buttons, fix email sending, add boolean to archived tasks to prevent multiple feedback

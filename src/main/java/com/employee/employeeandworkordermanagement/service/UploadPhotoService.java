@@ -14,7 +14,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -62,10 +61,5 @@ public class UploadPhotoService {
         // Using FileSystems to get separator depending on operating system.
         String separator = FileSystems.getDefault().getSeparator();
         return System.getProperty("user.dir") + separator + "src" + separator + "main" + separator + "resources" + separator + "static" + separator + "image";
-    }
-
-    private String convertToRelativePath(String basePath, String fullPath) {
-        String relativePath = fullPath.substring(basePath.length());
-        return relativePath.startsWith(File.separator) ? relativePath.substring(1) : relativePath;
     }
 }

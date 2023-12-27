@@ -10,22 +10,22 @@
             <h2 class="text-center mb-4">Formularz Rejestracji</h2>
             <form th:action="@{/register/user}" th:object="${user}" method="post">
                 <div class="form-group">
-                    <label for="firstName">Imię</label>
+                    <label for="firstName">First name:</label>
                     <input type="text" class="form-control" th:field="*{firstName}" required>
                 </div>
                 <div class="form-group">
-                    <label for="lastName">Nazwisko</label>
+                    <label for="lastName">Last name:</label>
                     <input type="text" class="form-control" th:field="*{lastName}" required>
                 </div>
                 <div class="form-group">
-                    <label for="email">Adres email</label>
+                    <label for="email">E-mail address:</label>
                     <input type="email" class="form-control" th:field="*{email}" required>
                 </div>
                 <div class="form-group">
-                    <label for="password">Hasło</label>
+                    <label for="password">Password:</label>
                     <input type="password" class="form-control" th:field="*{password}" required>
                 </div>
-                <button type="submit" class="btn btn-primary btn-block">Zarejestruj się</button><br>
+                <button type="submit" class="btn btn-primary btn-block">Register</button><br>
             </form>
         </div>
     </div>
