@@ -18,6 +18,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -79,7 +80,11 @@ public class RegistrationController {
 
     @PostMapping("/password-reset-request")
     public String resetPasswordRequest(PasswordResetRequest passwordResetRequest,
-                                       final HttpServletRequest request) {
+                                       final HttpServletRequest request, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("errorList", bindingResult.getAllErrors());
+            return "error/error";
+        }
         Optional<User> user = userService.findByEmail(passwordResetRequest.getEmail());
         if (user.isPresent()) {
             publisher.publishEvent(new ResetPasswordEvent(user.get(), applicationUrl(request)));

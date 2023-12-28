@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head th:insert="~{header.html}">
-  <title>Edition error</title>
+    <title>Edition error</title>
 </head>
 <body>
 <div class="container mt-5">
-  <div class="row">
-    <div class="col-md-6 offset-md-3">
-      <div th:if="${error}" class="alert alert-danger" role="alert">
-        <p th:text="${error}"></p>
-      </div>
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div th:if="${error}" class="alert alert-danger" role="alert">
+                <p th:text="${error}"></p>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 </body>
 <!-- Footer-->

@@ -1,7 +1,9 @@
 package com.employee.employeeandworkordermanagement.controller;
 
+import com.employee.employeeandworkordermanagement.dto.UserDTO;
 import com.employee.employeeandworkordermanagement.entity.Task;
 import com.employee.employeeandworkordermanagement.service.TaskService;
+import com.employee.employeeandworkordermanagement.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,16 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TaskRestController {
     private final TaskService taskService;
+    private final UserService userService;
+
+    @ModelAttribute("user")
+    public UserDTO userDTO(Authentication authentication) {
+        if (authentication != null) {
+            return userService.getUserDTO(authentication);
+        } else {
+            return null;
+        }
+    }
 
     @GetMapping
     public List<Task> getAllTasks() {

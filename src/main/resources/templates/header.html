@@ -32,7 +32,8 @@
                 <li th:if="${user == null}" class="nav-item">
                     <a class="nav-link" href="/register/password-reset-request">Reset password</a>
                 </li>
-                <li th:if="${user != null and user.role == T(com.employee.employeeandworkordermanagement.data.Role).ADMIN}" class="nav-item">
+                <li th:if="${user != null and user.role == T(com.employee.employeeandworkordermanagement.data.Role).ADMIN}"
+                    class="nav-item">
                     <a class="nav-link" href="/admin/panel">Admin Panel</a>
                 </li>
                 <li th:if="${user != null}" class="nav-item">
@@ -41,8 +42,10 @@
             </ul>
         </div>
         <div id="userImage" class="ml-3">
-            <img id="uploadedImage" th:if="${user != null && user.profilePicturePath != null}" th:src="@{${user.profilePicturePath}}" class="img-fluid" alt="User Image">
-            <img id="defaultImage" th:unless="${user != null && user.profilePicturePath != null}" src="/image/defaultImage.png" class="img-fluid" alt="Default Image">
+            <img id="uploadedImage" th:if="${user != null && user.profilePicturePath != null}"
+                 th:src="@{'/image/' + ${user.profilePicturePath}}" class="img-fluid" alt="User Image">
+            <img id="defaultImage" th:unless="${user != null && user.profilePicturePath != null}"
+                 src="/image/defaultImage.png" class="img-fluid" alt="Default Image">
         </div>
     </nav>
 </head>

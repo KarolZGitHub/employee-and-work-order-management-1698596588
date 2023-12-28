@@ -15,11 +15,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -29,18 +29,22 @@ public class MyProfileController {
     private final ApplicationEventPublisher publisher;
     private final ChangeEmailResetTokenService changeEmailResetTokenService;
 
+    @ModelAttribute("user")
+    public UserDTO userDTO(Authentication authentication) {
+        if (authentication != null) {
+            return userService.getUserDTO(authentication);
+        } else {
+            return null;
+        }
+    }
 
     @GetMapping("/my-profile")
-    public String showMyProfile(Model model, Authentication authentication) {
-        UserDTO userDTO = userService.getUserDTO(authentication);
-        model.addAttribute("user", userDTO);
+    public String showMyProfile() {
         return "myProfile/myProfile";
     }
 
     @GetMapping("/change-password")
-    public String showChangePasswordForm(Model model, PasswordResetProcess passwordResetProcess, Authentication authentication) {
-        UserDTO userDTO = userService.getUserDTO(authentication);
-        model.addAttribute("user", userDTO);
+    public String showChangePasswordForm(Model model, PasswordResetProcess passwordResetProcess) {
         model.addAttribute("passwordResetProcess", passwordResetProcess);
         return "myProfile/changePassword";
     }
@@ -52,7 +56,6 @@ public class MyProfileController {
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not been found."));
         boolean changePasswordSuccess = userService.changePassword(user, passwordResetProcess.getPassword()
                 , passwordResetProcess.getRepeatPassword());
-        model.addAttribute("user", user);
         if (changePasswordSuccess) {
             return "redirect:/profile/my-profile";
         } else {
@@ -62,45 +65,42 @@ public class MyProfileController {
     }
 
     @GetMapping("/change-first-name")
-    public String showFirstNameChangeForm(Model model, Authentication authentication, ChangeFirstOrLastName changeFirstOrLastName) {
-        UserDTO userDTO = userService.getUserDTO(authentication);
-        model.addAttribute("user", userDTO);
+    public String showFirstNameChangeForm(Model model, ChangeFirstOrLastName changeFirstOrLastName) {
         model.addAttribute("changeFirstOrLastName", changeFirstOrLastName);
         return "myProfile/changeFirstName";
     }
 
     @PostMapping("/change-first-name")
-    public String handleFirstNameChange(Model model, ChangeFirstOrLastName changeFirstOrLastName, Authentication authentication) {
+    public String handleFirstNameChange(ChangeFirstOrLastName changeFirstOrLastName, Authentication authentication,
+                                        BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("errorList", bindingResult.getAllErrors());
+            return "error/error";
+        }
         User user = userService.findByEmail(authentication.getName()).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not been found."));
         user.setFirstName(changeFirstOrLastName.getFirstOrLastName());
         userService.changeFirstName(user, changeFirstOrLastName.getFirstOrLastName());
-        model.addAttribute("user", user);
         return "redirect:/profile/my-profile";
     }
 
     @GetMapping("/change-last-name")
-    public String showLastNameChangeForm(Model model, Authentication authentication, ChangeFirstOrLastName changeFirstOrLastName) {
-        UserDTO userDTO = userService.getUserDTO(authentication);
-        model.addAttribute("user", userDTO);
+    public String showLastNameChangeForm(Model model, ChangeFirstOrLastName changeFirstOrLastName) {
         model.addAttribute("changeFirstOrLastName", changeFirstOrLastName);
         return "myProfile/changeLastName";
     }
 
     @PostMapping("/change-last-name")
-    public String handleLastNameChange(Model model, ChangeFirstOrLastName changeFirstOrLastName, Authentication authentication) {
+    public String handleLastNameChange(ChangeFirstOrLastName changeFirstOrLastName, Authentication authentication) {
         User user = userService.findByEmail(authentication.getName()).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not been found."));
         user.setLastName(changeFirstOrLastName.getFirstOrLastName());
         userService.changeLastName(user, changeFirstOrLastName.getFirstOrLastName());
-        model.addAttribute("user", user);
         return "redirect:/profile/my-profile";
     }
 
     @GetMapping("/email-change-request")
-    public String showEmailChangeForm(Model model, Authentication authentication, final HttpServletRequest request) {
-        UserDTO userDTO = userService.getUserDTO(authentication);
-        model.addAttribute("user", userDTO);
+    public String showEmailChangeForm(Authentication authentication, final HttpServletRequest request) {
         User user = userService.findByEmail(authentication.getName()).get();
         publisher.publishEvent(new ChangeEmailEvent(user, applicationUrl(request)));
         return "myProfile/emailTokenSent";
@@ -109,11 +109,8 @@ public class MyProfileController {
     @GetMapping("/email-change-request-process")
     public String verifyChangeEmailToken(@RequestParam("token") String token,
                                          Model model,
-                                         Authentication authentication,
                                          ChangeEmailRequest changeEmailRequest
     ) {
-        UserDTO userDTO = userService.getUserDTO(authentication);
-        model.addAttribute("user", userDTO);
         String verificationResult = changeEmailResetTokenService.validatePasswordResetToken(token);
         if (verificationResult.equalsIgnoreCase("token expired")) {
             return "token/tokenExpired";
@@ -126,10 +123,16 @@ public class MyProfileController {
     }
 
     @PostMapping("/email-change-request-process")
-    public String handleEmailChangeProcess(Model model, Authentication authentication,
-                                           ChangeEmailRequest changeEmailRequest) {
-        UserDTO userDTO = userService.getUserDTO(authentication);
-        model.addAttribute("user", userDTO);
+    public String handleEmailChangeProcess(Authentication authentication,
+                                           ChangeEmailRequest changeEmailRequest, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("errorList", bindingResult.getAllErrors());
+            return "error/error";
+        }
+        Optional<User> userOptional = userService.findByEmail(changeEmailRequest.getEmail());
+        if (userOptional.isPresent()) {
+            return "error/emailTaken";
+        }
         if (changeEmailRequest.getEmail().equals(changeEmailRequest.getConfirmEmail())) {
             User user = userService.findByEmail(authentication.getName()).get();
             userService.saveEmailForUser(user, changeEmailRequest.getEmail());

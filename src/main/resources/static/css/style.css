@@ -1,4 +1,4 @@
-/* style.css */
+ó/* style.css */
 .navbar {
     background-color: #007BFF;
     color: white;
@@ -31,6 +31,7 @@ footer {
     padding: 10px 0;
     text-align: center;
 }
+
 .normal-font {
     font-weight: normal;
 }

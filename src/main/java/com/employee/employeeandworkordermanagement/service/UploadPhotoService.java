@@ -14,7 +14,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -40,7 +39,6 @@ public class UploadPhotoService {
     }
 
     public void uploadImage(MultipartFile file, Authentication authentication, Model model) throws IOException {
-        String basePath = System.getProperty("user.dir") + "/src/main/resources/static/image";
         String uploadDirectory = createUploadDirectory();
         System.out.println("Upload directory: " + uploadDirectory);
 
@@ -51,8 +49,7 @@ public class UploadPhotoService {
 
         User user = userRepository.findByEmail(authentication.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not been found."));
         if (user != null) {
-            String relativePath = convertToRelativePath(basePath, fileNameAndPath.toString());
-            user.setProfilePicturePath("/" + relativePath);
+            user.setProfilePicturePath(file.getOriginalFilename());
             userRepository.save(user);
             model.addAttribute("msg", "Uploaded images: " + fileNames.toString() + " for user: " + user.getFirstName());
         } else {
@@ -63,11 +60,6 @@ public class UploadPhotoService {
     private String createUploadDirectory() {
         // Using FileSystems to get separator depending on operating system.
         String separator = FileSystems.getDefault().getSeparator();
-        return System.getProperty("user.dir") + separator + "src" + separator + "main" + separator + "resources" + separator + "static";
-    }
-
-    private String convertToRelativePath(String basePath, String fullPath) {
-        String relativePath = fullPath.substring(basePath.length());
-        return relativePath.startsWith(File.separator) ? relativePath.substring(1) : relativePath;
+        return System.getProperty("user.dir") + separator + "src" + separator + "main" + separator + "resources" + separator + "static" + separator + "image";
     }
 }

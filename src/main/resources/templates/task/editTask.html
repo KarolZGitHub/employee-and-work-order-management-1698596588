@@ -6,7 +6,7 @@
 <body>
 <div class="container mt-5">
     <h2 th:text="'Edit Task ' + ${task.taskName}"></h2>
-    <form th:action="@{'/task/edit-task?id='+${task.id}}" method="post" th:object="${task}">
+    <form th:action="@{'/edit/edit-task?id='+${task.id}}" method="post" th:object="${task}">
         <div class="form-group">
             <label for="taskName">Task name:</label>
             <input class="form-control" id="taskName" type="text" name="taskName" th:field="*{taskName}" required>

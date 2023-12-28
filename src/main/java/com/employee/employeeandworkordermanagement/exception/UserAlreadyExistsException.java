@@ -1,9 +1,11 @@
 package com.employee.employeeandworkordermanagement.exception;
 
 
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+@Getter
 public class UserAlreadyExistsException extends ResponseStatusException {
 
     private final String errorCode;
@@ -13,7 +15,4 @@ public class UserAlreadyExistsException extends ResponseStatusException {
         this.errorCode = errorCode;
     }
 
-    public String getErrorCode() {
-        return errorCode;
-    }
 }

@@ -2,8 +2,8 @@ package com.employee.employeeandworkordermanagement.controller;
 
 import com.employee.employeeandworkordermanagement.data.Role;
 import com.employee.employeeandworkordermanagement.dto.UserDTO;
-import com.employee.employeeandworkordermanagement.user.User;
 import com.employee.employeeandworkordermanagement.service.UserService;
+import com.employee.employeeandworkordermanagement.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,10 +18,17 @@ import org.springframework.web.bind.annotation.*;
 public class AdminController {
     private final UserService userService;
 
+    @ModelAttribute("user")
+    public UserDTO userDTO(Authentication authentication) {
+        if (authentication != null) {
+            return userService.getUserDTO(authentication);
+        } else {
+            return null;
+        }
+    }
+
     @GetMapping("/panel")
-    public String showAdminPanel(Authentication authentication, Model model) {
-        UserDTO userDTO = userService.getUserDTO(authentication);
-        model.addAttribute("user", userDTO);
+    public String showAdminPanel() {
         return "admin/adminPanel";
     }
 
@@ -29,10 +36,8 @@ public class AdminController {
     public String showAllUsers(
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "50") int size,
-            Model model, Authentication authentication) {
+            Model model) {
         Page<User> userPage = userService.getAllUsers(PageRequest.of(page, size));
-        UserDTO userDTO = userService.getUserDTO(authentication);
-        model.addAttribute("user", userDTO);
         model.addAttribute("userPage", userPage);
         return "admin/allUsers";
     }

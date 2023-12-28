@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.util.Calendar;
 import java.util.Date;
+
 @Entity
 @Getter
 @Setter
@@ -24,7 +25,7 @@ public class VerificationTokenForEmailChange {
     private User user;
     private static final int EXPIRATION_TIME = 15;
 
-    public VerificationTokenForEmailChange(String token,User user) {
+    public VerificationTokenForEmailChange(String token, User user) {
         this.token = token;
         this.user = user;
         this.expirationTime = getTokenExpirationTime();
