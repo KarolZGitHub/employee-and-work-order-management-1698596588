@@ -15,6 +15,7 @@
             <th>Designer</th>
             <th>Created</th>
             <th>Feedback</th>
+            <th>Difficulty</th>
             <th>Give us feedback</th>
         </tr>
         </thead>
@@ -25,12 +26,14 @@
             <td th:text="${archivedTask.description}"></td>
             <td th:text="${archivedTask.designer.firstName} + ' ' + ${archivedTask.designer.lastName}"></td>
             <td th:text="${archivedTask.createdAt}"></td>
-            <td th:text="${archivedTask.difficulty} + ', ' + ${archivedTask.feedback}">
+            <td th:text="${archivedTask.feedback}">
+            <td th:text="${archivedTask.difficulty}">
             </td>
             <td>
                 <a th:href="@{'/task/task-feedback?id=' + ${archivedTask.id}}"
                    class="btn btn-primary"
-                   th:classappend="${user.role == archivedTask.designer.role} ? 'active' : 'disabled'">
+                   th:classappend="${(user.email == archivedTask.designer.email ? 'active' : 'disabled')
+                    + ' ' + (archivedTask.feedbackSet == false ? 'active' : 'disabled')}">
                     Give Your Feedback
                 </a>
             </td>

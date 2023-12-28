@@ -24,11 +24,13 @@ public class ArchivedTaskService {
     public Page<ArchivedTask> getAllArchivedTasks(PageRequest pageRequest) {
         return archivedTaskRepository.findAll(pageRequest);
     }
-    public ArchivedTask findById(Long id){
-        return archivedTaskRepository.findById(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,
+
+    public ArchivedTask findById(Long id) {
+        return archivedTaskRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                 "Archived task has not been found."));
     }
-    public void saveArchivedTask(ArchivedTask archivedTask){
+
+    public void saveArchivedTask(ArchivedTask archivedTask) {
         archivedTaskRepository.save(archivedTask);
     }
 }

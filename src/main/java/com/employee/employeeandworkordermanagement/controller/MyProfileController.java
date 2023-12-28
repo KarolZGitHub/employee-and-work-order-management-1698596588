@@ -19,6 +19,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Optional;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/profile")
@@ -70,9 +72,9 @@ public class MyProfileController {
 
     @PostMapping("/change-first-name")
     public String handleFirstNameChange(ChangeFirstOrLastName changeFirstOrLastName, Authentication authentication,
-                                        BindingResult bindingResult,Model model) {
-        if(bindingResult.hasErrors()){
-            model.addAttribute("errorList",bindingResult.getAllErrors());
+                                        BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("errorList", bindingResult.getAllErrors());
             return "error/error";
         }
         User user = userService.findByEmail(authentication.getName()).orElseThrow(
@@ -126,6 +128,10 @@ public class MyProfileController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("errorList", bindingResult.getAllErrors());
             return "error/error";
+        }
+        Optional<User> userOptional = userService.findByEmail(changeEmailRequest.getEmail());
+        if (userOptional.isPresent()) {
+            return "error/emailTaken";
         }
         if (changeEmailRequest.getEmail().equals(changeEmailRequest.getConfirmEmail())) {
             User user = userService.findByEmail(authentication.getName()).get();

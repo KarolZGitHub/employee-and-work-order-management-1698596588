@@ -152,4 +152,5 @@ public class UserService implements IUserService {
     public Page<User> designerPage(PageRequest pageRequest) {
         return userRepository.findByRole(Role.DESIGNER, pageRequest);
     }
+
 }

@@ -11,21 +11,26 @@
         <div class="form-group">
             <label for="taskName">Task Name:</label>
             <input type="text" class="form-control" id="taskName" name="taskName" th:field="*{taskName}" required/>
-            <small th:if="${#fields.hasErrors('taskName')}" th:errors="*{taskName}" class="form-text text-danger"></small>
+            <small th:if="${#fields.hasErrors('taskName')}" th:errors="*{taskName}"
+                   class="form-text text-danger"></small>
         </div>
 
         <div class="form-group">
             <label for="description">Description:</label>
-            <textarea class="form-control" id="description" name="description" th:field="*{description}" rows="3"></textarea>
-            <small th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="form-text text-danger"></small>
+            <textarea class="form-control" id="description" name="description" th:field="*{description}"
+                      rows="3"></textarea>
+            <small th:if="${#fields.hasErrors('description')}" th:errors="*{description}"
+                   class="form-text text-danger"></small>
         </div>
 
         <div class="form-group">
             <label for="designer">Assigned Designer:</label>
             <select class="form-control" id="designer" name="designer" th:field="*{designer}" required>
-                <option th:each="designer : ${designers}" th:value="${designer.id}" th:text="${designer.firstName}"></option>
+                <option th:each="designer : ${designers}" th:value="${designer.id}"
+                        th:text="${designer.firstName}"></option>
             </select>
-            <small th:if="${#fields.hasErrors('designer')}" th:errors="*{designer}" class="form-text text-danger"></small>
+            <small th:if="${#fields.hasErrors('designer')}" th:errors="*{designer}"
+                   class="form-text text-danger"></small>
         </div>
 
         <button type="submit" class="btn btn-primary">Create Task</button>

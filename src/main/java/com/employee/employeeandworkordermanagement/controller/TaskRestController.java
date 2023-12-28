@@ -23,6 +23,7 @@ import java.util.Optional;
 public class TaskRestController {
     private final TaskService taskService;
     private final UserService userService;
+
     @ModelAttribute("user")
     public UserDTO userDTO(Authentication authentication) {
         if (authentication != null) {
@@ -31,6 +32,7 @@ public class TaskRestController {
             return null;
         }
     }
+
     @GetMapping
     public List<Task> getAllTasks() {
         return taskService.getAllTasks();

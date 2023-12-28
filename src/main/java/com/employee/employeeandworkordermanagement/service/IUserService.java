@@ -31,10 +31,16 @@ public interface IUserService {
     UserDTO convertUserToUserDTO(User user);
 
     UserDTO getUserDTO(Authentication authentication);
+
     boolean changePassword(User user, String password, String repeatPassword);
-    void changeFirstName(User user,String firstName);
-    void changeLastName(User user,String lastName);
-    void saveEmailForUser(User user,String email);
+
+    void changeFirstName(User user, String firstName);
+
+    void changeLastName(User user, String lastName);
+
+    void saveEmailForUser(User user, String email);
+
     List<User> getDesigners();
+
     Page<User> designerPage(PageRequest pageRequest);
 }

@@ -1,27 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head th:insert="~{header.html}">
-  <title>Reset Your Password</title>
+    <title>Reset Your Password</title>
 </head>
 <body>
 <div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <h2 class="text-center mb-4">Change:</h2>
-      <form th:action="@{/profile/email-change-request-process}" th:object="${changeEmailRequest}" method="post">
-        <div class="form-group">
-          <label for="email">E-mail address:</label>
-          <input id="email" type="email" class="form-control" th:field="*{email}" required>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="text-center mb-4">Change:</h2>
+            <form th:action="@{/profile/email-change-request-process}" th:object="${changeEmailRequest}" method="post">
+                <div class="form-group">
+                    <label for="email">E-mail address:</label>
+                    <input id="email" type="email" class="form-control" th:field="*{email}" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmEmail">Repeat email address:</label>
+                    <input id="confirmEmail" type="email" class="form-control" th:field="*{confirmEmail}" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Change Your Email</button>
+                <br>
+            </form>
         </div>
-        <div class="form-group">
-          <label for="confirmEmail">Repeat email address:</label>
-          <input id="confirmEmail" type="email" class="form-control" th:field="*{confirmEmail}" required>
-        </div>
-        <button type="submit" class="btn btn-primary btn-block">Change Your Email</button>
-        <br>
-      </form>
     </div>
-  </div>
 </div>
 </body>
 <!-- Footer-->

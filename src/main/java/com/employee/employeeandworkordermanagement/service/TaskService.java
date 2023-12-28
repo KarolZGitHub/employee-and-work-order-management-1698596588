@@ -54,7 +54,8 @@ public class TaskService {
         messageService.notifyDesignerIfTaskIsDeleted(user, userService.findByEmail(authentication.getName()).get(), task);
         taskRepository.delete(task);
     }
-    public void saveTask(Task task){
+
+    public void saveTask(Task task) {
         taskRepository.save(task);
     }
 

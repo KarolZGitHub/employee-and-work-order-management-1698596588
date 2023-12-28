@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head th:insert="~{header.html}">
-  <title>Upload Image</title>
+    <title>Upload Image</title>
 </head>
 <body>
 <section class="my-5">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-8 mx-auto">
-        <h2>Upload Image</h2>
-        <p th:text="${message}" th:if="${message == null}" class="alert alert-primary"></p>
-        <form method="post" th:action="@{/upload/upload-image}" enctype="multipart/form-data">
-          <div class="form-group">
-            <input type="file" name="image" accept="image/*" class="form-control-file">
-          </div>
-          <button type="submit" class="btn btn-primary">Upload image</button>
-        </form>
-        <span th:if="${msg != null}" th:text="${msg}"></span>
-      </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <h2>Upload Image</h2>
+                <p th:text="${message}" th:if="${message == null}" class="alert alert-primary"></p>
+                <form method="post" th:action="@{/upload/upload-image}" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <input type="file" name="image" accept="image/*" class="form-control-file">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Upload image</button>
+                </form>
+                <span th:if="${msg != null}" th:text="${msg}"></span>
+            </div>
+        </div>
     </div>
-  </div>
 </section>
 </body>
 <!-- Footer-->

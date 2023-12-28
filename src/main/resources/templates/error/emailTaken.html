@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-<head th:insert="~{header.html}">
-    <title>Account verified</title>
+<head th:include="header.html">
+    <title>Error</title>
 </head>
 <body>
-<p>This account has been verified, please login.</p>
+<h2>Error: Email is taken.</h2>
 </body>
 <!-- Footer-->
-<div th:insert="~{footer.html}"></div>
+<div th:include="footer.html"></div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </html>

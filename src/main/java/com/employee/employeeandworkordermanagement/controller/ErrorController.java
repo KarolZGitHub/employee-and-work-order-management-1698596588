@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 @RequiredArgsConstructor
 public class ErrorController {
     private final UserService userService;
+
     @ModelAttribute("user")
     public UserDTO userDTO(Authentication authentication) {
         if (authentication != null) {
@@ -24,6 +25,7 @@ public class ErrorController {
             return null;
         }
     }
+
     @GetMapping("/error")
     public String handleError(HttpServletRequest request, Model model) {
         // Get error status

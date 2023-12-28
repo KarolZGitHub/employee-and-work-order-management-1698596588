@@ -19,6 +19,7 @@ public class UploadController {
 
     private final UploadPhotoService uploadPhotoService;
     private final UserService userService;
+
     @ModelAttribute("user")
     public UserDTO userDTO(Authentication authentication) {
         if (authentication != null) {
@@ -27,6 +28,7 @@ public class UploadController {
             return null;
         }
     }
+
     @GetMapping("/upload-image")
     public String displayUploadForm() {
         return "upload/uploadImage";

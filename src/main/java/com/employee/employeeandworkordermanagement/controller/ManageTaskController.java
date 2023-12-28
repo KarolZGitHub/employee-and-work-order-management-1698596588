@@ -20,9 +20,10 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/edit")
-public class EditTaskController {
+public class ManageTaskController {
     private final TaskService taskService;
     private final UserService userService;
+    private final ArchivedTaskService archivedTaskService;
 
     @ModelAttribute("designers")
     public List<User> getDesigners() {
@@ -55,5 +56,30 @@ public class EditTaskController {
         }
         taskService.editTask(task, authentication);
         return "redirect:/task/all-tasks";
+    }
+
+    @GetMapping("/delete-task")
+    public String deleteTask(@RequestParam(name = "id") Long id, Authentication authentication) {
+        taskService.deleteTask(taskService.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Task has not been found.")), authentication);
+        return "redirect:/task/all-tasks";
+    }
+
+    @GetMapping("/close-task")
+    public String closeTask(@RequestParam(name = "id") Long id, Authentication authentication) {
+        taskService.closeTask(taskService.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Task has not been found.")), authentication);
+        return "redirect:/task/all-tasks";
+    }
+
+    @GetMapping("/archive-task")
+    public String archiveTask(@RequestParam(name = "id") Long id, Authentication authentication) {
+        Task task = taskService.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                "Task has not been found"));
+        archivedTaskService.archiveTask(task);
+        taskService.deleteTask(task, authentication);
+        return "redirect:/task/archived-tasks";
     }
 }

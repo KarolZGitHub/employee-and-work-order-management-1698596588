@@ -11,9 +11,10 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class VerificationTokenService {
     private final VerificationTokenRepository verificationTokenRepository;
-    public VerificationToken getToken(String token){
-      VerificationToken verificationToken =  verificationTokenRepository.findByToken(token).orElseThrow(
-              () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Token doesn't exist"));
-      return verificationToken;
+
+    public VerificationToken getToken(String token) {
+        VerificationToken verificationToken = verificationTokenRepository.findByToken(token).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Token doesn't exist"));
+        return verificationToken;
     }
 }

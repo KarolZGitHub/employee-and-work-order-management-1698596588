@@ -80,9 +80,9 @@ public class RegistrationController {
 
     @PostMapping("/password-reset-request")
     public String resetPasswordRequest(PasswordResetRequest passwordResetRequest,
-                                       final HttpServletRequest request, BindingResult bindingResult,Model model) {
-        if(bindingResult.hasErrors()){
-            model.addAttribute("errorList",bindingResult.getAllErrors());
+                                       final HttpServletRequest request, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("errorList", bindingResult.getAllErrors());
             return "error/error";
         }
         Optional<User> user = userService.findByEmail(passwordResetRequest.getEmail());

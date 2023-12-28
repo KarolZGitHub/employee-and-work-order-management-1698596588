@@ -34,6 +34,7 @@ public class ArchivedTask {
     @Min(value = 1, message = "Difficulty should be at least 1")
     @Max(value = 10, message = "Difficulty should be at most 10")
     private Integer difficulty;
+    private boolean feedbackSet = false;
 
     public ArchivedTask(String taskName, String description, User designer, Date createdAt) {
         this.taskName = taskName;
@@ -41,6 +42,6 @@ public class ArchivedTask {
         this.designer = designer;
         this.createdAt = createdAt;
         this.difficulty = 1;
-        this.feedback = "There is no feedback yet.";
+        this.feedback = "Empty";
     }
 }

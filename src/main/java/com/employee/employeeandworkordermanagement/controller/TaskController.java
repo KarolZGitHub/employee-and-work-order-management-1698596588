@@ -1,5 +1,6 @@
 package com.employee.employeeandworkordermanagement.controller;
 
+import com.employee.employeeandworkordermanagement.data.Role;
 import com.employee.employeeandworkordermanagement.dto.UserDTO;
 import com.employee.employeeandworkordermanagement.entity.ArchivedTask;
 import com.employee.employeeandworkordermanagement.entity.Task;
@@ -38,6 +39,19 @@ public class TaskController {
         }
     }
 
+    @ModelAttribute("blockDesignerView")
+    public boolean blockDesignerAccess(Authentication authentication) {
+        if (authentication != null) {
+            User user = userService.findByEmail(authentication.getName()).orElseThrow(
+                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not been found"));
+            if (user.getRole().equals(Role.ADMIN) || user.getRole().equals(Role.OPERATOR)) {
+                return true;
+            } else return false;
+        } else {
+            return false;
+        }
+    }
+
     @ModelAttribute("designers")
     public List<User> getDesigners() {
         return userService.getDesigners();
@@ -57,22 +71,6 @@ public class TaskController {
         return "task/tasks";
     }
 
-    @GetMapping("/delete-task")
-    public String deleteTask(@RequestParam(name = "id") Long id, Authentication authentication) {
-        taskService.deleteTask(taskService.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Task has not been found.")), authentication);
-        return "redirect:/task/all-tasks";
-    }
-
-    @GetMapping("/close-task")
-    public String closeTask(@RequestParam(name = "id") Long id, Authentication authentication) {
-        taskService.closeTask(taskService.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Task has not been found.")), authentication);
-        return "redirect:/task/all-tasks";
-    }
-
     @GetMapping("/archived-tasks")
     public String showAllArchivedTasks(@RequestParam(required = false, defaultValue = "0") int page,
                                        @RequestParam(required = false, defaultValue = "50") int size,
@@ -80,15 +78,6 @@ public class TaskController {
         Page<ArchivedTask> archivedTaskPage = archivedTaskService.getAllArchivedTasks(PageRequest.of(page, size));
         model.addAttribute("archivedTaskPage", archivedTaskPage);
         return "task/archivedTasks";
-    }
-
-    @GetMapping("/archive-task")
-    public String archiveTask(@RequestParam(name = "id") Long id, Authentication authentication) {
-        Task task = taskService.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                "Task has not been found"));
-        archivedTaskService.archiveTask(task);
-        taskService.deleteTask(task, authentication);
-        return "redirect:/task/archived-tasks";
     }
 
     @PostMapping("/task-feedback")
@@ -101,15 +90,23 @@ public class TaskController {
         ArchivedTask archivedTask = archivedTaskService.findById(id);
         archivedTask.setFeedback(feedbackRequest.getFeedback());
         archivedTask.setDifficulty(feedbackRequest.getDifficulty());
+        archivedTask.setFeedbackSet(true);
         archivedTaskService.saveArchivedTask(archivedTask);
         return "redirect:/task/archived-tasks";
     }
 
     @GetMapping("/task-feedback")
-    public String showFeedbackForm(@RequestParam(name = "id") Long id, FeedbackRequest feedbackRequest,Model model) {
-        model.addAttribute("id",id);
-        model.addAttribute("feedbackRequest",feedbackRequest);
+    public String showFeedbackForm(@RequestParam(name = "id") Long id, FeedbackRequest feedbackRequest, Model model,
+                                   Authentication authentication) {
+        ArchivedTask archivedTask = archivedTaskService.findById(id);
+        User user = userService.findByEmail(authentication.getName()).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "User has not been found"));
+        if (!archivedTask.getDesigner().equals(user)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not right designer");
+        }
+        model.addAttribute("id", id);
+        model.addAttribute("feedbackRequest", feedbackRequest);
         return ("task/feedbackForm");
     }
 }
-//TODO "edit" buttons, fix email sending, add boolean to archived tasks to prevent multiple feedback
+//TODO

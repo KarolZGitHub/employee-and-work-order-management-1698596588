@@ -1,8 +1,8 @@
 package com.employee.employeeandworkordermanagement.event.listener;
 
 import com.employee.employeeandworkordermanagement.event.ResetPasswordEvent;
-import com.employee.employeeandworkordermanagement.user.User;
 import com.employee.employeeandworkordermanagement.service.UserService;
+import com.employee.employeeandworkordermanagement.user.User;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ public class ResetPasswordListener implements ApplicationListener<ResetPasswordE
         //2. Create a verification token for the user
         String resetPasswordToken = UUID.randomUUID().toString();
         //3. Save the verification token for the user
-        userService.createPasswordResetTokenForUser(theUser,resetPasswordToken);
+        userService.createPasswordResetTokenForUser(theUser, resetPasswordToken);
         //4 Build the verification url to be sent to the user
         String url = event.getApplicationUrl() + "/register/reset-password?token=" + resetPasswordToken;
         //5. Send the email.
