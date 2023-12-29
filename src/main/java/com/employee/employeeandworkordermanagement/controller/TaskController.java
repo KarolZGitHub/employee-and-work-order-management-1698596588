@@ -12,6 +12,8 @@ import com.employee.employeeandworkordermanagement.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -65,8 +67,13 @@ public class TaskController {
 
     @GetMapping("/all-tasks")
     public String showAllTasks(@RequestParam(required = false, defaultValue = "0") int page,
-                               @RequestParam(required = false, defaultValue = "50") int size, Model model) {
-        Page<Task> taskPage = taskService.getAllTasks(PageRequest.of(page, size));
+                               @RequestParam(required = false, defaultValue = "50") int size,
+                               @RequestParam(required = false, defaultValue = "asc") String direction,
+                               @RequestParam(required = false, defaultValue = "id") String sortField,
+                               Model model) {
+        model.addAttribute("sortField",sortField);
+        Sort sort = Sort.by(Sort.Direction.fromString(direction),sortField);
+        Page<Task> taskPage = taskService.getAllTasks(PageRequest.of(page,size,sort));
         model.addAttribute("taskPage", taskPage);
         return "task/tasks";
     }
@@ -74,8 +81,12 @@ public class TaskController {
     @GetMapping("/archived-tasks")
     public String showAllArchivedTasks(@RequestParam(required = false, defaultValue = "0") int page,
                                        @RequestParam(required = false, defaultValue = "50") int size,
+                                       @RequestParam(required = false, defaultValue = "asc") String direction,
+                                       @RequestParam(required = false, defaultValue = "id") String sortField,
                                        Model model) {
-        Page<ArchivedTask> archivedTaskPage = archivedTaskService.getAllArchivedTasks(PageRequest.of(page, size));
+        model.addAttribute("sortField",sortField);
+        Sort sort = Sort.by(Sort.Direction.fromString(direction),sortField);
+        Page<ArchivedTask> archivedTaskPage = archivedTaskService.getAllArchivedTasks(PageRequest.of(page,size,sort));
         model.addAttribute("archivedTaskPage", archivedTaskPage);
         return "task/archivedTasks";
     }
@@ -109,4 +120,4 @@ public class TaskController {
         return ("task/feedbackForm");
     }
 }
-//TODO
+//TODO sorting in admin panel

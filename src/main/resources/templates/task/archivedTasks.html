@@ -6,6 +6,26 @@
 <body>
 <div class="container">
     <h1 class="mt-5">Archived list.</h1>
+    <div class="row">
+        <div class="mt-3">
+            <a th:href="${'/task/archived-tasks?sortField=id'}" class="btn btn-primary">Sort by ID</a>
+        </div>
+        <div class="mt-3">
+            <a th:href="${'/task/archived-tasks?sortField=taskName'}" class="btn btn-primary">Sort by task name</a>
+        </div>
+        <div class="mt-3">
+            <a th:href="${'/task/archived-tasks?sortField=description'}" class="btn btn-primary">Sort by task description</a>
+        </div>
+        <div class="mt-3">
+            <a th:href="${'/task/archived-tasks?sortField=designer'}" class="btn btn-primary">Sort by designer</a>
+        </div>
+        <div class="mt-3">
+            <a th:href="${'/task/archived-tasks?sortField=createdAt'}" class="btn btn-primary">Sort by created time</a>
+        </div>
+        <div class="mt-3">
+            <a th:href="${'/task/archived-tasks?sortField=taskStatus'}" class="btn btn-primary">Sort by status</a>
+        </div>
+    </div>
     <table class="table mt-3">
         <thead class="thead-dark">
         <tr>
@@ -45,7 +65,8 @@
             <ul class="pagination">
                 <li class="page-item" th:each="pageNumber : ${#numbers.sequence(0, archivedTaskPage.totalPages - 1)}">
                     <a class="page-link"
-                       th:href="@{'/task/archived-tasks?page=' + ${pageNumber} + '&size=' + ${archivedTaskPage.size}}"
+                       th:href="@{'/task/archived-tasks?page=' + ${pageNumber} + '&size=' + ${archivedTaskPage.size}
+                       + '&sortField?' + ${sortField}}"
                        th:text="${pageNumber + 1}"></a>
                 </li>
             </ul>
