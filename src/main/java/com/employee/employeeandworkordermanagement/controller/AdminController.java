@@ -7,6 +7,7 @@ import com.employee.employeeandworkordermanagement.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,12 +33,15 @@ public class AdminController {
         return "admin/adminPanel";
     }
 
-    @GetMapping("/allUsers")
+    @GetMapping("/all-users")
     public String showAllUsers(
             @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "50") int size,
+            @RequestParam(required = false, defaultValue = "asc") String direction,
+            @RequestParam(required = false, defaultValue = "id") String sortField,
             Model model) {
-        Page<User> userPage = userService.getAllUsers(PageRequest.of(page, size));
+        model.addAttribute("sortField", sortField);
+        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortField);
+        Page<User> userPage = userService.getAllUsers(PageRequest.of(page, 50,sort));
         model.addAttribute("userPage", userPage);
         return "admin/allUsers";
     }
