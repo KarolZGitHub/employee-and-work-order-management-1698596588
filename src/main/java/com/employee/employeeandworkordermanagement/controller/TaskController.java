@@ -12,7 +12,6 @@ import com.employee.employeeandworkordermanagement.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -67,32 +66,32 @@ public class TaskController {
 
     @GetMapping("/all-tasks")
     public String showAllTasks(@RequestParam(required = false, defaultValue = "0") int page,
-                               @RequestParam(required = false, defaultValue = "50") int size,
                                @RequestParam(required = false, defaultValue = "asc") String direction,
                                @RequestParam(required = false, defaultValue = "id") String sortField,
                                Model model) {
-        model.addAttribute("sortField",sortField);
-        Sort sort = Sort.by(Sort.Direction.fromString(direction),sortField);
-        Page<Task> taskPage = taskService.getAllTasks(PageRequest.of(page,size,sort));
+        model.addAttribute("sortField", sortField);
+        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortField);
+        Page<Task> taskPage = taskService.getAllTasks(PageRequest.of(page, 50, sort));
         model.addAttribute("taskPage", taskPage);
         return "task/tasks";
     }
 
     @GetMapping("/archived-tasks")
     public String showAllArchivedTasks(@RequestParam(required = false, defaultValue = "0") int page,
-                                       @RequestParam(required = false, defaultValue = "50") int size,
                                        @RequestParam(required = false, defaultValue = "asc") String direction,
                                        @RequestParam(required = false, defaultValue = "id") String sortField,
                                        Model model) {
-        model.addAttribute("sortField",sortField);
-        Sort sort = Sort.by(Sort.Direction.fromString(direction),sortField);
-        Page<ArchivedTask> archivedTaskPage = archivedTaskService.getAllArchivedTasks(PageRequest.of(page,size,sort));
+        model.addAttribute("sortField", sortField);
+        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortField);
+        Page<ArchivedTask> archivedTaskPage = archivedTaskService.getAllArchivedTasks(PageRequest.of(
+                page, 50, sort));
         model.addAttribute("archivedTaskPage", archivedTaskPage);
         return "task/archivedTasks";
     }
 
     @PostMapping("/task-feedback")
-    public String handleFeedback(@RequestParam(name = "id") Long id, @ModelAttribute FeedbackRequest feedbackRequest,
+    public String handleFeedback(@RequestParam(name = "id") Long id,
+                                 @ModelAttribute FeedbackRequest feedbackRequest,
                                  BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("errorList", bindingResult.getAllErrors());
@@ -107,11 +106,13 @@ public class TaskController {
     }
 
     @GetMapping("/task-feedback")
-    public String showFeedbackForm(@RequestParam(name = "id") Long id, FeedbackRequest feedbackRequest, Model model,
+    public String showFeedbackForm(@RequestParam(name = "id") Long id, FeedbackRequest feedbackRequest,
+                                   Model model,
                                    Authentication authentication) {
         ArchivedTask archivedTask = archivedTaskService.findById(id);
-        User user = userService.findByEmail(authentication.getName()).orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "User has not been found"));
+        User user = userService.findByEmail(authentication.getName()).orElseThrow(
+                () -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "User has not been found"));
         if (!archivedTask.getDesigner().equals(user)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not right designer");
         }
@@ -120,4 +121,4 @@ public class TaskController {
         return ("task/feedbackForm");
     }
 }
-//TODO sorting in admin panel
+//TODO sorting in admin panel, task and archived task ascending and descending

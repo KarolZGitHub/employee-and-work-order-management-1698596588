@@ -87,8 +87,7 @@
             <ul class="pagination">
                 <li class="page-item" th:each="pageNumber : ${#numbers.sequence(0, taskPage.totalPages - 1)}">
                     <a class="page-link"
-                       th:href="@{'/task/all-tasks?page=' + ${pageNumber} + '&size=' + ${taskPage.size} + '&sortField?'
-                       + ${sortField}}"
+                       th:href="@{'/task/all-tasks?page=' + ${pageNumber} + '&sortField?' + ${sortField}}"
                        th:text="${pageNumber + 1}"></a>
                 </li>
             </ul>
