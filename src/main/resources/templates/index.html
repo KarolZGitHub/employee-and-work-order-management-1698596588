@@ -24,7 +24,9 @@
     <div th:if="${user != null}" class="container mt-5">
         <a th:href="@{/task/archived-tasks}" class="btn btn-primary">Show All Archived Tasks</a>
     </div>
-
+    <div th:if="${user != null}" class="container mt-5">
+        <a th:href="@{/work/work-list}" class="btn btn-primary">Show Work List</a>
+    </div>
 </div>
 <div th:if="${user == null}" class="container-fluid">
     <div class="container-fluid">

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{header.html}">
+    <title>Working Time List</title>
+</head>
+<body>
+<div class="container">
+    <!-- Content -->
+    <h2>Working Time List</h2>
+    <form th:action="@{'/work/work-list'}" method="get" id="sortForm">
+        <div class="btn-group" role="group" aria-label="Sort by">
+            <button type="submit" class="btn btn-secondary" name="sortField" value="id">Sort by ID</button>
+            <button type="submit" class="btn btn-secondary" name="sortField" value="createdAt">Sort by Date</button>
+            <button type="submit" class="btn btn-secondary" name="sortField" value="currentWorkingTime">Sort by Working Time</button>
+        </div>
+    </form>
+    <table class="table table-striped">
+        <!-- Table Header -->
+        <thead>
+        <tr>
+            <th th:sortable="id">ID</th>
+            <th th:sortable="createdAt">Date</th>
+            <th th:sortable="overallWorkingTime">Working Time</th>
+            <th th:sortable="currentWorkingTime">Current Working Time</th>
+        </tr>
+        </thead>
+        <!-- Table Data -->
+        <tbody>
+        <tr th:each="workingTime : ${workingTimePage.content}">
+            <td th:text="${workingTime.id}"></td>
+            <td th:text="${workingTime.createdAt}"></td>
+            <td th:text="${workingTime.overallWorkingTime}"></td>
+            <td th:if="${!workingTime.isWorking}" th:text="${workingTime.currentWorkingTime}"></td>
+            <td th:if="${workingTime.isWorking}" th:text="Finished"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <ul class="pagination">
+        <li th:classappend="${workingTimePage != null && workingTimePage.hasPrevious() ? '' : 'disabled'}">
+            <a th:if="${workingTimePage != null && workingTimePage.hasPrevious()}" th:href="@{'/work/work-list?page=' + ${workingTimePage.number - 1} + '&sortField=' + ${sortField}}">Previous</a>
+        </li>
+        <li th:each="i : ${#numbers.sequence(0, workingTimePage.totalPages - 1)}">
+            <a th:href="@{'/work/work-list?page=' + ${i} + '&sortField=' + ${sortField}}" th:text="${i + 1}"></a>
+        </li>
+        <li th:classappend="${workingTimePage != null && workingTimePage.hasNext() ? '' : 'disabled'}">
+            <a th:if="${workingTimePage != null && workingTimePage.hasNext()}" th:href="@{'/work/work-list?page=' + ${workingTimePage.number + 1} + '&sortField=' + ${sortField}}">Next</a>
+        </li>
+        <li th:classappend="${workingTimePage != null && workingTimePage.isLast() ? 'disabled' : ''}">
+            <a th:if="${workingTimePage != null && !workingTimePage.isLast()}" th:href="@{'/work/work-list?page=' + ${workingTimePage.totalPages - 1} + '&sortField=' + ${sortField}}">Last</a>
+        </li>
+    </ul>
+</div>
+<!-- Footer -->
+<div th:insert="~{footer}"></div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
