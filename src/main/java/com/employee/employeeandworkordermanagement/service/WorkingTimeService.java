@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -20,18 +21,29 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WorkingTimeService {
     private final WorkingTimeRepository workingTimeRepository;
+    private final UserService userService;
 
     public WorkingTime findById(Long id) {
         return workingTimeRepository.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Working day has not been found."));
     }
 
-    public void startWorking(WorkingTime workingTime) {
+    public void startWorking(WorkingTime workingTime, Authentication authentication) {
+        User user = userService.findByEmail(authentication.getName()).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not been found."));
+        List<WorkingTime> workingTimeList = workingTimeRepository.findAllByTheUser(user);
+        if (workingTimeList.stream().anyMatch(WorkingTime::isWorking)) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT, "There cannot be more than one work in progress");
+        }
+        workingTime.setCurrentWorkingTime(workingTime.getOverallWorkingTime());
         workingTime.setWorking(true);
         workingTimeRepository.save(workingTime);
+
     }
 
     public void stopWorking(WorkingTime workingTime) {
+        workingTime.setOverallWorkingTime(new Date().getTime() - workingTime.getWorkStarted().getTime());
         workingTime.setWorking(false);
         workingTimeRepository.save(workingTime);
     }
@@ -46,6 +58,7 @@ public class WorkingTimeService {
             WorkingTime workingTime = new WorkingTime();
             workingTime.setCreatedAt(new Date());
             workingTime.setCurrentWorkingTime(0L);
+            workingTime.setOverallWorkingTime(0L);
             workingTime.setTheUser(user);
             workingTime.setWorking(false);
             workingTimeRepository.save(workingTime);
@@ -63,9 +76,24 @@ public class WorkingTimeService {
                 cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH) &&
                 cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH);
     }
+
     public Page<WorkingTime> getSortedWorkingTimePage(int page, String direction, String sortField) {
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortField);
         Pageable pageable = PageRequest.of(page, 50, sort);
         return workingTimeRepository.findAll(pageable);
+    }
+
+    public void updateWorkingFunction(WorkingTime workingTime) {
+        long duration = new Date().getTime() - workingTime.getWorkStarted().getTime();
+        workingTime.setCurrentWorkingTime(duration);
+        workingTimeRepository.save(workingTime);
+    }
+
+    public void updateWorkingTime(List<WorkingTime> workingTimeList) {
+        workingTimeList.stream().filter(workingTime -> workingTime.isWorking()).forEach((workingTime -> updateWorkingFunction(workingTime)));
+    }
+
+    public List<WorkingTime> findAll() {
+        return workingTimeRepository.findAll();
     }
 }

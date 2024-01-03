@@ -7,8 +7,6 @@ import com.employee.employeeandworkordermanagement.service.WorkingTimeService;
 import com.employee.employeeandworkordermanagement.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -38,6 +36,7 @@ public class WorkingTimeController {
                                       @RequestParam(required = false, defaultValue = "id") String sortField,
                                       Model model
     ) {
+        workingTimeService.updateWorkingTime(workingTimeService.findAll());
         model.addAttribute("sortField", sortField);
         Page<WorkingTime> workingTimePage = workingTimeService.getSortedWorkingTimePage(page, direction, sortField);
         model.addAttribute("workingTimePage", workingTimePage);
@@ -52,8 +51,8 @@ public class WorkingTimeController {
         if (!workingTime.getTheUser().equals(user)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not right user.");
         }
-        workingTimeService.startWorking(workingTime);
-        return "redirect:/work-list";
+        workingTimeService.startWorking(workingTime,authentication);
+        return "redirect:/work/work-list";
     }
 
     @GetMapping("finish-work/{id}")
@@ -65,7 +64,7 @@ public class WorkingTimeController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not right user.");
         }
         workingTimeService.stopWorking(workingTime);
-        return "redirect:/work-list";
+        return "redirect:/work/work-list";
     }
     //TODO:JS for CurrentTime, BUTTONS FOR EACH WORK TIME
 }

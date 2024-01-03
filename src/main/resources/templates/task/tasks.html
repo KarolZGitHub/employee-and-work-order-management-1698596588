@@ -68,7 +68,8 @@
                    th:href="@{'/edit/close-task?id=' + ${task.id}}"
                    class="btn btn-primary">Close</a>
                 <button th:if="${task.taskStatus == T(com.employee.employeeandworkordermanagement.data.TaskStatus).CLOSED}"
-                        class="btn btn-disabled" disabled>Close
+                        class="btn btn-disabled" onclick=
+                                "return confirm('Are you sure you want to close this task?')" disabled>Close
                 </button>
             </td>
             <td th:if="${blockDesignerView}">
