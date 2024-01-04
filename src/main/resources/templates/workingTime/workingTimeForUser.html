@@ -7,15 +7,12 @@
 <div class="container">
     <!-- Content -->
     <h2>Working Time List</h2>
-    <form th:action="@{'/work/work-list'}" method="get" id="sortForm">
+    <form th:action="@{'/work-manage/users-working-time'}" method="get" id="sortForm">
         <div class="btn-group" role="group" aria-label="Sort by">
             <button type="submit" class="btn btn-secondary" name="sortField" value="id">Sort by ID</button>
             <button type="submit" class="btn btn-secondary" name="sortField" value="createdAt">Sort by Date</button>
             <button type="submit" class="btn btn-secondary" name="sortField"
                     value="currentWorkingTime">Sort by Working Time
-            </button>
-            <button type="submit" class="btn btn-secondary" name="sortField"
-                    value="task">Sort by Task
             </button>
         </div>
     </form>
@@ -25,59 +22,39 @@
         <tr>
             <th>ID</th>
             <th>Created Date</th>
-            <th>Task</th>
-            <th>Task Status</th>
             <th>Working Time</th>
-            <th>Current Working Time</th>
-            <th>Change Status</th>
+            <th>Is Working</th>
         </tr>
         </thead>
         <!-- Table Data -->
         <tbody>
-        <tr th:each="workingTime : ${workingTimePage.content}">
+        <tr th:each="workingTime : ${workingTimeForUserPage.content}">
             <td th:text="${workingTime.id}"></td>
             <td th:text="${workingTime.createdAt}"></td>
-            <td th:text="${workingTime.task.taskName}"></td>
-            <td th:text="${workingTime.task.taskStatus}"></td>
-            <td th:text="${workingTime.overallWorkingTime}"
-                th:id="'overallWorkingTime' + workingTime.id"></td>
-            <td th:if="${workingTime.isWorking}"
-                th:text="${workingTime.currentWorkingTime}"
-                th:id="workingTime"></td>
-            <td th:if="${!workingTime.isWorking}"
-                th:text="Finished"></td>
-            <td>
-                <a th:if="${workingTime.isWorking == false}"
-                   class="btn btn primary"
-                   th:href="@{'/work/start-work/' +${workingTime.id}}">Start Work</a>
-                <a th:if="${workingTime.isWorking == true}"
-                   th:href="@{'/work/finish-work/' + ${workingTime.id}}"
-                   class="btn btn-primary"
-                   onclick="alert('Your working time is stopped and added to overall working time.');">Stop Work</a>
-            </td>
+            <td th:text="${workingTime.overallWorkingTime}" th:id="'overallWorkingTime' + workingTime.id"></td>
+            <td th:text="${workingTime.isWorking}"></td>
         </tr>
         </tbody>
     </table>
     <ul class="pagination">
         <li th:classappend="${workingTimePage != null && workingTimePage.hasPrevious() ? '' : 'disabled'}">
             <a th:if="${workingTimePage != null && workingTimePage.hasPrevious()}"
-               th:href="@{'/work/work-list?page=' + ${workingTimePage.number - 1} + '&sortField=' + ${sortField}}">Previous</a>
+               th:href="@{'/work-manage/users-working-time?page=' + ${workingTimePage.number - 1} + '&sortField=' + ${sortField}}">Previous</a>
         </li>
         <li th:each="i : ${#numbers.sequence(0, workingTimePage.totalPages - 1)}">
-            <a th:href="@{'/work/work-list?page=' + ${i} + '&sortField=' + ${sortField}}" th:text="${i + 1}"></a>
+            <a th:href="@{'/work-manage/users-working-time?page=' + ${i} + '&sortField=' + ${sortField}}" th:text="${i + 1}"></a>
         </li>
         <li th:classappend="${workingTimePage != null && workingTimePage.hasNext() ? '' : 'disabled'}">
             <a th:if="${workingTimePage != null && workingTimePage.hasNext()}"
-               th:href="@{'/work/work-list?page=' + ${workingTimePage.number + 1} + '&sortField=' + ${sortField}}">Next</a>
+               th:href="@{'/work-manage/users-working-time?page=' + ${workingTimePage.number + 1} + '&sortField=' + ${sortField}}">Next</a>
         </li>
         <li th:classappend="${workingTimePage != null && workingTimePage.isLast() ? 'disabled' : ''}">
             <a th:if="${workingTimePage != null && !workingTimePage.isLast()}"
-               th:href="@{'/work/work-list?page=' + ${workingTimePage.totalPages - 1} + '&sortField=' + ${sortField}}">Last</a>
+               th:href="@{'/work-manage/users-working-time?page=' + ${workingTimePage.totalPages - 1} + '&sortField=' + ${sortField}}">Last</a>
         </li>
     </ul>
 </div>
 <script src="/js/formatTime.js"></script>
-<script src="/js/CurrentWorkingTime.js"></script>
 <script src="/js/OverallWorkingTime.js"></script>
 </body>
 <!-- Footer -->

@@ -66,5 +66,4 @@ public class WorkingTimeController {
         workingTimeService.stopWorking(workingTime);
         return "redirect:/work/work-list";
     }
-    //TODO:JS for CurrentTime, BUTTONS FOR EACH WORK TIME
 }

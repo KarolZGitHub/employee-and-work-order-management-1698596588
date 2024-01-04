@@ -1,5 +1,6 @@
 package com.employee.employeeandworkordermanagement.service;
 
+import com.employee.employeeandworkordermanagement.data.TaskStatus;
 import com.employee.employeeandworkordermanagement.entity.WorkingTime;
 import com.employee.employeeandworkordermanagement.repository.WorkingTimeRepository;
 import com.employee.employeeandworkordermanagement.user.User;
@@ -36,6 +37,12 @@ public class WorkingTimeService {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT, "There cannot be more than one work in progress");
         }
+        if (workingTime.getTask().getTaskStatus() == TaskStatus.CLOSED) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, workingTime.getTask().getTaskName() + " is closed.");
+        }
+        if(workingTime.isWorking()){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "This is already active.");
+        }
         workingTime.setCurrentWorkingTime(workingTime.getOverallWorkingTime());
         workingTime.setWorking(true);
         workingTimeRepository.save(workingTime);
@@ -43,19 +50,23 @@ public class WorkingTimeService {
     }
 
     public void stopWorking(WorkingTime workingTime) {
+        if(!workingTime.isWorking()){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "This is already inactive.");
+        }
         workingTime.setOverallWorkingTime(new Date().getTime() - workingTime.getWorkStarted().getTime());
         workingTime.setWorking(false);
         workingTimeRepository.save(workingTime);
     }
 
     public void createWorkDay(User user) {
-        List<WorkingTime> workingTimes = workingTimeRepository.findAll();
+        List<WorkingTime> workingTimes = workingTimeRepository.findAllByTheUser(user);
         boolean isWorkingDayExist = workingTimes.stream()
                 .anyMatch(day -> isSameDay(day.getCreatedAt(), new Date()));
         if (isWorkingDayExist) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "This working day already exists");
         } else {
             WorkingTime workingTime = new WorkingTime();
+            workingTime.setTheUser(user);
             workingTime.setCreatedAt(new Date());
             workingTime.setCurrentWorkingTime(0L);
             workingTime.setOverallWorkingTime(0L);

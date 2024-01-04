@@ -7,11 +7,10 @@ import lombok.Data;
 
 import java.util.Date;
 
-
 @Entity
 @Data
-@Table(name = "working_time")
-public class WorkingTime {
+@Table(name="break_time")
+public class BreakTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,19 +18,11 @@ public class WorkingTime {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     @Temporal(TemporalType.TIMESTAMP)
-    private Date workStarted;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date workFinished;
+    private Date finishedAt;
     @NotNull
-    private Long currentWorkingTime;
+    private Long breakDuration;
     @NotNull
-    private Long overallWorkingTime;
-    @NotNull
-    private boolean isWorking = false;
-    @NotNull
+    private boolean isFinished;
     @ManyToOne
-    private User theUser;
-    @NotNull
-    @OneToOne
-    private Task task;
+    private User user;
 }
