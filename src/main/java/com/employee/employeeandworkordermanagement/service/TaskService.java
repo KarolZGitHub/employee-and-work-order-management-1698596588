@@ -2,7 +2,9 @@ package com.employee.employeeandworkordermanagement.service;
 
 import com.employee.employeeandworkordermanagement.data.TaskStatus;
 import com.employee.employeeandworkordermanagement.entity.Task;
+import com.employee.employeeandworkordermanagement.entity.WorkingTime;
 import com.employee.employeeandworkordermanagement.repository.TaskRepository;
+import com.employee.employeeandworkordermanagement.repository.WorkingTimeRepository;
 import com.employee.employeeandworkordermanagement.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,6 +22,7 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final UserService userService;
     private final MessageService messageService;
+    private final WorkingTimeRepository workingTimeRepository;
 
     public List<Task> getAllTasks() {
         return taskRepository.findAll();
@@ -32,7 +35,15 @@ public class TaskService {
     public void createTask(Task task, Authentication authentication) {
         messageService.notifyDesignerIfAssignedToTask(task.getDesigner(), userService.findByEmail(authentication.getName()).get(),
                 task);
+        WorkingTime workingTime = new WorkingTime();
+        workingTime.setWorking(false);
+        workingTime.setCreatedAt(new Date());
+        workingTime.setTheUser(task.getDesigner());
+        workingTime.setOverallWorkingTime(0L);
+        workingTime.setCurrentWorkingTime(0L);
         taskRepository.save(task);
+        workingTime.setTask(task);
+        workingTimeRepository.save(workingTime);
     }
 
     public void editTask(Task task, Authentication authentication) {

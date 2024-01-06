@@ -31,14 +31,29 @@ public class WorkingTimeController {
     }
 
     @GetMapping("/work-list")
-    public String showWorkInformation(@RequestParam(required = false, defaultValue = "0") int page,
+    public String showYourWorkInformation(@RequestParam(required = false, defaultValue = "0") int page,
                                       @RequestParam(required = false, defaultValue = "asc") String direction,
                                       @RequestParam(required = false, defaultValue = "id") String sortField,
-                                      Model model
+                                      Model model,
+                                      Authentication authentication
+    ) {
+        User theUser = userService.findByEmail(authentication.getName()).orElseThrow(()->
+                new ResponseStatusException(HttpStatus.NOT_FOUND,"User has not been found."));
+        workingTimeService.updateWorkingTime(workingTimeService.findAll());
+        model.addAttribute("sortField", sortField);
+        Page<WorkingTime> workingTimePage = workingTimeService.getUserSortedWorkingTimePage(page, direction, sortField,theUser);
+        model.addAttribute("workingTimePage", workingTimePage);
+        return "workingTime/workingTimeList";
+    }
+    @GetMapping("/all-work-list")
+    public String showAllWorkInformation(@RequestParam(required = false, defaultValue = "0") int page,
+                                          @RequestParam(required = false, defaultValue = "asc") String direction,
+                                          @RequestParam(required = false, defaultValue = "id") String sortField,
+                                          Model model
     ) {
         workingTimeService.updateWorkingTime(workingTimeService.findAll());
         model.addAttribute("sortField", sortField);
-        Page<WorkingTime> workingTimePage = workingTimeService.getSortedWorkingTimePage(page, direction, sortField);
+        Page<WorkingTime> workingTimePage = workingTimeService.getAllSortedWorkingTimePage(page, direction, sortField);
         model.addAttribute("workingTimePage", workingTimePage);
         return "workingTime/workingTimeList";
     }

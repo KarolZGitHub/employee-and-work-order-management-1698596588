@@ -88,7 +88,12 @@ public class WorkingTimeService {
                 cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH);
     }
 
-    public Page<WorkingTime> getSortedWorkingTimePage(int page, String direction, String sortField) {
+    public Page<WorkingTime> getUserSortedWorkingTimePage(int page, String direction, String sortField, User user) {
+        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortField);
+        Pageable pageable = PageRequest.of(page, 50, sort);
+        return workingTimeRepository.findAllByTheUser(user,pageable);
+    }
+    public Page<WorkingTime> getAllSortedWorkingTimePage(int page, String direction, String sortField) {
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortField);
         Pageable pageable = PageRequest.of(page, 50, sort);
         return workingTimeRepository.findAll(pageable);
