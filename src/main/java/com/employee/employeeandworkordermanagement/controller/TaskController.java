@@ -58,12 +58,6 @@ public class TaskController {
         return userService.getDesigners();
     }
 
-    @GetMapping("/add")
-    public String showAddTaskForm(Task task, Model model) {
-        model.addAttribute("task", task);
-        return "task/addTaskForm";
-    }
-
     @GetMapping("/all-tasks")
     public String showAllTasks(@RequestParam(required = false, defaultValue = "0") int page,
                                @RequestParam(required = false, defaultValue = "asc") String direction,

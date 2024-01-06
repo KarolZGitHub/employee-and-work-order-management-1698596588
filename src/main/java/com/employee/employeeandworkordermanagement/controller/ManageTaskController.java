@@ -38,6 +38,11 @@ public class ManageTaskController {
             return null;
         }
     }
+    @GetMapping("/add")
+    public String showAddTaskForm(Task task, Model model) {
+        model.addAttribute("task", task);
+        return "task/addTaskForm";
+    }
 
     @GetMapping("/edit-task")
     public String editTaskDetails(@RequestParam Long id, Model model) {
