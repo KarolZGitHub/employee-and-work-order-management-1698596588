@@ -9,6 +9,7 @@ import lombok.Data;
 
 @Entity
 @Data
+@Table(name = "task_feedback")
 public class TaskFeedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +21,18 @@ public class TaskFeedback {
     @Max(value = 10, message = "Difficulty should be at most 10")
     private Integer difficulty;
     @NotNull(message = "Task feedback has to be set to task.")
-    @OneToOne(cascade = CascadeType.REMOVE)
+    @OneToOne
     private Task task;
+    @NotNull(message = "Status cannot be null")
+    private boolean isSet;
+
+    @PrePersist
+    protected void onCreate() {
+        isSet = false;
+    }
+
+    @PreUpdate
+    private void onUpdate() {
+        isSet = true;
+    }
 }

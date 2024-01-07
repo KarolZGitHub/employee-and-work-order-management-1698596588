@@ -36,6 +36,8 @@
             <th>Status</th>
             <th>Created</th>
             <th>Edited</th>
+            <th th:if="${blockDesignerView}">Activate Task
+            </th>
             <th th:if="${blockDesignerView}">Edit Task
             </th>
             <th th:if="${blockDesignerView}">Close Task
@@ -56,7 +58,19 @@
             <td th:text="${task.createdAt}"></td>
             <td th:text="${task.editedAt}"></td>
             <td th:if="${blockDesignerView}">
-                <a th:if="${task.taskStatus == T(com.employee.employeeandworkordermanagement.data.TaskStatus).ACTIVE}"
+                <a th:if="${task.taskStatus == T(com.employee.employeeandworkordermanagement.data.TaskStatus).PENDING}"
+                   th:href="@{'/edit/activate-task?id=' + ${task.id}}"
+                   class="btn btn-primary" onclick="return confirm('Are you sure you want to activate this task?')"
+                >Activate Task</a>
+                <button th:if="${task.taskStatus == T(com.employee.employeeandworkordermanagement.data.TaskStatus).CLOSED}
+                                or ${task.taskStatus == T(com.employee.employeeandworkordermanagement.data.TaskStatus).ARCHIVED}
+                                or ${task.taskStatus == T(com.employee.employeeandworkordermanagement.data.TaskStatus).ACTIVE}"
+                        class="btn btn-disabled" disabled>Activate Task
+                </button>
+            </td>
+            <td th:if="${blockDesignerView}">
+                <a th:if="${task.taskStatus == T(com.employee.employeeandworkordermanagement.data.TaskStatus).ACTIVE
+                or task.taskStatus == T(com.employee.employeeandworkordermanagement.data.TaskStatus).PENDING}"
                    th:href="@{'/edit/edit-task?id=' + ${task.id}}"
                    class="btn btn-primary">Edit</a>
                 <button th:if="${task.taskStatus == T(com.employee.employeeandworkordermanagement.data.TaskStatus).CLOSED}"
@@ -66,14 +80,22 @@
             <td th:if="${blockDesignerView}">
                 <a th:if="${task.taskStatus == T(com.employee.employeeandworkordermanagement.data.TaskStatus).ACTIVE}"
                    th:href="@{'/edit/close-task?id=' + ${task.id}}"
-                   class="btn btn-primary" onclick="return confirm('Are you sure you want to close this task?')">Close</a>
-                <button th:if="${task.taskStatus == T(com.employee.employeeandworkordermanagement.data.TaskStatus).CLOSED}"
+                   class="btn btn-primary"
+                   onclick="return confirm('Are you sure you want to close this task?')">Close</a>
+                <button th:if="${task.taskStatus == T(com.employee.employeeandworkordermanagement.data.TaskStatus).CLOSED
+                or task.taskStatus == T(com.employee.employeeandworkordermanagement.data.TaskStatus).PENDING}"
                         class="btn btn-disabled" disabled>Close
                 </button>
             </td>
             <td th:if="${blockDesignerView}">
-                <a th:href="@{'/edit/archive-task?id=' + ${task.id}}" class="btn btn-primary" onclick=
-                        "return confirm('Are you sure you want to archive this task?')">Archive</a>
+                <a th:if="${task.taskStatus == T(com.employee.employeeandworkordermanagement.data.TaskStatus).CLOSED}"
+                   th:href="@{'/edit/archive-task?id=' + ${task.id}}" class="btn btn-primary"
+                   onclick="return confirm('Are you sure you want to archive this task?')">Archive</a>
+                <button
+                        th:if="${task.taskStatus == T(com.employee.employeeandworkordermanagement.data.TaskStatus).ACTIVE
+                or task.taskStatus == T(com.employee.employeeandworkordermanagement.data.TaskStatus).PENDING}"
+                        class="btn btn-disabled" disabled>Archive
+                </button>
             </td>
             <td th:if="${blockDesignerView}">
                 <a th:href="@{'/edit/delete-task?id=' + ${task.id}}" class="btn btn-primary" onclick=

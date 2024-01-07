@@ -2,10 +2,9 @@ package com.employee.employeeandworkordermanagement.controller;
 
 import com.employee.employeeandworkordermanagement.data.Role;
 import com.employee.employeeandworkordermanagement.dto.UserDTO;
-import com.employee.employeeandworkordermanagement.entity.ArchivedTask;
 import com.employee.employeeandworkordermanagement.entity.Task;
 import com.employee.employeeandworkordermanagement.feedback.FeedbackRequest;
-import com.employee.employeeandworkordermanagement.service.ArchivedTaskService;
+import com.employee.employeeandworkordermanagement.service.TaskFeedbackService;
 import com.employee.employeeandworkordermanagement.service.TaskService;
 import com.employee.employeeandworkordermanagement.service.UserService;
 import com.employee.employeeandworkordermanagement.user.User;
@@ -29,7 +28,7 @@ import java.util.List;
 public class TaskController {
     private final TaskService taskService;
     private final UserService userService;
-    private final ArchivedTaskService archivedTaskService;
+    private final TaskFeedbackService taskFeedbackService;
 
     @ModelAttribute("user")
     public UserDTO userDTO(Authentication authentication) {
@@ -65,7 +64,7 @@ public class TaskController {
                                Model model) {
         model.addAttribute("sortField", sortField);
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortField);
-        Page<Task> taskPage = taskService.getAllTasks(PageRequest.of(page, 50, sort));
+        Page<Task> taskPage = taskService.getUnarchivedPage(PageRequest.of(page, 50, sort));
         model.addAttribute("taskPage", taskPage);
         return "task/tasks";
     }
@@ -77,7 +76,7 @@ public class TaskController {
                                        Model model) {
         model.addAttribute("sortField", sortField);
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortField);
-        Page<ArchivedTask> archivedTaskPage = archivedTaskService.getAllArchivedTasks(PageRequest.of(
+        Page<Task> archivedTaskPage = taskService.getAllArchivedTasks(PageRequest.of(
                 page, 50, sort));
         model.addAttribute("archivedTaskPage", archivedTaskPage);
         return "task/archivedTasks";
@@ -91,11 +90,8 @@ public class TaskController {
             model.addAttribute("errorList", bindingResult.getAllErrors());
             return "error/error";
         }
-        ArchivedTask archivedTask = archivedTaskService.findById(id);
-        archivedTask.setFeedback(feedbackRequest.getFeedback());
-        archivedTask.setDifficulty(feedbackRequest.getDifficulty());
-        archivedTask.setFeedbackSet(true);
-        archivedTaskService.saveArchivedTask(archivedTask);
+        Task task = taskService.findById(id);
+        taskFeedbackService.addFeedback(task, feedbackRequest);
         return "redirect:/task/archived-tasks";
     }
 
@@ -103,11 +99,11 @@ public class TaskController {
     public String showFeedbackForm(@RequestParam(name = "id") Long id, FeedbackRequest feedbackRequest,
                                    Model model,
                                    Authentication authentication) {
-        ArchivedTask archivedTask = archivedTaskService.findById(id);
+        Task task = taskService.findById(id);
         User user = userService.findByEmail(authentication.getName()).orElseThrow(
                 () -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "User has not been found"));
-        if (!archivedTask.getDesigner().equals(user)) {
+        if (!task.getDesigner().equals(user)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not right designer");
         }
         model.addAttribute("id", id);

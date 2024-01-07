@@ -63,7 +63,7 @@ public class WorkingTimeController {
         User user = userService.findByEmail(authentication.getName()).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not been found."));
         WorkingTime workingTime = workingTimeService.findById(id);
-        if (!workingTime.getTheUser().equals(user)) {
+        if (!workingTime.getUser().equals(user)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not right user.");
         }
         workingTimeService.startWorking(workingTime,authentication);
@@ -75,7 +75,7 @@ public class WorkingTimeController {
         User user = userService.findByEmail(authentication.getName()).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not been found."));
         WorkingTime workingTime = workingTimeService.findById(id);
-        if (!workingTime.getTheUser().equals(user)) {
+        if (!workingTime.getUser().equals(user)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not right user.");
         }
         workingTimeService.stopWorking(workingTime);

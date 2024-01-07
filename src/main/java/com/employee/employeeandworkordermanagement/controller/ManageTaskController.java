@@ -2,18 +2,15 @@ package com.employee.employeeandworkordermanagement.controller;
 
 import com.employee.employeeandworkordermanagement.dto.UserDTO;
 import com.employee.employeeandworkordermanagement.entity.Task;
-import com.employee.employeeandworkordermanagement.service.ArchivedTaskService;
 import com.employee.employeeandworkordermanagement.service.TaskService;
 import com.employee.employeeandworkordermanagement.service.UserService;
 import com.employee.employeeandworkordermanagement.user.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -23,7 +20,6 @@ import java.util.List;
 public class ManageTaskController {
     private final TaskService taskService;
     private final UserService userService;
-    private final ArchivedTaskService archivedTaskService;
 
     @ModelAttribute("designers")
     public List<User> getDesigners() {
@@ -46,8 +42,7 @@ public class ManageTaskController {
 
     @GetMapping("/edit-task")
     public String editTaskDetails(@RequestParam Long id, Model model) {
-        Task task = taskService.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                "Task has not been found."));
+        Task task = taskService.findById(id);
         model.addAttribute("task", task);
         return "task/editTask";
     }
@@ -65,26 +60,26 @@ public class ManageTaskController {
 
     @GetMapping("/delete-task")
     public String deleteTask(@RequestParam(name = "id") Long id, Authentication authentication) {
-        taskService.deleteTask(taskService.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Task has not been found.")), authentication);
+        taskService.deleteTask(taskService.findById(id), authentication);
         return "redirect:/task/all-tasks";
     }
 
     @GetMapping("/close-task")
     public String closeTask(@RequestParam(name = "id") Long id, Authentication authentication) {
-        taskService.closeTask(taskService.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Task has not been found.")), authentication);
+        taskService.closeTask(taskService.findById(id), authentication);
         return "redirect:/task/all-tasks";
     }
 
     @GetMapping("/archive-task")
-    public String archiveTask(@RequestParam(name = "id") Long id, Authentication authentication) {
-        Task task = taskService.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                "Task has not been found"));
-        archivedTaskService.archiveTask(task);
-        taskService.deleteTask(task, authentication);
+    public String archiveTask(@RequestParam(name = "id") Long id) {
+        Task task = taskService.findById(id);
+        taskService.archiveTask(task);
         return "redirect:/task/archived-tasks";
+    }
+    @GetMapping("/activate-task")
+    private String activateTask(@RequestParam(name="id")Long id){
+        Task task = taskService.findById(id);
+        taskService.setTaskToActive(task);
+        return "redirect:/task/all-tasks";
     }
 }

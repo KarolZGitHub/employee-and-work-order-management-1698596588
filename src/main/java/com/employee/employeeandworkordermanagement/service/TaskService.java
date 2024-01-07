@@ -9,8 +9,11 @@ import com.employee.employeeandworkordermanagement.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.List;
@@ -22,28 +25,23 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final UserService userService;
     private final MessageService messageService;
-    private final WorkingTimeRepository workingTimeRepository;
+    private final TaskFeedbackService taskFeedbackService;
+    private final WorkingTimeService workingTimeService;
 
     public List<Task> getAllTasks() {
         return taskRepository.findAll();
     }
 
-    public Optional<Task> findById(Long id) {
-        return taskRepository.findById(id);
+    public Task findById(Long id) {
+        return taskRepository.findById(id).orElseThrow(()->
+                new ResponseStatusException(HttpStatus.NOT_FOUND,"Task has not been found."));
     }
 
     public void createTask(Task task, Authentication authentication) {
         messageService.notifyDesignerIfAssignedToTask(task.getDesigner(), userService.findByEmail(authentication.getName()).get(),
                 task);
-        WorkingTime workingTime = new WorkingTime();
-        workingTime.setWorking(false);
-        workingTime.setCreatedAt(new Date());
-        workingTime.setTheUser(task.getDesigner());
-        workingTime.setOverallWorkingTime(0L);
-        workingTime.setCurrentWorkingTime(0L);
         taskRepository.save(task);
-        workingTime.setTask(task);
-        workingTimeRepository.save(workingTime);
+        taskFeedbackService.initializeFeedback(task);
     }
 
     public void editTask(Task task, Authentication authentication) {
@@ -72,5 +70,29 @@ public class TaskService {
 
     public Page<Task> getAllTasks(PageRequest pageRequest) {
         return taskRepository.findAll(pageRequest);
+    }
+    public Page<Task> getUnarchivedPage(PageRequest pageRequest){
+        return taskRepository.findAllByTaskStatusNot(TaskStatus.ARCHIVED,pageRequest);
+    }
+
+    public Page<Task> getAllArchivedTasks(PageRequest pageRequest) {
+        return taskRepository.findAllByTaskStatus(TaskStatus.ARCHIVED, pageRequest);
+    }
+    public void archiveTask(Task task){
+        if(task.getTaskStatus().equals(TaskStatus.ARCHIVED) || task.getTaskStatus().equals(TaskStatus.ACTIVE) ||
+        task.getTaskStatus().equals(TaskStatus.PENDING)){
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"You cannot archive this task");
+        }
+        task.setTaskStatus(TaskStatus.ARCHIVED);
+        taskRepository.save(task);
+    }
+    public void setTaskToActive(Task task){
+        if(task.getTaskStatus().equals(TaskStatus.ACTIVE)||task.getTaskStatus().equals(TaskStatus.ARCHIVED)||
+                task.getTaskStatus().equals(TaskStatus.CLOSED)){
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"You cannot activate this task");
+        }
+        workingTimeService.initializeWorkingTime(task);
+        task.setTaskStatus(TaskStatus.ACTIVE);
+        taskRepository.save(task);
     }
 }

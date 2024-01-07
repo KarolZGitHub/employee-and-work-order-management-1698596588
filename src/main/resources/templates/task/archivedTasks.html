@@ -14,7 +14,8 @@
             <a th:href="${'/task/archived-tasks?sortField=taskName'}" class="btn btn-primary">Sort by task name</a>
         </div>
         <div class="mt-3">
-            <a th:href="${'/task/archived-tasks?sortField=description'}" class="btn btn-primary">Sort by task description</a>
+            <a th:href="${'/task/archived-tasks?sortField=description'}" class="btn btn-primary">Sort by task
+                description</a>
         </div>
         <div class="mt-3">
             <a th:href="${'/task/archived-tasks?sortField=designer'}" class="btn btn-primary">Sort by designer</a>
@@ -43,16 +44,18 @@
             <td th:text="${archivedTask.description}"></td>
             <td th:text="${archivedTask.designer.firstName} + ' ' + ${archivedTask.designer.lastName}"></td>
             <td th:text="${archivedTask.createdAt}"></td>
-            <td th:text="${archivedTask.feedback}">
-            <td th:text="${archivedTask.difficulty}">
+            <td th:text="${archivedTask.taskFeedback.feedback}">
+            <td th:text="${archivedTask.taskFeedback.difficulty}">
             </td>
             <td>
-                <a th:href="@{'/task/task-feedback?id=' + ${archivedTask.id}}"
-                   class="btn btn-primary"
-                   th:classappend="${(user.email == archivedTask.designer.email ? 'active' : 'disabled')
-                    + ' ' + (archivedTask.feedbackSet == false ? 'active' : 'disabled')}">
-                    Give Your Feedback
-                </a>
+                <a
+                        th:if="${user.email == archivedTask.designer.email and !archivedTask.taskFeedback.isSet}"
+                        th:href="@{'/task/task-feedback?id=' + ${archivedTask.id}}"
+                        class="btn btn-primary">Give Your Feedback</a>
+                <button
+                        th:if="${user.email != archivedTask.designer.email or archivedTask.taskFeedback.isSet}"
+                        class="btn btn-disabled" disabled>Give Your Feedback
+                </button>
             </td>
         </tr>
         </tbody>

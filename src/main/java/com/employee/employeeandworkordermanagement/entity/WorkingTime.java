@@ -2,7 +2,6 @@ package com.employee.employeeandworkordermanagement.entity;
 
 import com.employee.employeeandworkordermanagement.user.User;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -32,6 +31,13 @@ public class WorkingTime {
     @NotNull(message = "Working time have to be set to user.")
     @ManyToOne
     private User user;
-    @NotBlank(message = "Task name cannot be empty")
-    private String taskName;
+    @NotNull(message = "Task cannot be empty")
+    @OneToOne
+    private Task task;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+        currentWorkingTime=0L;
+    }
 }

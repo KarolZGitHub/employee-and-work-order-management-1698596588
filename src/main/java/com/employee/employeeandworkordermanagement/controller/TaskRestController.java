@@ -38,16 +38,6 @@ public class TaskRestController {
         return taskService.getAllTasks();
     }
 
-    @GetMapping("/{taskId}")
-    public ResponseEntity<Task> getTaskById(@PathVariable Long taskId) {
-        Optional<Task> task = taskService.findById(taskId);
-        if (task.isPresent()) {
-            return new ResponseEntity<>(task.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
     @PostMapping
     public ModelAndView createTask(@Valid Task task, BindingResult result, Authentication authentication) {
         ModelAndView modelAndView = new ModelAndView();

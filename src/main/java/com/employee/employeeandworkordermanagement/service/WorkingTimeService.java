@@ -1,6 +1,7 @@
 package com.employee.employeeandworkordermanagement.service;
 
 import com.employee.employeeandworkordermanagement.data.TaskStatus;
+import com.employee.employeeandworkordermanagement.entity.Task;
 import com.employee.employeeandworkordermanagement.entity.WorkingTime;
 import com.employee.employeeandworkordermanagement.repository.WorkingTimeRepository;
 import com.employee.employeeandworkordermanagement.user.User;
@@ -32,7 +33,7 @@ public class WorkingTimeService {
     public void startWorking(WorkingTime workingTime, Authentication authentication) {
         User user = userService.findByEmail(authentication.getName()).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not been found."));
-        List<WorkingTime> workingTimeList = workingTimeRepository.findAllByTheUser(user);
+        List<WorkingTime> workingTimeList = workingTimeRepository.findAllByUser(user);
         if (workingTimeList.stream().anyMatch(WorkingTime::isWorking)) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT, "There cannot be more than one work in progress");
@@ -40,37 +41,39 @@ public class WorkingTimeService {
         if (workingTime.getTask().getTaskStatus() == TaskStatus.CLOSED) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, workingTime.getTask().getTaskName() + " is closed.");
         }
-        if(workingTime.isWorking()){
+        if (workingTime.isWorking()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "This is already active.");
         }
-        workingTime.setCurrentWorkingTime(workingTime.getOverallWorkingTime());
+        workingTime.setWorkStarted(new Date());
+        workingTime.setCurrentWorkingTime(0L);
         workingTime.setWorking(true);
         workingTimeRepository.save(workingTime);
-
     }
 
     public void stopWorking(WorkingTime workingTime) {
-        if(!workingTime.isWorking()){
+        if (!workingTime.isWorking()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "This is already inactive.");
         }
-        workingTime.setOverallWorkingTime(new Date().getTime() - workingTime.getWorkStarted().getTime());
+        workingTime.setOverallWorkingTime(workingTime.getOverallWorkingTime() +
+                (new Date().getTime() - workingTime.getWorkStarted().getTime()));
         workingTime.setWorking(false);
+        workingTime.setCurrentWorkingTime(0L);
         workingTimeRepository.save(workingTime);
     }
 
     public void createWorkDay(User user) {
-        List<WorkingTime> workingTimes = workingTimeRepository.findAllByTheUser(user);
+        List<WorkingTime> workingTimes = workingTimeRepository.findAllByUser(user);
         boolean isWorkingDayExist = workingTimes.stream()
                 .anyMatch(day -> isSameDay(day.getCreatedAt(), new Date()));
         if (isWorkingDayExist) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "This working day already exists");
         } else {
             WorkingTime workingTime = new WorkingTime();
-            workingTime.setTheUser(user);
+            workingTime.setUser(user);
             workingTime.setCreatedAt(new Date());
             workingTime.setCurrentWorkingTime(0L);
             workingTime.setOverallWorkingTime(0L);
-            workingTime.setTheUser(user);
+            workingTime.setUser(user);
             workingTime.setWorking(false);
             workingTimeRepository.save(workingTime);
         }
@@ -91,8 +94,9 @@ public class WorkingTimeService {
     public Page<WorkingTime> getUserSortedWorkingTimePage(int page, String direction, String sortField, User user) {
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortField);
         Pageable pageable = PageRequest.of(page, 50, sort);
-        return workingTimeRepository.findAllByTheUser(user,pageable);
+        return workingTimeRepository.findAllByUser(user, pageable);
     }
+
     public Page<WorkingTime> getAllSortedWorkingTimePage(int page, String direction, String sortField) {
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortField);
         Pageable pageable = PageRequest.of(page, 50, sort);
@@ -111,5 +115,16 @@ public class WorkingTimeService {
 
     public List<WorkingTime> findAll() {
         return workingTimeRepository.findAll();
+    }
+
+    public void initializeWorkingTime(Task task) {
+        WorkingTime workingTime = new WorkingTime();
+        workingTime.setWorkStarted(new Date());
+        workingTime.setTask(task);
+        workingTime.setWorking(false);
+        workingTime.setCurrentWorkingTime(0L);
+        workingTime.setOverallWorkingTime(0L);
+        workingTime.setUser(task.getDesigner());
+        workingTimeRepository.save(workingTime);
     }
 }

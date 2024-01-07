@@ -31,10 +31,21 @@ public class Task {
     private User designer;
     @NotNull(message = "Task status cannot be null")
     @Enumerated(EnumType.STRING)
-    private TaskStatus taskStatus = TaskStatus.ACTIVE;
-    @NotNull(message = "Created at date cannot be null")
+    private TaskStatus taskStatus = TaskStatus.PENDING;
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt = new Date();
+    private Date createdAt;
     @Temporal(TemporalType.TIMESTAMP)
     private Date editedAt;
+    @OneToOne(mappedBy = "task")
+    private TaskFeedback taskFeedback;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        editedAt = new Date();
+    }
 }

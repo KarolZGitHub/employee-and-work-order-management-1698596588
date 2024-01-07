@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface WorkingTimeRepository extends JpaRepository<WorkingTime, Long> {
-    List<WorkingTime> findAllByTheUser(User user);
-    Page<WorkingTime> findAllByTheUser(User user, Pageable pageable);
+    List<WorkingTime> findAllByUser(User user);
+    Page<WorkingTime> findAllByUser(User user, Pageable pageable);
 }

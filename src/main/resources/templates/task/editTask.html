@@ -23,7 +23,7 @@
         <div class="form-group">
             <label for="designer">Designers:</label>
             <select class="form-control" id="designer" name="designer" th:field="*{designer}" required>
-                <option th:each="designer : ${designers}" th:value="${designer.id}"
+                <option th:each="designer : ${designers}" th:value="${task.designer.id}"
                         th:text="${designer.firstName}"></option>
             </select>
             <small th:if="${#fields.hasErrors('designer')}" class="form-text text-danger"
