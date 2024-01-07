@@ -7,36 +7,22 @@ import lombok.Data;
 
 import java.util.Date;
 
-
 @Entity
 @Data
-@Table(name = "working_time")
-public class WorkingTime {
+@Table(name = "working_time_history")
+public class WorkingTimeHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotNull(message = "Creation date cannot be empty.")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     @Temporal(TemporalType.TIMESTAMP)
     private Date workStarted;
     @Temporal(TemporalType.TIMESTAMP)
     private Date workFinished;
-    @NotNull(message = "Current working time value cannot be empty.")
-    private Long currentWorkingTime;
     @NotNull(message = "Overall working time value cannot be empty.")
     private Long overallWorkingTime;
-    @NotNull(message = "Is working condition cannot be empty.")
-    private boolean isWorking = false;
-    @NotNull(message = "Working time have to be set to user.")
+    @NotNull(message = "User has to be set.")
     @ManyToOne
     private User user;
-    @OneToOne(orphanRemoval = true)
-    @JoinColumn(name = "task_id", referencedColumnName = "id")
-    private Task task;
-    @PrePersist
-    protected void onCreate() {
-        createdAt = new Date();
-        currentWorkingTime=0L;
-    }
 }

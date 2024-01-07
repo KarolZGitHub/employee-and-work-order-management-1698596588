@@ -1,6 +1,5 @@
 package com.employee.employeeandworkordermanagement.entity;
 
-import com.employee.employeeandworkordermanagement.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -9,7 +8,7 @@ import java.util.Date;
 
 @Entity
 @Data
-@Table(name="break_time")
+@Table(name = "break_time")
 public class BreakTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

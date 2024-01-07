@@ -36,8 +36,11 @@ public class Task {
     private Date createdAt;
     @Temporal(TemporalType.TIMESTAMP)
     private Date editedAt;
-    @OneToOne(mappedBy = "task")
+    @OneToOne(mappedBy = "task" , cascade = CascadeType.ALL)
     private TaskFeedback taskFeedback;
+    @NotNull(message = "Working time has to be set.")
+    @OneToOne(mappedBy = "task", cascade = CascadeType.ALL)
+    private WorkingTime workingTime;
 
     @PrePersist
     protected void onCreate() {

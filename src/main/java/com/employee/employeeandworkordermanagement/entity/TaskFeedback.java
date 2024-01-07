@@ -21,10 +21,11 @@ public class TaskFeedback {
     @Max(value = 10, message = "Difficulty should be at most 10")
     private Integer difficulty;
     @NotNull(message = "Task feedback has to be set to task.")
-    @OneToOne
-    private Task task;
     @NotNull(message = "Status cannot be null")
     private boolean isSet;
+    @OneToOne(orphanRemoval = true)
+    @JoinColumn(name = "task_id", referencedColumnName = "id")
+    private Task task;
 
     @PrePersist
     protected void onCreate() {
