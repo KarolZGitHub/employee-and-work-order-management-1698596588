@@ -2,6 +2,7 @@ package com.employee.employeeandworkordermanagement.entity;
 
 import com.employee.employeeandworkordermanagement.user.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -15,23 +16,22 @@ public class WorkingTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotNull
+    @NotNull(message = "Creation date cannot be empty.")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     @Temporal(TemporalType.TIMESTAMP)
     private Date workStarted;
     @Temporal(TemporalType.TIMESTAMP)
     private Date workFinished;
-    @NotNull
+    @NotNull(message = "Current working time value cannot be empty.")
     private Long currentWorkingTime;
-    @NotNull
+    @NotNull(message = "Overall working time value cannot be empty.")
     private Long overallWorkingTime;
-    @NotNull
+    @NotNull(message = "Is working condition cannot be empty.")
     private boolean isWorking = false;
-    @NotNull
+    @NotNull(message = "Working time have to be set to user.")
     @ManyToOne
-    private User theUser;
-    @NotNull
-    @OneToOne
-    private Task task;
+    private User user;
+    @NotBlank(message = "Task name cannot be empty")
+    private String taskName;
 }
