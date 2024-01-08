@@ -1,7 +1,7 @@
 package com.employee.employeeandworkordermanagement.repository;
 
 import com.employee.employeeandworkordermanagement.data.Role;
-import com.employee.employeeandworkordermanagement.user.User;
+import com.employee.employeeandworkordermanagement.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

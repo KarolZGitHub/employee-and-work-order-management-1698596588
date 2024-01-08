@@ -7,7 +7,7 @@ import com.employee.employeeandworkordermanagement.profile.ChangeEmailRequest;
 import com.employee.employeeandworkordermanagement.profile.ChangeFirstOrLastName;
 import com.employee.employeeandworkordermanagement.service.ChangeEmailResetTokenService;
 import com.employee.employeeandworkordermanagement.service.UserService;
-import com.employee.employeeandworkordermanagement.user.User;
+import com.employee.employeeandworkordermanagement.entity.User;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;

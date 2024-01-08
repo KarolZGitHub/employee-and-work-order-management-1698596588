@@ -3,7 +3,7 @@ package com.employee.employeeandworkordermanagement.service;
 import com.employee.employeeandworkordermanagement.entity.Message;
 import com.employee.employeeandworkordermanagement.entity.Task;
 import com.employee.employeeandworkordermanagement.repository.MessageRepository;
-import com.employee.employeeandworkordermanagement.user.User;
+import com.employee.employeeandworkordermanagement.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

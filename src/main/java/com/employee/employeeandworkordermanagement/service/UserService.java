@@ -7,7 +7,7 @@ import com.employee.employeeandworkordermanagement.registration.RegistrationRequ
 import com.employee.employeeandworkordermanagement.registration.token.VerificationToken;
 import com.employee.employeeandworkordermanagement.repository.UserRepository;
 import com.employee.employeeandworkordermanagement.repository.VerificationTokenRepository;
-import com.employee.employeeandworkordermanagement.user.User;
+import com.employee.employeeandworkordermanagement.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

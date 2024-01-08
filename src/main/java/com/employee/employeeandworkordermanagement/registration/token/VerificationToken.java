@@ -1,6 +1,6 @@
 package com.employee.employeeandworkordermanagement.registration.token;
 
-import com.employee.employeeandworkordermanagement.user.User;
+import com.employee.employeeandworkordermanagement.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

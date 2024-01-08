@@ -2,7 +2,7 @@ package com.employee.employeeandworkordermanagement.service;
 
 import com.employee.employeeandworkordermanagement.registration.token.VerificationTokenForEmailChange;
 import com.employee.employeeandworkordermanagement.repository.VerificationTokenForEmailChangeRepository;
-import com.employee.employeeandworkordermanagement.user.User;
+import com.employee.employeeandworkordermanagement.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

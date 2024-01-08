@@ -11,7 +11,7 @@ import com.employee.employeeandworkordermanagement.registration.token.Verificati
 import com.employee.employeeandworkordermanagement.service.PasswordResetTokenService;
 import com.employee.employeeandworkordermanagement.service.UserService;
 import com.employee.employeeandworkordermanagement.service.VerificationTokenService;
-import com.employee.employeeandworkordermanagement.user.User;
+import com.employee.employeeandworkordermanagement.entity.User;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;

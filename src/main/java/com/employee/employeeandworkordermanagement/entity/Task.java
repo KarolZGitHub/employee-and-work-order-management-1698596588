@@ -1,7 +1,6 @@
 package com.employee.employeeandworkordermanagement.entity;
 
 import com.employee.employeeandworkordermanagement.data.TaskStatus;
-import com.employee.employeeandworkordermanagement.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -11,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Data
@@ -27,12 +27,11 @@ public class Task {
 
     @Size(max = 1000, message = "Description cannot exceed 1000 characters")
     private String description;
-
-    @NotNull(message = "Assigned designer cannot be null")
-    @ManyToOne
+    @NotNull(message = "You have to set designer to this task.")
+    @OneToOne
+    @JoinColumn(name = "designer_id")
     private User designer;
 
-    @NotNull(message = "Task status cannot be null")
     @Enumerated(EnumType.STRING)
     private TaskStatus taskStatus = TaskStatus.PENDING;
 
@@ -42,7 +41,6 @@ public class Task {
     @ManyToOne(cascade = CascadeType.ALL)
     private TaskFeedback taskFeedback;
 
-    @NotNull(message = "Working time has to be set.")
     @ManyToOne(cascade = CascadeType.ALL)
     private WorkingTime workingTime;
 

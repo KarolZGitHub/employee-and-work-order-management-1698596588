@@ -4,14 +4,13 @@ import com.employee.employeeandworkordermanagement.data.TaskStatus;
 import com.employee.employeeandworkordermanagement.entity.Task;
 import com.employee.employeeandworkordermanagement.entity.WorkingTime;
 import com.employee.employeeandworkordermanagement.repository.WorkingTimeRepository;
-import com.employee.employeeandworkordermanagement.user.User;
+import com.employee.employeeandworkordermanagement.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -81,11 +80,11 @@ public class WorkingTimeService {
         return workingTimeRepository.findAll(pageable);
     }
 
-    public void initializeWorkingTime(Task task) {
-        WorkingTime workingTime = new WorkingTime();
-        workingTime.setTask(task);
-        workingTime.setUser(task.getDesigner());
-        workingTime.setCreatedAt(Instant.now());
-        workingTimeRepository.save(workingTime);
-    }
+//    public void initializeWorkingTime(Task task) {
+//        WorkingTime workingTime = new WorkingTime();
+//        workingTime.setTask(task);
+//        workingTime.setUser(task.getDesigner());
+//        workingTime.setCreatedAt(Instant.now());
+//        workingTimeRepository.save(workingTime);
+//    }
 }

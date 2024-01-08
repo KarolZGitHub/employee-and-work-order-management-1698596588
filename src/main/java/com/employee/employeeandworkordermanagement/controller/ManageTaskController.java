@@ -2,9 +2,10 @@ package com.employee.employeeandworkordermanagement.controller;
 
 import com.employee.employeeandworkordermanagement.dto.UserDTO;
 import com.employee.employeeandworkordermanagement.entity.Task;
+import com.employee.employeeandworkordermanagement.entity.User;
 import com.employee.employeeandworkordermanagement.service.TaskService;
 import com.employee.employeeandworkordermanagement.service.UserService;
-import com.employee.employeeandworkordermanagement.user.User;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -34,10 +35,22 @@ public class ManageTaskController {
             return null;
         }
     }
+
     @GetMapping("/add")
     public String showAddTaskForm(Task task, Model model) {
         model.addAttribute("task", task);
         return "task/addTaskForm";
+    }
+
+    @PostMapping("/add")
+    public String handleAddTaskForm(@Valid Task task, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("errorList", bindingResult.getAllErrors());
+            return "error/error";
+        }
+        taskService.createTask(task);
+        model.addAttribute("message","Task has been successfully created.");
+        return "task/taskHasBeenCreated";
     }
 
     @GetMapping("/edit-task")
@@ -47,39 +60,39 @@ public class ManageTaskController {
         return "task/editTask";
     }
 
-    @PostMapping("/edit-task")
-    public String handleEditTask(@RequestParam Long id, Task task, BindingResult bindingResult, Model model,
-                                 Authentication authentication) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("errorList", bindingResult.getAllErrors());
-            return "error/error";
-        }
-        taskService.editTask(task, authentication);
-        return "redirect:/task/all-tasks";
-    }
+//    @PostMapping("/edit-task")
+//    public String handleEditTask(@RequestParam Long id, Task task, BindingResult bindingResult, Model model,
+//                                 Authentication authentication) {
+//        if (bindingResult.hasErrors()) {
+//            model.addAttribute("errorList", bindingResult.getAllErrors());
+//            return "error/error";
+//        }
+//        taskService.editTask(task, authentication);
+//        return "redirect:/task/all-tasks";
+//    }
 
-    @GetMapping("/delete-task")
-    public String deleteTask(@RequestParam(name = "id") Long id, Authentication authentication) {
-        taskService.deleteTask(taskService.findById(id), authentication);
-        return "redirect:/task/all-tasks";
-    }
+//    @GetMapping("/delete-task")
+//    public String deleteTask(@RequestParam(name = "id") Long id, Authentication authentication) {
+//        taskService.deleteTask(taskService.findById(id), authentication);
+//        return "redirect:/task/all-tasks";
+//    }
 
-    @GetMapping("/close-task")
-    public String closeTask(@RequestParam(name = "id") Long id, Authentication authentication) {
-        taskService.closeTask(taskService.findById(id), authentication);
-        return "redirect:/task/all-tasks";
-    }
+//    @GetMapping("/close-task")
+//    public String closeTask(@RequestParam(name = "id") Long id, Authentication authentication) {
+//        taskService.closeTask(taskService.findById(id), authentication);
+//        return "redirect:/task/all-tasks";
+//    }
 
-    @GetMapping("/archive-task")
-    public String archiveTask(@RequestParam(name = "id") Long id) {
-        Task task = taskService.findById(id);
-        taskService.archiveTask(task);
-        return "redirect:/task/archived-tasks";
-    }
-    @GetMapping("/activate-task")
-    private String activateTask(@RequestParam(name="id")Long id){
-        Task task = taskService.findById(id);
-        taskService.setTaskToActive(task);
-        return "redirect:/task/all-tasks";
-    }
+    //    @GetMapping("/archive-task")
+//    public String archiveTask(@RequestParam(name = "id") Long id) {
+//        Task task = taskService.findById(id);
+//        taskService.archiveTask(task);
+//        return "redirect:/task/archived-tasks";
+//    }
+//    @GetMapping("/activate-task")
+//    private String activateTask(@RequestParam(name = "id") Long id) {
+//        Task task = taskService.findById(id);
+//        taskService.setTaskToActive(task);
+//        return "redirect:/task/all-tasks";
+//    }
 }

@@ -2,7 +2,7 @@ package com.employee.employeeandworkordermanagement.event.listener;
 
 import com.employee.employeeandworkordermanagement.event.ResetPasswordEvent;
 import com.employee.employeeandworkordermanagement.service.UserService;
-import com.employee.employeeandworkordermanagement.user.User;
+import com.employee.employeeandworkordermanagement.entity.User;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
