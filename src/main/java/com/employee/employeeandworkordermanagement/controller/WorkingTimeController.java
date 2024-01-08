@@ -39,7 +39,6 @@ public class WorkingTimeController {
     ) {
         User theUser = userService.findByEmail(authentication.getName()).orElseThrow(()->
                 new ResponseStatusException(HttpStatus.NOT_FOUND,"User has not been found."));
-        workingTimeService.updateWorkingTime(workingTimeService.findAll());
         model.addAttribute("sortField", sortField);
         Page<WorkingTime> workingTimePage = workingTimeService.getUserSortedWorkingTimePage(page, direction, sortField,theUser);
         model.addAttribute("workingTimePage", workingTimePage);
@@ -51,7 +50,6 @@ public class WorkingTimeController {
                                           @RequestParam(required = false, defaultValue = "id") String sortField,
                                           Model model
     ) {
-        workingTimeService.updateWorkingTime(workingTimeService.findAll());
         model.addAttribute("sortField", sortField);
         Page<WorkingTime> workingTimePage = workingTimeService.getAllSortedWorkingTimePage(page, direction, sortField);
         model.addAttribute("workingTimePage", workingTimePage);
@@ -66,7 +64,7 @@ public class WorkingTimeController {
         if (!workingTime.getUser().equals(user)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not right user.");
         }
-        workingTimeService.startWorking(workingTime,authentication);
+        workingTimeService.startWorking(workingTime);
         return "redirect:/work/work-list";
     }
 

@@ -5,6 +5,7 @@ import com.employee.employeeandworkordermanagement.entity.Task;
 import com.employee.employeeandworkordermanagement.repository.TaskRepository;
 import com.employee.employeeandworkordermanagement.user.User;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.CloseableThreadContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
@@ -38,13 +40,12 @@ public class TaskService {
         messageService.notifyDesignerIfAssignedToTask(task.getDesigner(), userService.findByEmail(authentication.getName()).get(),
                 task);
         taskRepository.save(task);
-        taskFeedbackService.initializeFeedback(task);
     }
 
     public void editTask(Task task, Authentication authentication) {
         messageService.notifyDesignerIfTaskIsEdited(task.getDesigner(), userService.findByEmail(authentication.getName()).get(),
                 task);
-        task.setEditedAt(new Date());
+        task.setEditedAt(Instant.now());
         taskRepository.save(task);
     }
 

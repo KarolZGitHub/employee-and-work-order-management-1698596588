@@ -15,8 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.*;
 import java.util.List;
 
 @Service
@@ -27,68 +26,47 @@ public class WorkingTimeService {
 
     public WorkingTime findById(Long id) {
         return workingTimeRepository.findById(id).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "Working day has not been found."));
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "Working time has not been found."));
     }
 
-    public void startWorking(WorkingTime workingTime, Authentication authentication) {
-        User user = userService.findByEmail(authentication.getName()).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not been found."));
-        List<WorkingTime> workingTimeList = workingTimeRepository.findAllByUser(user);
-        if (workingTimeList.stream().anyMatch(WorkingTime::isWorking)) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT, "There cannot be more than one work in progress");
-        }
+    public void startWorking(WorkingTime workingTime) {
         if (workingTime.getTask().getTaskStatus() == TaskStatus.CLOSED) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, workingTime.getTask().getTaskName() + " is closed.");
         }
-        if (workingTime.isWorking()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "This is already active.");
-        }
-        workingTime.setWorkStarted(new Date());
-        workingTime.setCurrentWorkingTime(0L);
-        workingTime.setWorking(true);
+        workingTime.setWorkStarted(Instant.now());
         workingTimeRepository.save(workingTime);
     }
 
     public void stopWorking(WorkingTime workingTime) {
-        if (!workingTime.isWorking()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "This is already inactive.");
-        }
-        workingTime.setOverallWorkingTime(workingTime.getOverallWorkingTime() +
-                (new Date().getTime() - workingTime.getWorkStarted().getTime()));
-        workingTime.setWorking(false);
-        workingTime.setCurrentWorkingTime(0L);
+        workingTime.setWorkFinished(Instant.now());
         workingTimeRepository.save(workingTime);
     }
 
     public void createWorkDay(User user) {
         List<WorkingTime> workingTimes = workingTimeRepository.findAllByUser(user);
         boolean isWorkingDayExist = workingTimes.stream()
-                .anyMatch(day -> isSameDay(day.getCreatedAt(), new Date()));
+                .anyMatch(day -> isSameDay(day.getCreatedAt(), Instant.now()));
         if (isWorkingDayExist) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "This working day already exists");
         } else {
             WorkingTime workingTime = new WorkingTime();
             workingTime.setUser(user);
-            workingTime.setCreatedAt(new Date());
-            workingTime.setCurrentWorkingTime(0L);
-            workingTime.setOverallWorkingTime(0L);
-            workingTime.setUser(user);
-            workingTime.setWorking(false);
+            workingTime.setCreatedAt(Instant.now());
             workingTimeRepository.save(workingTime);
         }
     }
 
-    private boolean isSameDay(Date date1, Date date2) {
-        Calendar cal1 = Calendar.getInstance();
-        cal1.setTime(date1);
+    public Duration calculateTotalWorkingTime(WorkingTime workingTime) {
+        if (workingTime.getWorkStarted() == null || workingTime.getWorkFinished() == null) {
+            return Duration.ZERO;
+        }
+        return Duration.between(workingTime.getWorkStarted(), workingTime.getWorkFinished());
+    }
 
-        Calendar cal2 = Calendar.getInstance();
-        cal2.setTime(date2);
-
-        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
-                cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH) &&
-                cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH);
+    private boolean isSameDay(Instant instant1, Instant instant2) {
+        LocalDate date1 = LocalDateTime.ofInstant(instant1, ZoneId.systemDefault()).toLocalDate();
+        LocalDate date2 = LocalDateTime.ofInstant(instant2, ZoneId.systemDefault()).toLocalDate();
+        return date1.equals(date2);
     }
 
     public Page<WorkingTime> getUserSortedWorkingTimePage(int page, String direction, String sortField, User user) {
@@ -103,28 +81,11 @@ public class WorkingTimeService {
         return workingTimeRepository.findAll(pageable);
     }
 
-    public void updateWorkingFunction(WorkingTime workingTime) {
-        long duration = new Date().getTime() - workingTime.getWorkStarted().getTime();
-        workingTime.setCurrentWorkingTime(duration);
-        workingTimeRepository.save(workingTime);
-    }
-
-    public void updateWorkingTime(List<WorkingTime> workingTimeList) {
-        workingTimeList.stream().filter(workingTime -> workingTime.isWorking()).forEach((workingTime -> updateWorkingFunction(workingTime)));
-    }
-
-    public List<WorkingTime> findAll() {
-        return workingTimeRepository.findAll();
-    }
-
     public void initializeWorkingTime(Task task) {
         WorkingTime workingTime = new WorkingTime();
-        workingTime.setWorkStarted(new Date());
         workingTime.setTask(task);
-        workingTime.setWorking(false);
-        workingTime.setCurrentWorkingTime(0L);
-        workingTime.setOverallWorkingTime(0L);
         workingTime.setUser(task.getDesigner());
+        workingTime.setCreatedAt(Instant.now());
         workingTimeRepository.save(workingTime);
     }
 }

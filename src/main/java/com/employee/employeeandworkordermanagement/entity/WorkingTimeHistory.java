@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.Instant;
 
 @Entity
 @Data
@@ -14,15 +14,21 @@ public class WorkingTimeHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date workStarted;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date workFinished;
-    @NotNull(message = "Overall working time value cannot be empty.")
-    private Long overallWorkingTime;
+
+    private Instant createdAt;
+    private Instant workStarted;
+    private Instant workFinished;
+
     @NotNull(message = "User has to be set.")
     @ManyToOne
     private User user;
+
+    @NotNull(message = "Task has to be set.")
+    @ManyToOne
+    private Task task;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = Instant.now();
+    }
 }

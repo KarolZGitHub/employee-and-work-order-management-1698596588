@@ -23,8 +23,7 @@ public class TaskFeedback {
     @NotNull(message = "Task feedback has to be set to task.")
     @NotNull(message = "Status cannot be null")
     private boolean isSet;
-    @OneToOne(orphanRemoval = true)
-    @JoinColumn(name = "task_id", referencedColumnName = "id")
+    @ManyToOne
     private Task task;
 
     @PrePersist

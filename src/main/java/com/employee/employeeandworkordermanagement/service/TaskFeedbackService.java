@@ -17,11 +17,4 @@ public class TaskFeedbackService {
         taskFeedback.setDifficulty(feedbackRequest.getDifficulty());
         taskFeedbackRepository.save(taskFeedback);
     }
-    public void initializeFeedback(Task task){
-        TaskFeedback taskFeedback = new TaskFeedback();
-        taskFeedback.setDifficulty(1);
-        taskFeedback.setFeedback("Not set yet.");
-        taskFeedback.setTask(task);
-        taskFeedbackRepository.save(taskFeedback);
-    }
 }
