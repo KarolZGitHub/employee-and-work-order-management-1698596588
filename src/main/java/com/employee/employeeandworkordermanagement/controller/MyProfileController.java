@@ -1,13 +1,13 @@
 package com.employee.employeeandworkordermanagement.controller;
 
 import com.employee.employeeandworkordermanagement.dto.UserDTO;
+import com.employee.employeeandworkordermanagement.entity.User;
 import com.employee.employeeandworkordermanagement.event.ChangeEmailEvent;
 import com.employee.employeeandworkordermanagement.password.PasswordResetProcess;
 import com.employee.employeeandworkordermanagement.profile.ChangeEmailRequest;
 import com.employee.employeeandworkordermanagement.profile.ChangeFirstOrLastName;
 import com.employee.employeeandworkordermanagement.service.ChangeEmailResetTokenService;
 import com.employee.employeeandworkordermanagement.service.UserService;
-import com.employee.employeeandworkordermanagement.entity.User;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -101,7 +101,7 @@ public class MyProfileController {
 
     @GetMapping("/email-change-request")
     public String showEmailChangeForm(Authentication authentication, final HttpServletRequest request) {
-        User user = userService.findOptionalUserByEmail(authentication.getName()).get();
+        User user = userService.findUserByEmail(authentication.getName());
         publisher.publishEvent(new ChangeEmailEvent(user, applicationUrl(request)));
         return "myProfile/emailTokenSent";
     }
@@ -134,7 +134,7 @@ public class MyProfileController {
             return "error/emailTaken";
         }
         if (changeEmailRequest.getEmail().equals(changeEmailRequest.getConfirmEmail())) {
-            User user = userService.findOptionalUserByEmail(authentication.getName()).get();
+            User user = userService.findUserByEmail(authentication.getName());
             userService.saveEmailForUser(user, changeEmailRequest.getEmail());
             return "redirect:/logout";
         } else {

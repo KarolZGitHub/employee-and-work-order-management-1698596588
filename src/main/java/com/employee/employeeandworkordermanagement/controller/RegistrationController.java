@@ -71,7 +71,7 @@ public class RegistrationController {
             return "/password/resetPasswordRequest";
         }
         if (authentication.isAuthenticated()) {
-            UserDTO userDTO = userService.convertUserToUserDTO(userService.findOptionalUserByEmail(authentication.getName()).get());
+            UserDTO userDTO = userService.convertUserToUserDTO(userService.findUserByEmail(authentication.getName()));
             model.addAttribute("user", userDTO);
         }
         model.addAttribute("passwordResetRequest", new PasswordResetRequest());
