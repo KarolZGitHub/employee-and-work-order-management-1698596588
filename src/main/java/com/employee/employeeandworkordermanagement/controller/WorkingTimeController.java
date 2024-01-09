@@ -37,7 +37,7 @@ public class WorkingTimeController {
                                       Model model,
                                       Authentication authentication
     ) {
-        User theUser = userService.findByEmail(authentication.getName()).orElseThrow(()->
+        User theUser = userService.findOptionalUserByEmail(authentication.getName()).orElseThrow(()->
                 new ResponseStatusException(HttpStatus.NOT_FOUND,"User has not been found."));
         model.addAttribute("sortField", sortField);
         Page<WorkingTime> workingTimePage = workingTimeService.getUserSortedWorkingTimePage(page, direction, sortField,theUser);
@@ -58,7 +58,7 @@ public class WorkingTimeController {
 
     @GetMapping("start-work/{id}")
     public String handleStartWork(@PathVariable Long id, Authentication authentication) {
-        User user = userService.findByEmail(authentication.getName()).orElseThrow(() ->
+        User user = userService.findOptionalUserByEmail(authentication.getName()).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not been found."));
         WorkingTime workingTime = workingTimeService.findById(id);
         if (!workingTime.getUser().equals(user)) {
@@ -70,7 +70,7 @@ public class WorkingTimeController {
 
     @GetMapping("finish-work/{id}")
     public String handleStopWork(@PathVariable Long id, Authentication authentication) {
-        User user = userService.findByEmail(authentication.getName()).orElseThrow(() ->
+        User user = userService.findOptionalUserByEmail(authentication.getName()).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not been found."));
         WorkingTime workingTime = workingTimeService.findById(id);
         if (!workingTime.getUser().equals(user)) {

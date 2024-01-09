@@ -15,7 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findById(long id);
 
-    List<User> findByRole(Role role);
+    List<User> findByAssignedTaskIsNull();
 
     Page<User> findByRole(Role role, Pageable pageable);
 }

@@ -2,19 +2,24 @@ package com.employee.employeeandworkordermanagement.controller;
 
 import com.employee.employeeandworkordermanagement.data.Role;
 import com.employee.employeeandworkordermanagement.dto.UserDTO;
+import com.employee.employeeandworkordermanagement.entity.Task;
 import com.employee.employeeandworkordermanagement.entity.User;
 import com.employee.employeeandworkordermanagement.service.TaskFeedbackService;
 import com.employee.employeeandworkordermanagement.service.TaskService;
 import com.employee.employeeandworkordermanagement.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -36,7 +41,7 @@ public class TaskController {
     @ModelAttribute("blockDesignerView")
     public boolean blockDesignerAccess(Authentication authentication) {
         if (authentication != null) {
-            User user = userService.findByEmail(authentication.getName()).orElseThrow(
+            User user = userService.findOptionalUserByEmail(authentication.getName()).orElseThrow(
                     () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not been found"));
             if (user.getRole().equals(Role.ADMIN) || user.getRole().equals(Role.OPERATOR)) {
                 return true;
@@ -45,22 +50,17 @@ public class TaskController {
             return false;
         }
     }
-
-    @ModelAttribute("designers")
-    public List<User> getDesigners() {
-        return userService.getDesigners();
+    @GetMapping("/all-tasks")
+    public String showAllTasks(@RequestParam(required = false, defaultValue = "0") int page,
+                               @RequestParam(required = false, defaultValue = "asc") String direction,
+                               @RequestParam(required = false, defaultValue = "id") String sortField,
+                               Model model) {
+        model.addAttribute("sortField", sortField);
+        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortField);
+        Page<Task> taskPage = taskService.getUnarchivedTasksPage(PageRequest.of(page, 50, sort));
+        model.addAttribute("taskPage", taskPage);
+        return "task/tasks";
     }
-
-//    @GetMapping("/all-tasks")
-//    public String showAllTasks(@RequestParam(required = false, defaultValue = "0") int page,
-//                               @RequestParam(required = false, defaultValue = "asc") String direction,
-//                               @RequestParam(required = false, defaultValue = "id") String sortField,
-//                               Model model) {
-//        model.addAttribute("sortField", sortField);
-//        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortField);
-//        Page<Task> taskPage = taskService.getUnarchivedPage(PageRequest.of(page, 50, sort));
-//        model.addAttribute("taskPage", taskPage);
-//        return "task/tasks";
 }
 
 //    @GetMapping("/archived-tasks")

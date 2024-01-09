@@ -21,13 +21,12 @@
                    class="form-text text-danger"></small>
         </div>
         <div class="form-group">
-            <label for="designer">Designers:</label>
-            <select class="form-control" id="designer" name="designer" th:field="*{designer}" required>
-                <option th:each="designer : ${designers}" th:value="${task.designer.id}"
-                        th:text="${designer.firstName}"></option>
+            <label for="designer">Designer:</label>
+            <select class="form-control" id="designer" name="designer" th:field="*{designer.id}" required>
+                <option th:each="designer : ${availableDesigners}" th:value="${designer.id}"
+                        th:selected="${designer.id == task.designer.id}"
+                        th:text="${designer.firstName + ' ' + designer.lastName}"></option>
             </select>
-            <small th:if="${#fields.hasErrors('designer')}" class="form-text text-danger"
-                   th:errors="designers"></small>
             <button class="btn btn-primary" onclick="return confirm('Are you sure you want to edit?')">Edit</button>
         </div>
     </form>

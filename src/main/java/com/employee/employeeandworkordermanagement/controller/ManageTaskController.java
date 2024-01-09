@@ -22,9 +22,9 @@ public class ManageTaskController {
     private final TaskService taskService;
     private final UserService userService;
 
-    @ModelAttribute("designers")
-    public List<User> getDesigners() {
-        return userService.getDesigners();
+    @ModelAttribute("availableDesigners")
+    public List<User> getAvailableDesigners() {
+        return userService.getAvailableDesigners();
     }
 
     @ModelAttribute("user")
@@ -43,33 +43,34 @@ public class ManageTaskController {
     }
 
     @PostMapping("/add")
-    public String handleAddTaskForm(@Valid Task task, BindingResult bindingResult, Model model) {
+    public String handleAddTaskForm(@Valid Task task, BindingResult bindingResult, Model model,
+                                    Authentication authentication) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("errorList", bindingResult.getAllErrors());
             return "error/error";
         }
-        taskService.createTask(task);
-        model.addAttribute("message","Task has been successfully created.");
+        taskService.createTask(task, authentication);
+        model.addAttribute("message", "Task has been successfully created.");
         return "task/taskHasBeenCreated";
     }
 
     @GetMapping("/edit-task")
-    public String editTaskDetails(@RequestParam Long id, Model model) {
+    public String showEditTaskForm(@RequestParam Long id, Model model) {
         Task task = taskService.findById(id);
         model.addAttribute("task", task);
         return "task/editTask";
     }
 
-//    @PostMapping("/edit-task")
-//    public String handleEditTask(@RequestParam Long id, Task task, BindingResult bindingResult, Model model,
-//                                 Authentication authentication) {
-//        if (bindingResult.hasErrors()) {
-//            model.addAttribute("errorList", bindingResult.getAllErrors());
-//            return "error/error";
-//        }
-//        taskService.editTask(task, authentication);
-//        return "redirect:/task/all-tasks";
-//    }
+    @PostMapping("/edit-task")
+    public String handleEditTask(@RequestParam Long id, @Valid Task task, BindingResult bindingResult,
+                                 Model model, Authentication authentication) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("errorList", bindingResult.getAllErrors());
+            return "error/error";
+        }
+        taskService.editTask(id, task, authentication);
+        return "redirect:/task/all-tasks";
+    }
 
 //    @GetMapping("/delete-task")
 //    public String deleteTask(@RequestParam(name = "id") Long id, Authentication authentication) {

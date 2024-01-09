@@ -35,7 +35,7 @@ public class DesignerController {
     @ModelAttribute("adminOrOperator")
     public boolean isAdminOrOperator(Authentication authentication) {
         if (authentication != null) {
-            User user = userService.findByEmail(authentication.getName()).orElseThrow(
+            User user = userService.findOptionalUserByEmail(authentication.getName()).orElseThrow(
                     () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not been found"));
             if (user.getRole().equals(Role.ADMIN) || user.getRole().equals(Role.OPERATOR)) {
                 return true;

@@ -2,8 +2,8 @@ package com.employee.employeeandworkordermanagement.service;
 
 import com.employee.employeeandworkordermanagement.entity.Message;
 import com.employee.employeeandworkordermanagement.entity.Task;
-import com.employee.employeeandworkordermanagement.repository.MessageRepository;
 import com.employee.employeeandworkordermanagement.entity.User;
+import com.employee.employeeandworkordermanagement.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -63,5 +63,18 @@ public class MessageService {
     public Message findById(Long id) {
         return messageRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                 "Message has not been found."));
+    }
+
+    public void notifyChangeDesignerInTask(User previousUser, User currentUser, User sender, Task task) {
+        Message messageToPrevious = new Message();
+        messageToPrevious.setContent("You are not assigned to task " + task.getTaskName() + " anymore.");
+        messageToPrevious.setSender(sender);
+        messageToPrevious.setReceiver(previousUser);
+        messageRepository.save(messageToPrevious);
+        Message messageToCurrent = new Message();
+        messageToCurrent.setReceiver(currentUser);
+        messageToCurrent.setSender(sender);
+        messageToCurrent.setContent("You are now assigned to task " + task.getTaskName() + ".");
+        messageRepository.save(messageToCurrent);
     }
 }

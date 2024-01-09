@@ -27,7 +27,7 @@
             <label for="designer">Assigned Designer:</label>
             <select class="form-control" id="designer" name="designer" th:field="*{designer}" required>
                 <option value="" th:unless="${designers}">Select a designer</option>
-                <option th:each="designer : ${designers}" th:value="${designer.id}"
+                <option th:each="designer : ${availableDesigners}" th:value="${designer.id}"
                         th:text="${designer.firstName + ' ' + designer.lastName}"></option>
             </select>
             <small th:if="${#fields.hasErrors('designer')}" th:errors="*{designer}"

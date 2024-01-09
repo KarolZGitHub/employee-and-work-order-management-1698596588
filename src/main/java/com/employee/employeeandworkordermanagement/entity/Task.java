@@ -33,7 +33,7 @@ public class Task {
     private User designer;
 
     @Enumerated(EnumType.STRING)
-    private TaskStatus taskStatus = TaskStatus.PENDING;
+    private TaskStatus taskStatus;
 
     private Instant createdAt;
     private Instant editedAt;
