@@ -31,8 +31,8 @@ public class TaskService {
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Task has not been found."));
     }
 
-    public Page<Task> getUnarchivedTasksPage(PageRequest pageRequest) {
-        return taskRepository.findAllByTaskStatusNot(TaskStatus.ARCHIVED, pageRequest);
+    public Page<Task> getAllTasksPage(PageRequest pageRequest) {
+        return taskRepository.findAll(pageRequest);
     }
 
     public void editTask(Long id, Task updatedTask, Authentication authentication) {

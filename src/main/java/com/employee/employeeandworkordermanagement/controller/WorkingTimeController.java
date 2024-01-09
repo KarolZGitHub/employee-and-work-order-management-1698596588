@@ -56,17 +56,17 @@ public class WorkingTimeController {
         return "workingTime/workingTimeList";
     }
 
-    @GetMapping("start-work/{id}")
-    public String handleStartWork(@PathVariable Long id, Authentication authentication) {
-        User user = userService.findOptionalUserByEmail(authentication.getName()).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not been found."));
-        WorkingTime workingTime = workingTimeService.findById(id);
-        if (!workingTime.getUser().equals(user)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not right user.");
-        }
-        workingTimeService.startWorking(workingTime);
-        return "redirect:/work/work-list";
-    }
+//    @GetMapping("start-work/{id}")
+//    public String handleStartWork(@PathVariable Long id, Authentication authentication) {
+//        User user = userService.findOptionalUserByEmail(authentication.getName()).orElseThrow(() ->
+//                new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not been found."));
+//        WorkingTime workingTime = workingTimeService.findById(id);
+//        if (!workingTime.getUser().equals(user)) {
+//            throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not right user.");
+//        }
+//        workingTimeService.startWorking(workingTime);
+//        return "redirect:/work/work-list";
+//    }
 
     @GetMapping("finish-work/{id}")
     public String handleStopWork(@PathVariable Long id, Authentication authentication) {

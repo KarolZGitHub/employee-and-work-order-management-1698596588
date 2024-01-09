@@ -28,13 +28,13 @@ public class WorkingTimeService {
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Working time has not been found."));
     }
 
-    public void startWorking(WorkingTime workingTime) {
-        if (workingTime.getTask().getTaskStatus() == TaskStatus.CLOSED) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, workingTime.getTask().getTaskName() + " is closed.");
-        }
-        workingTime.setWorkStarted(Instant.now());
-        workingTimeRepository.save(workingTime);
-    }
+//    public void startWorking(WorkingTime workingTime) {
+//        if (workingTime.getTask().getTaskStatus() == TaskStatus.CLOSED) {
+//            throw new ResponseStatusException(HttpStatus.CONFLICT, workingTime.getTask().getTaskName() + " is closed.");
+//        }
+//        workingTime.setWorkStarted(Instant.now());
+//        workingTimeRepository.save(workingTime);
+//    }
 
     public void stopWorking(WorkingTime workingTime) {
         workingTime.setWorkFinished(Instant.now());
