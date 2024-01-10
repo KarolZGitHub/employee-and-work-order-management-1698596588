@@ -50,6 +50,7 @@ public class TaskController {
             return false;
         }
     }
+
     @GetMapping("/all-tasks")
     public String showAllTasks(@RequestParam(required = false, defaultValue = "0") int page,
                                @RequestParam(required = false, defaultValue = "asc") String direction,
@@ -60,6 +61,13 @@ public class TaskController {
         Page<Task> taskPage = taskService.getAllTasksPage(PageRequest.of(page, 50, sort));
         model.addAttribute("taskPage", taskPage);
         return "task/tasks";
+    }
+
+    @GetMapping("/complete-task")
+    public String completeTask(@RequestParam(name = "id") Long id, Model model,Authentication authentication) {
+        taskService.markTaskAsComplete(id,authentication);
+        model.addAttribute("message", "Congratulations, you have marked task as completed.");
+        return "/task/taskCompleted";
     }
 }
 

@@ -6,6 +6,7 @@ import com.employee.employeeandworkordermanagement.entity.User;
 import com.employee.employeeandworkordermanagement.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -15,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MessageService {
     private final MessageRepository messageRepository;
+    private final UserService userService;
 
     public void saveMessage(Message message) {
         messageRepository.save(message);
@@ -26,6 +28,7 @@ public class MessageService {
 
     public void notifyDesignerIfAssignedToTask(User designer, User sender, Task task) {
         Message message = new Message();
+        message.setTitle("Task assignment.");
         message.setContent("You are assigned to task " + task.getTaskName() + ".");
         message.setReceiver(designer);
         message.setSender(sender);
@@ -34,15 +37,8 @@ public class MessageService {
 
     public void notifyDesignerIfTaskIsEdited(User designer, User sender, Task task) {
         Message message = new Message();
+        message.setTitle("Changes in " + task.getTaskName() + ".");
         message.setContent(task.getTaskName() + " has been edited");
-        message.setReceiver(designer);
-        message.setSender(sender);
-        messageRepository.save(message);
-    }
-
-    public void notifyDesignerIfClosedTask(User designer, User sender, Task task) {
-        Message message = new Message();
-        message.setContent(task.getTaskName() + " has been closed");
         message.setReceiver(designer);
         message.setSender(sender);
         messageRepository.save(message);
@@ -50,6 +46,7 @@ public class MessageService {
 
     public void notifyDesignerIfTaskIsDeleted(User designer, User sender, Task task) {
         Message message = new Message();
+        message.setTitle("Task deletion.");
         message.setContent(task.getTaskName() + " has been deleted");
         message.setReceiver(designer);
         message.setSender(sender);
@@ -67,14 +64,25 @@ public class MessageService {
 
     public void notifyChangeDesignerInTask(User previousUser, User currentUser, User sender, Task task) {
         Message messageToPrevious = new Message();
+        messageToPrevious.setTitle("Task assignment.");
         messageToPrevious.setContent("You are not assigned to task " + task.getTaskName() + " anymore.");
         messageToPrevious.setSender(sender);
         messageToPrevious.setReceiver(previousUser);
         messageRepository.save(messageToPrevious);
         Message messageToCurrent = new Message();
+        messageToCurrent.setTitle("Task assignment.");
         messageToCurrent.setReceiver(currentUser);
         messageToCurrent.setSender(sender);
         messageToCurrent.setContent("You are now assigned to task " + task.getTaskName() + ".");
         messageRepository.save(messageToCurrent);
+    }
+
+    public void notifyOperatorThatTaskIsCompleted(User operator, User sender,Task task) {
+        Message message = new Message();
+        message.setTitle("Task completed");
+        message.setContent("Task " + task.getTaskName() + " has been completed.");
+        message.setSender(sender);
+        message.setReceiver(operator);
+        messageRepository.save(message);
     }
 }

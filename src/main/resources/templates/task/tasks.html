@@ -60,8 +60,7 @@
                    th:href="@{'/edit/activate-task?id=' + ${task.id}}"
                    class="btn btn-primary" onclick="return confirm('Are you sure you want to activate this task?')"
                 >Activate Task</a>
-                <button th:if="${task.taskStatus == T(com.employee.employeeandworkordermanagement.data.TaskStatus).PENDING}
-                                or ${task.taskStatus == T(com.employee.employeeandworkordermanagement.data.TaskStatus).ACTIVE}"
+                <button th:if="${task.taskStatus != T(com.employee.employeeandworkordermanagement.data.TaskStatus).PENDING}"
                         class="btn btn-disabled" disabled>Activate Task
                 </button>
             </td>
@@ -86,9 +85,8 @@
                 task.designer.email == user.email}"
                    th:href="@{'/task/complete-task?id=' + ${task.id}}" class="btn btn-primary"
                    onclick="return confirm('Are you sure you want to mark this task as completed?')">Mark As Done</a>
-                <button
-                        th:if="${task.taskStatus == T(com.employee.employeeandworkordermanagement.data.TaskStatus).DONE
-                or task.taskStatus == T(com.employee.employeeandworkordermanagement.data.TaskStatus).PENDING}"
+                <button th:if="${task.designer.email != user.email or
+                task.taskStatus == T(com.employee.employeeandworkordermanagement.data.TaskStatus).DONE}"
                         class="btn btn-disabled" disabled>Mark As Done
                 </button>
             </td>

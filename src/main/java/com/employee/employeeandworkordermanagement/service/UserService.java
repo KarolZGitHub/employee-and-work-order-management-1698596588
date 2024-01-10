@@ -1,6 +1,7 @@
 package com.employee.employeeandworkordermanagement.service;
 
 import com.employee.employeeandworkordermanagement.data.Role;
+import com.employee.employeeandworkordermanagement.data.TaskStatus;
 import com.employee.employeeandworkordermanagement.dto.UserDTO;
 import com.employee.employeeandworkordermanagement.entity.User;
 import com.employee.employeeandworkordermanagement.exception.UserAlreadyExistsException;
@@ -156,5 +157,7 @@ public class UserService {
     public Page<User> designerPage(PageRequest pageRequest) {
         return userRepository.findByRole(Role.DESIGNER, pageRequest);
     }
-
+    public List<User> getAllOperators(){
+        return userRepository.findAllByRole(Role.OPERATOR);
+    }
 }

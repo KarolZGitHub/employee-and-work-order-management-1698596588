@@ -12,6 +12,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class TaskService {
@@ -47,6 +49,16 @@ public class TaskService {
         task.setTaskName(updatedTask.getTaskName());
         task.setDescription(updatedTask.getDescription());
         task.setDesigner(updatedTask.getDesigner());
+        taskRepository.save(task);
+    }
+
+    public void markTaskAsComplete(Long id, Authentication authentication) {
+        User sender = userService.findUserByEmail(authentication.getName());
+        Task task = taskRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task has not been found."));
+        List<User> operatorsList = userService.getAllOperators();
+        operatorsList.forEach(operator -> messageService.notifyOperatorThatTaskIsCompleted(operator, sender, task));
+        task.setTaskStatus(TaskStatus.DONE);
         taskRepository.save(task);
     }
 }

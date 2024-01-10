@@ -12,6 +12,8 @@ public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotBlank(message = "Title cannot be empty.")
+    private String title;
     @NotBlank(message = "Message cannot be empty.")
     private String content;
     @NotNull(message = "Receiver has to be set.")
