@@ -33,8 +33,30 @@ public class TaskService {
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Task has not been found."));
     }
 
-    public Page<Task> getAllTasksPage(PageRequest pageRequest) {
-        return taskRepository.findAll(pageRequest);
+    public Task findTaskByUser(User designer) {
+        return taskRepository.findByDesigner(designer).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task has not been found."));
+    }
+
+    public Page<Task> getAllUnarchivedTasksPage(PageRequest pageRequest) {
+        return taskRepository.findAllByTaskStatusNot(TaskStatus.ARCHIVED, pageRequest);
+    }
+
+    public Page<Task> getAllArchivedTasksPage(PageRequest pageRequest) {
+        return taskRepository.findAllByTaskStatus(TaskStatus.ARCHIVED, pageRequest);
+    }
+
+    public void archiveTask(Long taskId, Authentication authentication) {
+        Task task = taskRepository.findById(taskId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task has not been found."));
+        if (!task.getTaskStatus().equals(TaskStatus.DONE)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "You cannot archive undone task.");
+        }
+        User sender = userService.findUserByEmail(authentication.getName());
+        List<User> operatorsList = userService.getAllOperators();
+        task.setTaskStatus(TaskStatus.ARCHIVED);
+        operatorsList.forEach(operator -> messageService.notifyOperatorThatTaskIsArchived(operator, sender, task));
+        taskRepository.save(task);
     }
 
     public void editTask(Long id, Task updatedTask, Authentication authentication) {
@@ -59,6 +81,13 @@ public class TaskService {
         List<User> operatorsList = userService.getAllOperators();
         operatorsList.forEach(operator -> messageService.notifyOperatorThatTaskIsCompleted(operator, sender, task));
         task.setTaskStatus(TaskStatus.DONE);
+        taskRepository.save(task);
+    }
+
+    public void setTaskToActive(Long id) {
+        Task task = taskRepository.findById(id).orElseThrow(
+                ()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Task has not been found."));
+        task.setTaskStatus(TaskStatus.ACTIVE);
         taskRepository.save(task);
     }
 }

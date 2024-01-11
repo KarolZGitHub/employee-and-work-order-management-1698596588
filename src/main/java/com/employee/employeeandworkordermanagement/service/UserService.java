@@ -1,7 +1,6 @@
 package com.employee.employeeandworkordermanagement.service;
 
 import com.employee.employeeandworkordermanagement.data.Role;
-import com.employee.employeeandworkordermanagement.data.TaskStatus;
 import com.employee.employeeandworkordermanagement.dto.UserDTO;
 import com.employee.employeeandworkordermanagement.entity.User;
 import com.employee.employeeandworkordermanagement.exception.UserAlreadyExistsException;
@@ -54,9 +53,10 @@ public class UserService {
     public Optional<User> findOptionalUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
-    public User findUserByEmail(String email){
-        return userRepository.findByEmail(email).orElseThrow(()->
-                new ResponseStatusException(HttpStatus.NOT_FOUND,"User has not been found."));
+
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not been found."));
     }
 
     public void saveUserVerificationToken(User theUser, String token) {
@@ -157,7 +157,8 @@ public class UserService {
     public Page<User> designerPage(PageRequest pageRequest) {
         return userRepository.findByRole(Role.DESIGNER, pageRequest);
     }
-    public List<User> getAllOperators(){
+
+    public List<User> getAllOperators() {
         return userRepository.findAllByRole(Role.OPERATOR);
     }
 }

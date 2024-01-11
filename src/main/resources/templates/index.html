@@ -11,7 +11,9 @@
         <h1 th:text="'Welcome to the Employee Manager ' + ${user.firstName}" class="display-4 text-center mt-5"></h1>
 
     </div>
-
+    <div th:if="${user != null}" class="container mt-5">
+        <a th:href="@{/task/your-task}" class="btn btn-primary">Your Task</a>
+    </div>
     <div th:if="${blockDesignerView}" class="container mt-5">
         <a th:href="@{/edit/add}" class="btn btn-primary">Add Task</a>
     </div>
@@ -22,7 +24,7 @@
         <a th:href="@{/task/all-tasks}" class="btn btn-primary">Show All Tasks</a>
     </div>
     <div th:if="${blockDesignerView}" class="container mt-5">
-        <a th:href="@{/task/archived-tasks}" class="btn btn-primary">Show All Archived Tasks</a>
+        <a th:href="@{/edit/archived-tasks}" class="btn btn-primary">Show All Archived Tasks</a>
     </div>
     <div th:if="${user != null}" class="container mt-5">
         <a th:href="@{/work/work-list}" class="btn btn-primary">Show Work List</a>

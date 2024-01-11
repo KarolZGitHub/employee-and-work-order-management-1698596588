@@ -7,6 +7,9 @@ import com.employee.employeeandworkordermanagement.service.TaskService;
 import com.employee.employeeandworkordermanagement.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -72,6 +75,29 @@ public class ManageTaskController {
         return "redirect:/task/all-tasks";
     }
 
+    @GetMapping("/archived-tasks")
+    public String showAllArchivedTasks(@RequestParam(required = false, defaultValue = "0") int page,
+                                       @RequestParam(required = false, defaultValue = "asc") String direction,
+                                       @RequestParam(required = false, defaultValue = "id") String sortField,
+                                       Model model) {
+        model.addAttribute("sortField", sortField);
+        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortField);
+        Page<Task> archivedTaskPage = taskService.getAllArchivedTasksPage(PageRequest.of(
+                page, 50, sort));
+        model.addAttribute("archivedTaskPage", archivedTaskPage);
+        return "task/archivedTasks";
+    }
+    @GetMapping("/archive-task")
+    public String archiveTask(@RequestParam(name = "id") Long id, Authentication authentication) {
+        taskService.archiveTask(id, authentication);
+        return "redirect:/edit/archived-tasks";
+    }
+    @GetMapping("/activate-task")
+    private String activateTask(@RequestParam(name = "id") Long id) {
+        taskService.setTaskToActive(id);
+        return "redirect:/task/all-tasks";
+    }
+
 //    @GetMapping("/delete-task")
 //    public String deleteTask(@RequestParam(name = "id") Long id, Authentication authentication) {
 //        taskService.deleteTask(taskService.findById(id), authentication);
@@ -84,16 +110,6 @@ public class ManageTaskController {
 //        return "redirect:/task/all-tasks";
 //    }
 
-    //    @GetMapping("/archive-task")
-//    public String archiveTask(@RequestParam(name = "id") Long id) {
-//        Task task = taskService.findById(id);
-//        taskService.archiveTask(task);
-//        return "redirect:/task/archived-tasks";
-//    }
-//    @GetMapping("/activate-task")
-//    private String activateTask(@RequestParam(name = "id") Long id) {
-//        Task task = taskService.findById(id);
-//        taskService.setTaskToActive(task);
-//        return "redirect:/task/all-tasks";
-//    }
+
+
 }

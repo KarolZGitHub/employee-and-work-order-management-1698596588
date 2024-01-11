@@ -2,6 +2,7 @@ package com.employee.employeeandworkordermanagement.repository;
 
 import com.employee.employeeandworkordermanagement.data.TaskStatus;
 import com.employee.employeeandworkordermanagement.entity.Task;
+import com.employee.employeeandworkordermanagement.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +16,5 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     Page<Task> findAllByTaskStatus(TaskStatus taskStatus, Pageable pageable);
     Page<Task> findAllByTaskStatusNot(TaskStatus taskStatus,Pageable pageable);
+    Optional<Task> findByDesigner(User designer);
 }

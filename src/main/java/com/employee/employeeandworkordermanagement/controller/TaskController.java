@@ -58,31 +58,26 @@ public class TaskController {
                                Model model) {
         model.addAttribute("sortField", sortField);
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortField);
-        Page<Task> taskPage = taskService.getAllTasksPage(PageRequest.of(page, 50, sort));
+        Page<Task> taskPage = taskService.getAllUnarchivedTasksPage(PageRequest.of(page, 50, sort));
         model.addAttribute("taskPage", taskPage);
         return "task/tasks";
     }
 
     @GetMapping("/complete-task")
-    public String completeTask(@RequestParam(name = "id") Long id, Model model,Authentication authentication) {
-        taskService.markTaskAsComplete(id,authentication);
+    public String completeTask(@RequestParam(name = "id") Long id, Model model, Authentication authentication) {
+        taskService.markTaskAsComplete(id, authentication);
         model.addAttribute("message", "Congratulations, you have marked task as completed.");
         return "/task/taskCompleted";
     }
+
+    @GetMapping("/your-task")
+    public String showSingleTask(Authentication authentication, Model model) {
+        User designer = userService.findUserByEmail(authentication.getName());
+        Task task = taskService.findTaskByUser(designer);
+        model.addAttribute("task", task);
+        return "/task/singleTask";
+    }
 }
-
-//    @GetMapping("/archived-tasks")
-//    public String showAllArchivedTasks(@RequestParam(required = false, defaultValue = "0") int page,
-//                                       @RequestParam(required = false, defaultValue = "asc") String direction,
-//                                       @RequestParam(required = false, defaultValue = "id") String sortField,
-//                                       Model model) {
-//        model.addAttribute("sortField", sortField);
-//        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortField);
-//        Page<Task> archivedTaskPage = taskService.getAllArchivedTasks(PageRequest.of(
-//                page, 50, sort));
-//        model.addAttribute("archivedTaskPage", archivedTaskPage);
-//        return "task/archivedTasks";
-
 
 //    @PostMapping("/task-feedback")
 //    public String handleFeedback(@RequestParam(name = "id") Long id,

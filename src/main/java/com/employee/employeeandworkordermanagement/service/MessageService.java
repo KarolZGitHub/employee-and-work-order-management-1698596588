@@ -6,7 +6,6 @@ import com.employee.employeeandworkordermanagement.entity.User;
 import com.employee.employeeandworkordermanagement.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -77,10 +76,18 @@ public class MessageService {
         messageRepository.save(messageToCurrent);
     }
 
-    public void notifyOperatorThatTaskIsCompleted(User operator, User sender,Task task) {
+    public void notifyOperatorThatTaskIsCompleted(User operator, User sender, Task task) {
         Message message = new Message();
         message.setTitle("Task completed");
         message.setContent("Task " + task.getTaskName() + " has been completed.");
+        message.setSender(sender);
+        message.setReceiver(operator);
+        messageRepository.save(message);
+    }
+    public void notifyOperatorThatTaskIsArchived(User operator, User sender, Task task) {
+        Message message = new Message();
+        message.setTitle("Task archived");
+        message.setContent("Task " + task.getTaskName() + " has been archived.");
         message.setSender(sender);
         message.setReceiver(operator);
         messageRepository.save(message);
