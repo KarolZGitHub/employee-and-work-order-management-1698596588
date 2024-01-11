@@ -87,14 +87,16 @@ public class ManageTaskController {
         model.addAttribute("archivedTaskPage", archivedTaskPage);
         return "task/archivedTasks";
     }
+
     @GetMapping("/archive-task")
     public String archiveTask(@RequestParam(name = "id") Long id, Authentication authentication) {
         taskService.archiveTask(id, authentication);
         return "redirect:/edit/archived-tasks";
     }
+
     @GetMapping("/activate-task")
-    private String activateTask(@RequestParam(name = "id") Long id) {
-        taskService.setTaskToActive(id);
+    private String activateTask(@RequestParam(name = "id") Long id, Authentication authentication) {
+        taskService.setTaskToActive(id, authentication);
         return "redirect:/task/all-tasks";
     }
 
@@ -109,7 +111,6 @@ public class ManageTaskController {
 //        taskService.closeTask(taskService.findById(id), authentication);
 //        return "redirect:/task/all-tasks";
 //    }
-
 
 
 }

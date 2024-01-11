@@ -84,9 +84,11 @@ public class TaskService {
         taskRepository.save(task);
     }
 
-    public void setTaskToActive(Long id) {
+    public void setTaskToActive(Long id, Authentication authentication) {
         Task task = taskRepository.findById(id).orElseThrow(
-                ()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Task has not been found."));
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task has not been found."));
+        User sender = userService.findUserByEmail(authentication.getName());
+        messageService.notifyDesignerThatTaskIsActivated(task.getDesigner(), sender, task);
         task.setTaskStatus(TaskStatus.ACTIVE);
         taskRepository.save(task);
     }
