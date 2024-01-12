@@ -3,6 +3,8 @@ package com.employee.employeeandworkordermanagement.controller;
 import com.employee.employeeandworkordermanagement.dto.UserDTO;
 import com.employee.employeeandworkordermanagement.entity.Task;
 import com.employee.employeeandworkordermanagement.entity.User;
+import com.employee.employeeandworkordermanagement.feedback.FeedbackRequest;
+import com.employee.employeeandworkordermanagement.service.TaskFeedbackService;
 import com.employee.employeeandworkordermanagement.service.TaskService;
 import com.employee.employeeandworkordermanagement.service.UserService;
 import jakarta.validation.Valid;
@@ -16,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.lang.model.element.ModuleElement;
 import java.util.List;
 
 @Controller
@@ -24,6 +27,7 @@ import java.util.List;
 public class ManageTaskController {
     private final TaskService taskService;
     private final UserService userService;
+    private final TaskFeedbackService taskFeedbackService;
 
     @ModelAttribute("availableDesigners")
     public List<User> getAvailableDesigners() {
@@ -89,28 +93,30 @@ public class ManageTaskController {
     }
 
     @GetMapping("/archive-task")
-    public String archiveTask(@RequestParam(name = "id") Long id, Authentication authentication) {
-        taskService.archiveTask(id, authentication);
+    public String archiveTask(@RequestParam(name = "taskId") Long taskId, Authentication authentication) {
+        taskService.archiveTask(taskId, authentication);
         return "redirect:/edit/archived-tasks";
     }
 
     @GetMapping("/activate-task")
-    private String activateTask(@RequestParam(name = "id") Long id, Authentication authentication) {
-        taskService.setTaskToActive(id, authentication);
+    private String activateTask(@RequestParam(name = "taskId") Long taskId, Authentication authentication) {
+        taskService.setTaskToActive(taskId, authentication);
         return "redirect:/task/all-tasks";
     }
-
-//    @GetMapping("/delete-task")
-//    public String deleteTask(@RequestParam(name = "id") Long id, Authentication authentication) {
-//        taskService.deleteTask(taskService.findById(id), authentication);
-//        return "redirect:/task/all-tasks";
-//    }
-
-//    @GetMapping("/close-task")
-//    public String closeTask(@RequestParam(name = "id") Long id, Authentication authentication) {
-//        taskService.closeTask(taskService.findById(id), authentication);
-//        return "redirect:/task/all-tasks";
-//    }
-
-
+    @GetMapping("/set-feedback")
+    public String showFeedbackForm(@RequestParam(name = "id")Long taskId, FeedbackRequest feedbackRequest, Model model){
+        model.addAttribute("id", taskId);
+        model.addAttribute("feedbackRequest", feedbackRequest);
+        return "task/feedbackForm";
+    }
+    @PostMapping("/set-feedback")
+    public String handleFeedbackForm(@RequestParam(name = "id") Long taskId,@Valid FeedbackRequest feedbackRequest,
+                                     BindingResult bindingResult, Model model){
+        if(bindingResult.hasErrors()){
+            model.addAttribute("errorList", bindingResult.getAllErrors());
+            return "error/error";
+        }
+        taskFeedbackService.addFeedback(taskId,feedbackRequest);
+        return "redirect:/task/all-tasks";
+    }
 }

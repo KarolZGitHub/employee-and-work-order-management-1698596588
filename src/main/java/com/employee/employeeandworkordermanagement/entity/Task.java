@@ -37,7 +37,7 @@ public class Task {
     private Instant createdAt;
     private Instant editedAt;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "task", cascade = CascadeType.ALL)
     private TaskFeedback taskFeedback;
 
     @ManyToOne(cascade = CascadeType.ALL)

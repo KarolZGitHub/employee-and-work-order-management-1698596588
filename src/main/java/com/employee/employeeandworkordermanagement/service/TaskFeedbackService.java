@@ -1,5 +1,6 @@
 package com.employee.employeeandworkordermanagement.service;
 
+import com.employee.employeeandworkordermanagement.data.TaskStatus;
 import com.employee.employeeandworkordermanagement.entity.Task;
 import com.employee.employeeandworkordermanagement.entity.TaskFeedback;
 import com.employee.employeeandworkordermanagement.feedback.FeedbackRequest;
@@ -11,10 +12,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TaskFeedbackService {
     private final TaskFeedbackRepository taskFeedbackRepository;
-    public void addFeedback(Task task, FeedbackRequest feedbackRequest){
-        TaskFeedback taskFeedback =task.getTaskFeedback();
+    private final TaskService taskService;
+    public void addFeedback(Long taskId, FeedbackRequest feedbackRequest){
+        Task task = taskService.findById(taskId);
+        TaskFeedback taskFeedback =new TaskFeedback();
+        taskFeedback.setTask(task);
+        taskFeedback.setSet(true);
         taskFeedback.setFeedback(feedbackRequest.getFeedback());
-        taskFeedback.setDifficulty(feedbackRequest.getDifficulty());
+        taskFeedback.setGrade(feedbackRequest.getGrade());
         taskFeedbackRepository.save(taskFeedback);
     }
 }

@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.time.Instant;
+
 @Entity
 @Data
 @Table(name = "task_feedback")
@@ -19,16 +21,19 @@ public class TaskFeedback {
     @NotNull
     @Min(value = 1, message = "Difficulty should be at least 1")
     @Max(value = 10, message = "Difficulty should be at most 10")
-    private Integer difficulty;
+    private Integer grade;
     @NotNull(message = "Task feedback has to be set to task.")
     @NotNull(message = "Status cannot be null")
     private boolean isSet;
-    @ManyToOne
+    @OneToOne
+    @JoinColumn(name = "task_id")
     private Task task;
+    private Instant createdAt;
 
     @PrePersist
     protected void onCreate() {
         isSet = false;
+        createdAt = Instant.now();
     }
 
     @PreUpdate

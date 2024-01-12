@@ -6,16 +6,16 @@
 <body>
 <div class="container mt-5">
     <h2>Archived Task Form</h2>
-    <form th:action="@{'/task/task-feedback?id='+${id}}" th:object="${feedbackRequest}" method="post">
+    <form th:action="@{'/edit/set-feedback?id='+${id}}" th:object="${feedbackRequest}" method="post">
 
         <div class="form-group">
-            <label for="feedback">Feedback:</label>
+            <label for="feedback">Feedback content:</label>
             <input type="text" class="form-control" name="feedback" id="feedback" th:field="*{feedback}" required>
         </div>
 
         <div class="form-group">
-            <label for="difficulty">Difficulty:</label>
-            <select class="form-control" id="difficulty" name="feedback" th:field="*{difficulty}" required>
+            <label for="difficulty">Grade:</label>
+            <select class="form-control" id="difficulty" name="feedback" th:field="*{grade}" required>
                 <option th:each="i : ${#numbers.sequence(1, 10)}" th:value="${i}" th:text="${i}"></option>
             </select>
         </div>
