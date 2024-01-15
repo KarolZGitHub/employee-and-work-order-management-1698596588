@@ -95,6 +95,14 @@ public class MessageService {
     public void notifyDesignerThatTaskIsActivated(User designer, User sender, Task task) {
         Message message = new Message();
         message.setTitle("Task activated");
+        message.setContent("Task " + task.getTaskName() + " has been activated.");
+        message.setSender(sender);
+        message.setReceiver(designer);
+        messageRepository.save(message);
+    }
+    public void notifyDesignerThatTaskIsArchived(User designer, User sender, Task task) {
+        Message message = new Message();
+        message.setTitle("Task archived");
         message.setContent("Task " + task.getTaskName() + " has been archived.");
         message.setSender(sender);
         message.setReceiver(designer);

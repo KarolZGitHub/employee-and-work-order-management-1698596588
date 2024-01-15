@@ -1,9 +1,7 @@
 package com.employee.employeeandworkordermanagement.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,12 +28,12 @@ public class ArchivedTask {
     @OneToOne
     @JoinColumn(name = "designer_id")
     private User designer;
-
     private Instant createdAt;
-
-    @OneToOne(mappedBy = "task", cascade = CascadeType.ALL)
-    private TaskFeedback taskFeedback;
-
+    @NotBlank(message = "Task feedback cannot be blank")
+    private String taskFeedback;
+    @Min(value = 1, message = "Minimum value for grade is 1.")
+    @Max(value = 10, message = "Maximum value for grade is 10.")
+    private int grade;
     private Duration totalWorkingTime;
 
     @PrePersist

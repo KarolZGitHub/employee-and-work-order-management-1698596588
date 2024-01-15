@@ -22,7 +22,6 @@ public class TaskFeedback {
     @Min(value = 1, message = "Difficulty should be at least 1")
     @Max(value = 10, message = "Difficulty should be at most 10")
     private Integer grade;
-    @NotNull(message = "Task feedback has to be set to task.")
     @NotNull(message = "Status cannot be null")
     private boolean isSet;
     @OneToOne
@@ -32,12 +31,7 @@ public class TaskFeedback {
 
     @PrePersist
     protected void onCreate() {
-        isSet = false;
-        createdAt = Instant.now();
-    }
-
-    @PreUpdate
-    private void onUpdate() {
         isSet = true;
+        createdAt = Instant.now();
     }
 }

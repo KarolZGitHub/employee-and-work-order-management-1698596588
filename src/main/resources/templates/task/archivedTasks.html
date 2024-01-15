@@ -33,7 +33,7 @@
             <th>Designer</th>
             <th>Created</th>
             <th>Feedback</th>
-            <th>Difficulty</th>
+            <th>Grade</th>
         </tr>
         </thead>
         <tbody>
@@ -43,10 +43,8 @@
             <td th:text="${archivedTask.description}"></td>
             <td th:text="${archivedTask.designer.firstName} + ' ' + ${archivedTask.designer.lastName}"></td>
             <td th:text="${archivedTask.createdAt}"></td>
-            <td th:if="${archivedTask.taskFeedback == null}">Not set yet.</td>
-            <td th:if="${archivedTask.taskFeedback != null}" th:text="${archivedTask.taskFeedback.feedback}">
-            <td th:if="${archivedTask.taskFeedback == null}">Not set yet.</td>
-            <td th:if="${archivedTask.taskFeedback != null}" th:text="${archivedTask.taskFeedback.difficulty}">
+            <td th:text="${archivedTask.taskFeedback}">
+            <td th:text="${archivedTask.grade}">
             </td>
         </tr>
         </tbody>

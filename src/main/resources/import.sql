@@ -34,7 +34,6 @@ INSERT INTO working_time (createdAt, workStarted, workFinished, currentWorkingTi
 INSERT INTO working_time (createdAt, workStarted, workFinished, currentWorkingTime, overallWorkingTime, isWorking, user_id, task_id) VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL, 0, 0, FALSE, 2, 8);
 INSERT INTO working_time (createdAt, workStarted, workFinished, currentWorkingTime, overallWorkingTime, isWorking, user_id, task_id) VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL, 0, 0, FALSE, 1, 9);
 INSERT INTO working_time (createdAt, workStarted, workFinished, currentWorkingTime, overallWorkingTime, isWorking, user_id, task_id) VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL, 0, 0, FALSE, 2, 10);
-INSERT INTO task_feedback (feedback, grade, isSet, task_id) VALUES ('Good job!', 8, TRUE, 1);
 INSERT INTO task_feedback (feedback, grade, isSet, task_id) VALUES ('Could be better.', 5, TRUE, 2);
 INSERT INTO task_feedback (feedback, grade, isSet, task_id) VALUES ('Excellent work!', 9, TRUE, 3);
 INSERT INTO task_feedback (feedback, grade, isSet, task_id) VALUES ('Satisfactory.', 6, TRUE, 4);

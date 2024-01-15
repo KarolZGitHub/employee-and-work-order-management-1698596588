@@ -2,8 +2,10 @@ package com.employee.employeeandworkordermanagement.controller;
 
 import com.employee.employeeandworkordermanagement.data.Role;
 import com.employee.employeeandworkordermanagement.dto.UserDTO;
+import com.employee.employeeandworkordermanagement.entity.ArchivedTask;
 import com.employee.employeeandworkordermanagement.entity.Task;
 import com.employee.employeeandworkordermanagement.entity.User;
+import com.employee.employeeandworkordermanagement.service.ArchivedTaskService;
 import com.employee.employeeandworkordermanagement.service.TaskFeedbackService;
 import com.employee.employeeandworkordermanagement.service.TaskService;
 import com.employee.employeeandworkordermanagement.service.UserService;
@@ -27,7 +29,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class TaskController {
     private final TaskService taskService;
     private final UserService userService;
-    private final TaskFeedbackService taskFeedbackService;
+    private final ArchivedTaskService archivedTaskService;
 
     @ModelAttribute("user")
     public UserDTO userDTO(Authentication authentication) {
@@ -77,34 +79,16 @@ public class TaskController {
         model.addAttribute("task", task);
         return "/task/singleTask";
     }
+    @GetMapping("/archived-tasks")
+    public String showAllArchivedTasks(@RequestParam(required = false, defaultValue = "0") int page,
+                                       @RequestParam(required = false, defaultValue = "asc") String direction,
+                                       @RequestParam(required = false, defaultValue = "id") String sortField,
+                                       Model model) {
+        model.addAttribute("sortField", sortField);
+        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortField);
+        Page<ArchivedTask> archivedTaskPage = archivedTaskService.getAllArchivedTasksPage(PageRequest.of(
+                page, 50, sort));
+        model.addAttribute("archivedTaskPage", archivedTaskPage);
+        return "task/archivedTasks";
+    }
 }
-
-//    @PostMapping("/task-feedback")
-//    public String handleFeedback(@RequestParam(name = "id") Long id,
-//                                 @ModelAttribute FeedbackRequest feedbackRequest,
-//                                 BindingResult bindingResult, Model model) {
-//        if (bindingResult.hasErrors()) {
-//            model.addAttribute("errorList", bindingResult.getAllErrors());
-//            return "error/error";
-//        }
-//        Task task = taskService.findById(id);
-//        taskFeedbackService.addFeedback(task, feedbackRequest);
-//        return "redirect:/task/archived-tasks";
-//    }
-
-//    @GetMapping("/task-feedback")
-//    public String showFeedbackForm(@RequestParam(name = "id") Long id, FeedbackRequest feedbackRequest,
-//                                   Model model,
-//                                   Authentication authentication) {
-//        Task task = taskService.findById(id);
-//        User user = userService.findByEmail(authentication.getName()).orElseThrow(
-//                () -> new ResponseStatusException(
-//                        HttpStatus.NOT_FOUND, "User has not been found"));
-//        if (!task.getDesigner().equals(user)) {
-//            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not right designer");
-//        }
-//        model.addAttribute("id", id);
-//        model.addAttribute("feedbackRequest", feedbackRequest);
-//        return ("task/feedbackForm");
-//    }
-//TODO sorting in admin panel, task and archived task ascending and descending

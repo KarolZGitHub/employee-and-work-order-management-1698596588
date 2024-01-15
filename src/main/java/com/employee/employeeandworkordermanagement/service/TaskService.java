@@ -92,4 +92,8 @@ public class TaskService {
         task.setTaskStatus(TaskStatus.ACTIVE);
         taskRepository.save(task);
     }
+
+    public void deleteTask(Task task) {
+        taskRepository.delete(task);
+    }
 }

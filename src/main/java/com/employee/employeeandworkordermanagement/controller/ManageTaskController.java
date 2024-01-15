@@ -80,25 +80,11 @@ public class ManageTaskController {
         taskService.editTask(id, task, authentication);
         return "redirect:/task/all-tasks";
     }
-
-    @GetMapping("/archived-tasks")
-    public String showAllArchivedTasks(@RequestParam(required = false, defaultValue = "0") int page,
-                                       @RequestParam(required = false, defaultValue = "asc") String direction,
-                                       @RequestParam(required = false, defaultValue = "id") String sortField,
-                                       Model model) {
-        model.addAttribute("sortField", sortField);
-        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortField);
-        Page<ArchivedTask> archivedTaskPage = archivedTaskService.getAllArchivedTasksPage(PageRequest.of(
-                page, 50, sort));
-        model.addAttribute("archivedTaskPage", archivedTaskPage);
-        return "task/archivedTasks";
+    @GetMapping("/archive-task")
+    public String archiveTask(@RequestParam(name = "id")Long taskId,Authentication authentication){
+        archivedTaskService.archiveTask(taskId,authentication);
+        return "redirect:/task/archived-tasks";
     }
-
-//    @GetMapping("/archive-task")
-//    public String archiveTask(@RequestParam(name = "taskId") Long taskId, Authentication authentication) {
-//        taskService.archiveTask(taskId, authentication);
-//        return "redirect:/edit/archived-tasks";
-//    }
 
     @GetMapping("/activate-task")
     private String activateTask(@RequestParam(name = "taskId") Long taskId, Authentication authentication) {
