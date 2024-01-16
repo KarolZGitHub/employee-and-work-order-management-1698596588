@@ -22,19 +22,6 @@
             <small th:if="${#fields.hasErrors('description')}" th:errors="*{description}"
                    class="form-text text-danger"></small>
         </div>
-
-        <div class="form-group">
-            <label for="designer">Assigned Designer:</label>
-            <select class="form-control" id="designer" name="designer" th:field="*{designer}" required>
-                <option value="" th:unless="${designers}">Select a designer</option>
-                <option th:each="designer : ${availableDesigners}" th:value="${designer.id}"
-                        th:text="${designer.firstName + ' ' + designer.lastName}"></option>
-            </select>
-            <small th:if="${#fields.hasErrors('designer')}" th:errors="*{designer}"
-                   class="form-text text-danger"></small>
-        </div>
-
-
         <button type="submit" class="btn btn-primary">Create Task</button>
     </form>
 </div>

@@ -1,7 +1,6 @@
 package com.employee.employeeandworkordermanagement.controller;
 
 import com.employee.employeeandworkordermanagement.dto.UserDTO;
-import com.employee.employeeandworkordermanagement.entity.ArchivedTask;
 import com.employee.employeeandworkordermanagement.entity.Task;
 import com.employee.employeeandworkordermanagement.entity.User;
 import com.employee.employeeandworkordermanagement.feedback.FeedbackRequest;
@@ -9,11 +8,9 @@ import com.employee.employeeandworkordermanagement.service.ArchivedTaskService;
 import com.employee.employeeandworkordermanagement.service.TaskFeedbackService;
 import com.employee.employeeandworkordermanagement.service.TaskService;
 import com.employee.employeeandworkordermanagement.service.UserService;
+import com.employee.employeeandworkordermanagement.task.AssignmentRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -52,13 +49,12 @@ public class ManageTaskController {
     }
 
     @PostMapping("/add")
-    public String handleAddTaskForm(@Valid Task task, BindingResult bindingResult, Model model,
-                                    Authentication authentication) {
+    public String handleAddTaskForm(@Valid Task task, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("errorList", bindingResult.getAllErrors());
             return "error/error";
         }
-        taskService.createTask(task, authentication);
+        taskService.createTask(task);
         model.addAttribute("message", "Task has been successfully created.");
         return "task/taskHasBeenCreated";
     }
@@ -80,16 +76,11 @@ public class ManageTaskController {
         taskService.editTask(id, task, authentication);
         return "redirect:/task/all-tasks";
     }
-    @GetMapping("/archive-task")
-    public String archiveTask(@RequestParam(name = "id")Long taskId,Authentication authentication){
-        archivedTaskService.archiveTask(taskId,authentication);
-        return "redirect:/task/archived-tasks";
-    }
 
-    @GetMapping("/activate-task")
-    private String activateTask(@RequestParam(name = "taskId") Long taskId, Authentication authentication) {
-        taskService.setTaskToActive(taskId, authentication);
-        return "redirect:/task/all-tasks";
+    @GetMapping("/archive-task")
+    public String archiveTask(@RequestParam(name = "id") Long taskId, Authentication authentication) {
+        archivedTaskService.archiveTask(taskId, authentication);
+        return "redirect:/task/archived-tasks";
     }
 
     @GetMapping("/set-feedback")
@@ -107,6 +98,24 @@ public class ManageTaskController {
             return "error/error";
         }
         taskFeedbackService.addFeedback(taskId, feedbackRequest);
+        return "redirect:/task/all-tasks";
+    }
+
+    @GetMapping("/assign-designer")
+    public String showAssignDesignerForm(@RequestParam(name = "id") Long taskId, Model model) {
+        Task task = taskService.findById(taskId);
+        model.addAttribute("task", task);
+        return "task/assigmentRequest";
+    }
+
+    @PostMapping("/assign-designer")
+    public String handleAssignDesigner(@RequestParam(name = "id") Long taskId, @Valid AssignmentRequest assignmentRequest,
+                                       BindingResult bindingResult, Model model, Authentication authentication) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("errorList", bindingResult.getAllErrors());
+            return "error/error";
+        }
+        taskService.assignDesigner(taskId, authentication, assignmentRequest);
         return "redirect:/task/all-tasks";
     }
 }

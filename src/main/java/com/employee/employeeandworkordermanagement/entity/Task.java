@@ -26,7 +26,6 @@ public class Task {
 
     @Size(max = 1000, message = "Description cannot exceed 1000 characters")
     private String description;
-    @NotNull(message = "You have to set designer to this task.")
     @OneToOne
     @JoinColumn(name = "designer_id")
     private User designer;
