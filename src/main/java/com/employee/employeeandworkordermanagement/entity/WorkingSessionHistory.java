@@ -8,19 +8,21 @@ import java.time.Instant;
 
 @Entity
 @Data
-@Table(name = "working_time")
-public class WorkingTime {
+@Table(name = "working_time_history")
+public class WorkingSessionHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "Creation date cannot be empty.")
     private Instant createdAt;
     private Instant workStarted;
     private Instant workFinished;
-    @NotNull(message = "Working time have to be set to user.")
+
+    @NotNull(message = "User has to be set.")
     @ManyToOne
     private User user;
+
+    @NotNull(message = "Task has to be set.")
     @ManyToOne
     private Task task;
 

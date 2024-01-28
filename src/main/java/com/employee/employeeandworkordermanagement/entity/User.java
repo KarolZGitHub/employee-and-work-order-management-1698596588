@@ -29,4 +29,6 @@ public class User {
     private String profilePicturePath;
     @OneToOne(mappedBy = "designer")
     private Task assignedTask;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<WorkingDuration> workingDurations;
 }

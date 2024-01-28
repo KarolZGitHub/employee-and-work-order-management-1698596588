@@ -2,7 +2,7 @@ package com.employee.employeeandworkordermanagement.controller;
 
 import com.employee.employeeandworkordermanagement.dto.UserDTO;
 import com.employee.employeeandworkordermanagement.service.UserService;
-import com.employee.employeeandworkordermanagement.service.WorkingTimeService;
+import com.employee.employeeandworkordermanagement.service.WorkingSessionService;
 import com.employee.employeeandworkordermanagement.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/work-manage")
-public class WorkingTimeManageController {
-    private final WorkingTimeService workingTimeService;
+public class WorkingSessionManageController {
+    private final WorkingSessionService workingSessionService;
     private final UserService userService;
 
     @ModelAttribute("user")
@@ -28,7 +28,7 @@ public class WorkingTimeManageController {
     @GetMapping("/create-working-time/{id}")
     public String handleAddWorkingTimeForm(@PathVariable(name = "id") Long id) {
         User user = userService.findById(id);
-        workingTimeService.createWorkDay(user);
+        workingSessionService.createWorkDay(user);
         return "redirect:/designer/all-designers";
     }
     @GetMapping("users-working-time")

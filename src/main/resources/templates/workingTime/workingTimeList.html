@@ -34,24 +34,24 @@
         </thead>
         <!-- Table Data -->
         <tbody>
-        <tr th:each="workingTime : ${workingTimePage.content}">
-            <td th:text="${workingTime.id}"></td>
-            <td th:text="${workingTime.createdAt}"></td>
-            <td th:text="${workingTime.task.taskName}"></td>
-            <td th:text="${workingTime.task.taskStatus}"></td>
-            <td th:text="${workingTime.overallWorkingTime}"
-                th:id="'overallWorkingTime' + workingTime.id"></td>
-            <td th:if="${workingTime.isWorking}"
-                th:text="${workingTime.currentWorkingTime}"
-                th:id="workingTime"></td>
-            <td th:if="${!workingTime.isWorking}"
+        <tr th:each="workingSession : ${workingTimePage.content}">
+            <td th:text="${workingSession.id}"></td>
+            <td th:text="${workingSession.createdAt}"></td>
+            <td th:text="${workingSession.task.taskName}"></td>
+            <td th:text="${workingSession.task.taskStatus}"></td>
+            <td th:text="${workingSession.overallWorkingTime}"
+                th:id="'overallWorkingTime' + workingSession.id"></td>
+            <td th:if="${workingSession.isWorking}"
+                th:text="${workingSession.currentWorkingTime}"
+                th:id="workingSession"></td>
+            <td th:if="${!workingSession.isWorking}"
                 th:text="Finished"></td>
             <td>
-                <a th:if="${workingTime.isWorking == false}"
+                <a th:if="${workingSession.isWorking == false}"
                    class="btn btn primary"
-                   th:href="@{'/work/start-work/' +${workingTime.id}}">Start Work</a>
-                <a th:if="${workingTime.isWorking == true}"
-                   th:href="@{'/work/finish-work/' + ${workingTime.id}}"
+                   th:href="@{'/work/start-work/' +${workingSession.id}}">Start Work</a>
+                <a th:if="${workingSession.isWorking == true}"
+                   th:href="@{'/work/finish-work/' + ${workingSession.id}}"
                    class="btn btn-primary"
                    onclick="alert('Your working time is stopped and added to overall working time.');">Stop Work</a>
             </td>

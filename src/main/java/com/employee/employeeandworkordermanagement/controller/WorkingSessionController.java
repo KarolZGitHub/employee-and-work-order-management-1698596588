@@ -1,9 +1,9 @@
 package com.employee.employeeandworkordermanagement.controller;
 
 import com.employee.employeeandworkordermanagement.dto.UserDTO;
-import com.employee.employeeandworkordermanagement.entity.WorkingTime;
+import com.employee.employeeandworkordermanagement.entity.WorkingSession;
 import com.employee.employeeandworkordermanagement.service.UserService;
-import com.employee.employeeandworkordermanagement.service.WorkingTimeService;
+import com.employee.employeeandworkordermanagement.service.WorkingSessionService;
 import com.employee.employeeandworkordermanagement.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,8 +17,8 @@ import org.springframework.web.server.ResponseStatusException;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/work")
-public class WorkingTimeController {
-    private final WorkingTimeService workingTimeService;
+public class WorkingSessionController {
+    private final WorkingSessionService workingSessionService;
     private final UserService userService;
 
     @ModelAttribute("user")
@@ -40,7 +40,7 @@ public class WorkingTimeController {
         User theUser = userService.findOptionalUserByEmail(authentication.getName()).orElseThrow(()->
                 new ResponseStatusException(HttpStatus.NOT_FOUND,"User has not been found."));
         model.addAttribute("sortField", sortField);
-        Page<WorkingTime> workingTimePage = workingTimeService.getUserSortedWorkingTimePage(page, direction, sortField,theUser);
+        Page<WorkingSession> workingTimePage = workingSessionService.getUserSortedWorkingTimePage(page, direction, sortField,theUser);
         model.addAttribute("workingTimePage", workingTimePage);
         return "workingTime/workingTimeList";
     }
@@ -51,7 +51,7 @@ public class WorkingTimeController {
                                           Model model
     ) {
         model.addAttribute("sortField", sortField);
-        Page<WorkingTime> workingTimePage = workingTimeService.getAllSortedWorkingTimePage(page, direction, sortField);
+        Page<WorkingSession> workingTimePage = workingSessionService.getAllSortedWorkingTimePage(page, direction, sortField);
         model.addAttribute("workingTimePage", workingTimePage);
         return "workingTime/workingTimeList";
     }
@@ -72,11 +72,11 @@ public class WorkingTimeController {
     public String handleStopWork(@PathVariable Long id, Authentication authentication) {
         User user = userService.findOptionalUserByEmail(authentication.getName()).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not been found."));
-        WorkingTime workingTime = workingTimeService.findById(id);
-        if (!workingTime.getUser().equals(user)) {
+        WorkingSession workingSession = workingSessionService.findById(id);
+        if (!workingSession.getUser().equals(user)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not right user.");
         }
-        workingTimeService.stopWorking(workingTime);
+        workingSessionService.stopWorking(workingSession);
         return "redirect:/work/work-list";
     }
 }

@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Duration;
 import java.time.Instant;
 
 @Entity
@@ -40,11 +41,14 @@ public class Task {
     private TaskFeedback taskFeedback;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    private WorkingTime workingTime;
+    private WorkingSession workingSession;
+    @NotNull
+    private Duration workDuration;
 
     @PrePersist
     protected void onCreate() {
         createdAt = Instant.now();
+        workDuration = Duration.ZERO;
     }
 
     @PreUpdate

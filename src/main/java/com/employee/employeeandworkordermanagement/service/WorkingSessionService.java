@@ -1,8 +1,8 @@
 package com.employee.employeeandworkordermanagement.service;
 
 import com.employee.employeeandworkordermanagement.entity.User;
-import com.employee.employeeandworkordermanagement.entity.WorkingTime;
-import com.employee.employeeandworkordermanagement.repository.WorkingTimeRepository;
+import com.employee.employeeandworkordermanagement.entity.WorkingSession;
+import com.employee.employeeandworkordermanagement.repository.WorkingSessionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,12 +17,12 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class WorkingTimeService {
-    private final WorkingTimeRepository workingTimeRepository;
+public class WorkingSessionService {
+    private final WorkingSessionRepository workingSessionRepository;
     private final UserService userService;
 
-    public WorkingTime findById(Long id) {
-        return workingTimeRepository.findById(id).orElseThrow(() ->
+    public WorkingSession findById(Long id) {
+        return workingSessionRepository.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Working time has not been found."));
     }
 
@@ -34,30 +34,30 @@ public class WorkingTimeService {
 //        workingTimeRepository.save(workingTime);
 //    }
 
-    public void stopWorking(WorkingTime workingTime) {
-        workingTime.setWorkFinished(Instant.now());
-        workingTimeRepository.save(workingTime);
+    public void stopWorking(WorkingSession workingSession) {
+        workingSession.setWorkFinished(Instant.now());
+        workingSessionRepository.save(workingSession);
     }
 
     public void createWorkDay(User user) {
-        List<WorkingTime> workingTimes = workingTimeRepository.findAllByUser(user);
-        boolean isWorkingDayExist = workingTimes.stream()
+        List<WorkingSession> workingSessions = workingSessionRepository.findAllByUser(user);
+        boolean isWorkingDayExist = workingSessions.stream()
                 .anyMatch(day -> isSameDay(day.getCreatedAt(), Instant.now()));
         if (isWorkingDayExist) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "This working day already exists");
         } else {
-            WorkingTime workingTime = new WorkingTime();
-            workingTime.setUser(user);
-            workingTime.setCreatedAt(Instant.now());
-            workingTimeRepository.save(workingTime);
+            WorkingSession workingSession = new WorkingSession();
+            workingSession.setUser(user);
+            workingSession.setCreatedAt(Instant.now());
+            workingSessionRepository.save(workingSession);
         }
     }
 
-    public Duration calculateTotalWorkingTime(WorkingTime workingTime) {
-        if (workingTime.getWorkStarted() == null || workingTime.getWorkFinished() == null) {
+    public Duration calculateTotalWorkingTime(WorkingSession workingSession) {
+        if (workingSession.getWorkStarted() == null || workingSession.getWorkFinished() == null) {
             return Duration.ZERO;
         }
-        return Duration.between(workingTime.getWorkStarted(), workingTime.getWorkFinished());
+        return Duration.between(workingSession.getWorkStarted(), workingSession.getWorkFinished());
     }
 
     private boolean isSameDay(Instant instant1, Instant instant2) {
@@ -66,16 +66,16 @@ public class WorkingTimeService {
         return date1.equals(date2);
     }
 
-    public Page<WorkingTime> getUserSortedWorkingTimePage(int page, String direction, String sortField, User user) {
+    public Page<WorkingSession> getUserSortedWorkingTimePage(int page, String direction, String sortField, User user) {
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortField);
         Pageable pageable = PageRequest.of(page, 50, sort);
-        return workingTimeRepository.findAllByUser(user, pageable);
+        return workingSessionRepository.findAllByUser(user, pageable);
     }
 
-    public Page<WorkingTime> getAllSortedWorkingTimePage(int page, String direction, String sortField) {
+    public Page<WorkingSession> getAllSortedWorkingTimePage(int page, String direction, String sortField) {
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortField);
         Pageable pageable = PageRequest.of(page, 50, sort);
-        return workingTimeRepository.findAll(pageable);
+        return workingSessionRepository.findAll(pageable);
     }
 
 //    public void initializeWorkingTime(Task task) {

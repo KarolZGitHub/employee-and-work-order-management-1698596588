@@ -36,6 +36,7 @@
             <th>Status</th>
             <th>Created</th>
             <th>Edited</th>
+            <th>Work Duration</th>
             <th th:if="${blockDesignerView}">Assign Designer</th>
             <th th:if="${blockDesignerView}">Edit Task</th>
             <th th:if="${blockDesignerView}">Archive Task</th>
@@ -49,10 +50,12 @@
             <td th:text="${task.taskName}"></td>
             <td th:text="${task.description}"></td>
             <td th:if="${task.designer == null}" th:text="'Not set yet.'"></td>
-            <td th:if="${task.designer != null}" th:text="${task.designer.firstName} + ' ' + ${task.designer.lastName}"></td>
+            <td th:if="${task.designer != null}"
+                th:text="${task.designer.firstName} + ' ' + ${task.designer.lastName}"></td>
             <td th:text="${task.taskStatus}"></td>
             <td th:text="${task.createdAt}"></td>
             <td th:text="${task.editedAt}"></td>
+            <td th:text="${task.workDuration.toMinutes()} + ' min'"></td>
             <td th:if="${blockDesignerView}">
                 <a th:if="${task.taskStatus == T(com.employee.employeeandworkordermanagement.data.TaskStatus).PENDING}"
                    th:href="@{'/edit/assign-designer?id=' + ${task.id}}"
@@ -65,11 +68,13 @@
                 <a th:href="@{'/edit/edit-task?id=' + ${task.id}}" class="btn btn-primary">Edit</a>
             </td>
             <td th:if="${blockDesignerView}">
-                <a th:if="${task.taskStatus == T(com.employee.employeeandworkordermanagement.data.TaskStatus).DONE}"
+                <a th:if="${task.taskStatus == T(com.employee.employeeandworkordermanagement.data.TaskStatus).DONE and
+                task.taskFeedback != null}"
                    th:href="@{'/edit/archive-task?id=' + ${task.id}}" class="btn btn-primary"
                    onclick="return confirm('Are you sure you want to archive this task?')">Archive</a>
                 <button
-                        th:if="${task.taskStatus != T(com.employee.employeeandworkordermanagement.data.TaskStatus).DONE}"
+                        th:if="${task.taskStatus != T(com.employee.employeeandworkordermanagement.data.TaskStatus).DONE or
+                        task.taskFeedback == null}"
                         class="btn btn-disabled" disabled>Archive
                 </button>
             </td>

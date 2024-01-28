@@ -28,11 +28,11 @@
         </thead>
         <!-- Table Data -->
         <tbody>
-        <tr th:each="workingTime : ${workingTimeForUserPage.content}">
-            <td th:text="${workingTime.id}"></td>
-            <td th:text="${workingTime.createdAt}"></td>
-            <td th:text="${workingTime.overallWorkingTime}" th:id="'overallWorkingTime' + workingTime.id"></td>
-            <td th:text="${workingTime.isWorking}"></td>
+        <tr th:each="workingSession : ${workingTimeForUserPage.content}">
+            <td th:text="${workingSession.id}"></td>
+            <td th:text="${workingSession.createdAt}"></td>
+            <td th:text="${workingSession.overallWorkingTime}" th:id="'overallWorkingTime' + workingSession.id"></td>
+            <td th:text="${workingSession.isWorking}"></td>
         </tr>
         </tbody>
     </table>
