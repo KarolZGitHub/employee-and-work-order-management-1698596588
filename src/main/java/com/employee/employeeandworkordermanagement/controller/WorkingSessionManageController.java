@@ -1,9 +1,11 @@
 package com.employee.employeeandworkordermanagement.controller;
 
 import com.employee.employeeandworkordermanagement.dto.UserDTO;
+import com.employee.employeeandworkordermanagement.entity.Task;
+import com.employee.employeeandworkordermanagement.entity.User;
+import com.employee.employeeandworkordermanagement.service.TaskService;
 import com.employee.employeeandworkordermanagement.service.UserService;
 import com.employee.employeeandworkordermanagement.service.WorkingSessionService;
-import com.employee.employeeandworkordermanagement.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class WorkingSessionManageController {
     private final WorkingSessionService workingSessionService;
     private final UserService userService;
+    private final TaskService taskService;
 
     @ModelAttribute("user")
     public UserDTO userDTO(Authentication authentication) {
@@ -25,17 +28,20 @@ public class WorkingSessionManageController {
             return null;
         }
     }
+
     @GetMapping("/create-working-time/{id}")
     public String handleAddWorkingTimeForm(@PathVariable(name = "id") Long id) {
-        User user = userService.findById(id);
-        workingSessionService.createWorkDay(user);
-        return "redirect:/designer/all-designers";
+        Task task = taskService.findById(id);
+        User user = task.getDesigner();
+        workingSessionService.createWorkingSession(user, task);
+        return "redirect:/task/your-task";
     }
+
     @GetMapping("users-working-time")
     public String showUsersWorkingTime(@RequestParam(required = false, defaultValue = "0") int page,
                                        @RequestParam(required = false, defaultValue = "asc") String direction,
                                        @RequestParam(required = false, defaultValue = "id") String sortField,
-                                       Model model){
+                                       Model model) {
         //TODO:implement
         return "/work/workingTimeForUser";
     }

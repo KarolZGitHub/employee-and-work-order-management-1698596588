@@ -1,5 +1,6 @@
 package com.employee.employeeandworkordermanagement.service;
 
+import com.employee.employeeandworkordermanagement.entity.Task;
 import com.employee.employeeandworkordermanagement.entity.User;
 import com.employee.employeeandworkordermanagement.entity.WorkingSession;
 import com.employee.employeeandworkordermanagement.repository.WorkingSessionRepository;
@@ -39,16 +40,16 @@ public class WorkingSessionService {
         workingSessionRepository.save(workingSession);
     }
 
-    public void createWorkDay(User user) {
+    public void createWorkingSession(User user, Task task) {
         List<WorkingSession> workingSessions = workingSessionRepository.findAllByUser(user);
-        boolean isWorkingDayExist = workingSessions.stream()
-                .anyMatch(day -> isSameDay(day.getCreatedAt(), Instant.now()));
-        if (isWorkingDayExist) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "This working day already exists");
-        } else {
+        boolean isWorkActive = workingSessions.stream().anyMatch(workingSession-> workingSession.getWorkFinished() == null);
+        if(isWorkActive){
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"There is already active work session.");
+        }else {
             WorkingSession workingSession = new WorkingSession();
+            workingSession.setWorkStarted(Instant.now());
             workingSession.setUser(user);
-            workingSession.setCreatedAt(Instant.now());
+            workingSession.setTask(task);
             workingSessionRepository.save(workingSession);
         }
     }
@@ -59,13 +60,6 @@ public class WorkingSessionService {
         }
         return Duration.between(workingSession.getWorkStarted(), workingSession.getWorkFinished());
     }
-
-    private boolean isSameDay(Instant instant1, Instant instant2) {
-        LocalDate date1 = LocalDateTime.ofInstant(instant1, ZoneId.systemDefault()).toLocalDate();
-        LocalDate date2 = LocalDateTime.ofInstant(instant2, ZoneId.systemDefault()).toLocalDate();
-        return date1.equals(date2);
-    }
-
     public Page<WorkingSession> getUserSortedWorkingTimePage(int page, String direction, String sortField, User user) {
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortField);
         Pageable pageable = PageRequest.of(page, 50, sort);

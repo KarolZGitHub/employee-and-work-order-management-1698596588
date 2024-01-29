@@ -7,8 +7,10 @@ import com.employee.employeeandworkordermanagement.repository.ArchivedTaskReposi
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -26,6 +28,9 @@ public class ArchivedTaskService {
     public void archiveTask(Long taskId, Authentication authentication){
         User sender = userService.findUserByEmail(authentication.getName());
         Task task = taskService.findById(taskId);
+        if(task.getTaskFeedback() == null){
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"Task feedback has not been set.");
+        }
         List<User> operatorsList = userService.getAllOperators();
         ArchivedTask archivedTask = new ArchivedTask();
         archivedTask.setTaskName(task.getTaskName());
