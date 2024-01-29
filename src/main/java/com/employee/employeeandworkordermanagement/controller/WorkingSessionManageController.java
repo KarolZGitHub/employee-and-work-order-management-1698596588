@@ -32,8 +32,7 @@ public class WorkingSessionManageController {
     @GetMapping("/create-working-time/{id}")
     public String handleAddWorkingTimeForm(@PathVariable(name = "id") Long id) {
         Task task = taskService.findById(id);
-        User user = task.getDesigner();
-        workingSessionService.createWorkingSession(user, task);
+        workingSessionService.createWorkingSession(task);
         return "redirect:/task/your-task";
     }
 

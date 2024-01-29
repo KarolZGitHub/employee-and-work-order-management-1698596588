@@ -2,7 +2,9 @@ package com.employee.employeeandworkordermanagement.service;
 
 import com.employee.employeeandworkordermanagement.entity.Task;
 import com.employee.employeeandworkordermanagement.entity.User;
+import com.employee.employeeandworkordermanagement.entity.WorkingDuration;
 import com.employee.employeeandworkordermanagement.entity.WorkingSession;
+import com.employee.employeeandworkordermanagement.repository.WorkingDurationRepository;
 import com.employee.employeeandworkordermanagement.repository.WorkingSessionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,45 +15,48 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.*;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class WorkingSessionService {
     private final WorkingSessionRepository workingSessionRepository;
-    private final UserService userService;
+    private final WorkingDurationRepository workingDurationRepository;
 
     public WorkingSession findById(Long id) {
         return workingSessionRepository.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Working time has not been found."));
     }
 
-//    public void startWorking(WorkingTime workingTime) {
-//        if (workingTime.getTask().getTaskStatus() == TaskStatus.CLOSED) {
-//            throw new ResponseStatusException(HttpStatus.CONFLICT, workingTime.getTask().getTaskName() + " is closed.");
-//        }
-//        workingTime.setWorkStarted(Instant.now());
-//        workingTimeRepository.save(workingTime);
-//    }
-
-    public void stopWorking(WorkingSession workingSession) {
-        workingSession.setWorkFinished(Instant.now());
-        workingSessionRepository.save(workingSession);
-    }
-
-    public void createWorkingSession(User user, Task task) {
-        List<WorkingSession> workingSessions = workingSessionRepository.findAllByUser(user);
-        boolean isWorkActive = workingSessions.stream().anyMatch(workingSession-> workingSession.getWorkFinished() == null);
-        if(isWorkActive){
-            throw new ResponseStatusException(HttpStatus.CONFLICT,"There is already active work session.");
-        }else {
+    public void createWorkingSession(Task task) {
+        List<WorkingSession> workingSessions = workingSessionRepository.findAllByUser(task.getDesigner());
+        boolean isWorkActive = workingSessions.stream().anyMatch(workingSession -> workingSession.getWorkFinished() == null);
+        if (isWorkActive) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "There is already active work session.");
+        } else {
             WorkingSession workingSession = new WorkingSession();
             workingSession.setWorkStarted(Instant.now());
-            workingSession.setUser(user);
+            workingSession.setUser(task.getDesigner());
             workingSession.setTask(task);
             workingSessionRepository.save(workingSession);
         }
+    }
+
+    public void stopWorkingSession(Task task) {
+        List<WorkingSession> workingSessions = workingSessionRepository.findAllByUser(task.getDesigner());
+        WorkingSession workingSession = workingSessions.stream().filter(session -> session.getWorkFinished() != null)
+                .findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT,
+                        "Working Session has not been found."));
+        workingSession.setWorkFinished(Instant.now());
+        WorkingDuration workingDuration = new WorkingDuration();
+        workingDuration.setWorkStarted(workingSession.getWorkStarted());
+        workingDuration.setWorkFinished(workingSession.getWorkFinished());
+        workingDuration.setUser(task.getDesigner());
+        workingDuration.setTaskName(task.getTaskName());
+        workingDurationRepository.save(workingDuration);
+        workingSessionRepository.save(workingSession);
     }
 
     public Duration calculateTotalWorkingTime(WorkingSession workingSession) {
@@ -60,6 +65,7 @@ public class WorkingSessionService {
         }
         return Duration.between(workingSession.getWorkStarted(), workingSession.getWorkFinished());
     }
+
     public Page<WorkingSession> getUserSortedWorkingTimePage(int page, String direction, String sortField, User user) {
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortField);
         Pageable pageable = PageRequest.of(page, 50, sort);
@@ -71,12 +77,4 @@ public class WorkingSessionService {
         Pageable pageable = PageRequest.of(page, 50, sort);
         return workingSessionRepository.findAll(pageable);
     }
-
-//    public void initializeWorkingTime(Task task) {
-//        WorkingTime workingTime = new WorkingTime();
-//        workingTime.setTask(task);
-//        workingTime.setUser(task.getDesigner());
-//        workingTime.setCreatedAt(Instant.now());
-//        workingTimeRepository.save(workingTime);
-//    }
 }
