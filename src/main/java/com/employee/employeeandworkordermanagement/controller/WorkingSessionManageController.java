@@ -2,7 +2,6 @@ package com.employee.employeeandworkordermanagement.controller;
 
 import com.employee.employeeandworkordermanagement.dto.UserDTO;
 import com.employee.employeeandworkordermanagement.entity.Task;
-import com.employee.employeeandworkordermanagement.entity.User;
 import com.employee.employeeandworkordermanagement.service.TaskService;
 import com.employee.employeeandworkordermanagement.service.UserService;
 import com.employee.employeeandworkordermanagement.service.WorkingSessionService;
@@ -28,14 +27,6 @@ public class WorkingSessionManageController {
             return null;
         }
     }
-
-    @GetMapping("/create-working-time/{id}")
-    public String handleAddWorkingTimeForm(@PathVariable(name = "id") Long id) {
-        Task task = taskService.findById(id);
-        workingSessionService.createWorkingSession(task);
-        return "redirect:/task/your-task";
-    }
-
     @GetMapping("users-working-time")
     public String showUsersWorkingTime(@RequestParam(required = false, defaultValue = "0") int page,
                                        @RequestParam(required = false, defaultValue = "asc") String direction,

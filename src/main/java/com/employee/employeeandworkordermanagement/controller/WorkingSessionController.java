@@ -1,10 +1,12 @@
 package com.employee.employeeandworkordermanagement.controller;
 
 import com.employee.employeeandworkordermanagement.dto.UserDTO;
+import com.employee.employeeandworkordermanagement.entity.Task;
+import com.employee.employeeandworkordermanagement.entity.User;
 import com.employee.employeeandworkordermanagement.entity.WorkingSession;
+import com.employee.employeeandworkordermanagement.service.TaskService;
 import com.employee.employeeandworkordermanagement.service.UserService;
 import com.employee.employeeandworkordermanagement.service.WorkingSessionService;
-import com.employee.employeeandworkordermanagement.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class WorkingSessionController {
     private final WorkingSessionService workingSessionService;
     private final UserService userService;
+    private final TaskService taskService;
 
     @ModelAttribute("user")
     public UserDTO userDTO(Authentication authentication) {
@@ -32,23 +35,24 @@ public class WorkingSessionController {
 
     @GetMapping("/work-list")
     public String showYourWorkInformation(@RequestParam(required = false, defaultValue = "0") int page,
-                                      @RequestParam(required = false, defaultValue = "asc") String direction,
-                                      @RequestParam(required = false, defaultValue = "id") String sortField,
-                                      Model model,
-                                      Authentication authentication
+                                          @RequestParam(required = false, defaultValue = "asc") String direction,
+                                          @RequestParam(required = false, defaultValue = "id") String sortField,
+                                          Model model,
+                                          Authentication authentication
     ) {
-        User theUser = userService.findOptionalUserByEmail(authentication.getName()).orElseThrow(()->
-                new ResponseStatusException(HttpStatus.NOT_FOUND,"User has not been found."));
+        User theUser = userService.findOptionalUserByEmail(authentication.getName()).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not been found."));
         model.addAttribute("sortField", sortField);
-        Page<WorkingSession> workingTimePage = workingSessionService.getUserSortedWorkingTimePage(page, direction, sortField,theUser);
+        Page<WorkingSession> workingTimePage = workingSessionService.getUserSortedWorkingTimePage(page, direction, sortField, theUser);
         model.addAttribute("workingTimePage", workingTimePage);
         return "workingTime/workingTimeList";
     }
+
     @GetMapping("/all-work-list")
     public String showAllWorkInformation(@RequestParam(required = false, defaultValue = "0") int page,
-                                          @RequestParam(required = false, defaultValue = "asc") String direction,
-                                          @RequestParam(required = false, defaultValue = "id") String sortField,
-                                          Model model
+                                         @RequestParam(required = false, defaultValue = "asc") String direction,
+                                         @RequestParam(required = false, defaultValue = "id") String sortField,
+                                         Model model
     ) {
         model.addAttribute("sortField", sortField);
         Page<WorkingSession> workingTimePage = workingSessionService.getAllSortedWorkingTimePage(page, direction, sortField);
@@ -56,27 +60,17 @@ public class WorkingSessionController {
         return "workingTime/workingTimeList";
     }
 
-//    @GetMapping("start-work/{id}")
-//    public String handleStartWork(@PathVariable Long id, Authentication authentication) {
-//        User user = userService.findOptionalUserByEmail(authentication.getName()).orElseThrow(() ->
-//                new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not been found."));
-//        WorkingTime workingTime = workingTimeService.findById(id);
-//        if (!workingTime.getUser().equals(user)) {
-//            throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not right user.");
-//        }
-//        workingTimeService.startWorking(workingTime);
-//        return "redirect:/work/work-list";
-//    }
+    @GetMapping("finish-work")
+    public String handleStopWork(@RequestParam(name = "id") Long id) {
+        Task task = taskService.findById(id);
+        workingSessionService.stopWorkingSession(task);
+        return "redirect:/task/your-task";
+    }
 
-    @GetMapping("finish-work/{id}")
-    public String handleStopWork(@PathVariable Long id, Authentication authentication) {
-        User user = userService.findOptionalUserByEmail(authentication.getName()).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not been found."));
-        WorkingSession workingSession = workingSessionService.findById(id);
-        if (!workingSession.getUser().equals(user)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not right user.");
-        }
-        workingSessionService.stopWorking(workingSession);
-        return "redirect:/work/work-list";
+    @GetMapping("start-work")
+    public String handleStartWorking(@RequestParam(name = "id") Long id) {
+        Task task = taskService.findById(id);
+        workingSessionService.createWorkingSession(task);
+        return "redirect:/task/your-task";
     }
 }

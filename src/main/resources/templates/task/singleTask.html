@@ -14,6 +14,8 @@
             <th>Status</th>
             <th>Created</th>
             <th>Edited</th>
+            <th>Working Time</th>
+            <th>Work Action</th>
             <th>Mark As Completed</th>
         </tr>
         </thead>
@@ -24,6 +26,17 @@
             <td th:text="${task.taskStatus}"></td>
             <td th:text="${task.createdAt}"></td>
             <td th:text="${task.editedAt}"></td>
+            <td th:text="${task.workDuration.toMinutes()}"></td>
+            <td th:if="${!hideStopButton}">
+                <a
+                   th:href="@{'/work/start-work?id=' + ${task.id}}" class="btn btn-primary"
+                   onclick="return confirm('Are you sure you want to start working time?')">Start Work</a>
+            </td>
+            <td th:if="${hideStopButton}">
+                <a
+                        th:href="@{'/work/finish-work?id=' + ${task.id}}" class="btn btn-primary"
+                        onclick="return confirm('Are you sure you want to stop working time?')">Stop Work</a>
+            </td>
             <td>
                 <a th:if="${task.taskStatus != T(com.employee.employeeandworkordermanagement.data.TaskStatus).DONE and
                 task.designer.email == user.email}"

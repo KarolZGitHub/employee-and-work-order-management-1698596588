@@ -24,6 +24,7 @@ import java.util.List;
 public class WorkingSessionService {
     private final WorkingSessionRepository workingSessionRepository;
     private final WorkingDurationRepository workingDurationRepository;
+    private final UserService userService;
 
     public WorkingSession findById(Long id) {
         return workingSessionRepository.findById(id).orElseThrow(() ->
@@ -46,7 +47,7 @@ public class WorkingSessionService {
 
     public void stopWorkingSession(Task task) {
         List<WorkingSession> workingSessions = workingSessionRepository.findAllByUser(task.getDesigner());
-        WorkingSession workingSession = workingSessions.stream().filter(session -> session.getWorkFinished() != null)
+        WorkingSession workingSession = workingSessions.stream().filter(session -> session.getWorkFinished() == null)
                 .findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT,
                         "Working Session has not been found."));
         workingSession.setWorkFinished(Instant.now());
@@ -58,7 +59,10 @@ public class WorkingSessionService {
         workingDurationRepository.save(workingDuration);
         workingSessionRepository.save(workingSession);
     }
-
+    public boolean hideStopButton(Task task){
+        List<WorkingSession> workingSessions = workingSessionRepository.findAllByUser(task.getDesigner());
+        return workingSessions.stream().anyMatch(workingSession -> workingSession.getWorkFinished() == null);
+    }
     public Duration calculateTotalWorkingTime(WorkingSession workingSession) {
         if (workingSession.getWorkStarted() == null || workingSession.getWorkFinished() == null) {
             return Duration.ZERO;
