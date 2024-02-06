@@ -2,6 +2,7 @@ package com.employee.employeeandworkordermanagement.service;
 
 import com.employee.employeeandworkordermanagement.data.Role;
 import com.employee.employeeandworkordermanagement.dto.UserDTO;
+import com.employee.employeeandworkordermanagement.entity.Task;
 import com.employee.employeeandworkordermanagement.entity.User;
 import com.employee.employeeandworkordermanagement.exception.UserAlreadyExistsException;
 import com.employee.employeeandworkordermanagement.registration.RegistrationRequest;
@@ -160,5 +161,12 @@ public class UserService {
 
     public List<User> getAllOperators() {
         return userRepository.findAllByRole(Role.OPERATOR);
+    }
+
+    public void checkCurrentUser(Task task, Authentication authentication) {
+        User user = findUserByEmail(authentication.getName());
+        if (user != task.getDesigner()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not right user.");
+        }
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -26,13 +27,15 @@ public class WorkingSessionService {
     private final WorkingSessionRepository workingSessionRepository;
     private final WorkingDurationRepository workingDurationRepository;
     private final TaskRepository taskRepository;
+    private final UserService userService;
 
     public WorkingSession findById(Long id) {
         return workingSessionRepository.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Working time has not been found."));
     }
 
-    public void createWorkingSession(Task task) {
+    public void createWorkingSession(Task task, Authentication authentication) {
+        userService.checkCurrentUser(task,authentication);
         List<WorkingSession> workingSessions = workingSessionRepository.findAllByUser(task.getDesigner());
         boolean isWorkActive = workingSessions.stream().anyMatch(WorkingSession::isActive);
         if (isWorkActive) {
@@ -46,7 +49,8 @@ public class WorkingSessionService {
         }
     }
 
-    public void stopWorkingSession(Task task) {
+    public void stopWorkingSession(Task task, Authentication authentication) {
+        userService.checkCurrentUser(task,authentication);
         List<WorkingSession> workingSessions = workingSessionRepository.findAllByUser(task.getDesigner());
         WorkingSession workingSession = workingSessions.stream().filter(WorkingSession::isActive)
                 .findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT,

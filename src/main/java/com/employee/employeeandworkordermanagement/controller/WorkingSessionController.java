@@ -61,16 +61,16 @@ public class WorkingSessionController {
     }
 
     @GetMapping("finish-work")
-    public String handleStopWork(@RequestParam(name = "id") Long id) {
+    public String handleStopWork(@RequestParam(name = "id") Long id, Authentication authentication) {
         Task task = taskService.findById(id);
-        workingSessionService.stopWorkingSession(task);
+        workingSessionService.stopWorkingSession(task, authentication);
         return "redirect:/task/your-task";
     }
 
     @GetMapping("start-work")
-    public String handleStartWorking(@RequestParam(name = "id") Long id) {
+    public String handleStartWorking(@RequestParam(name = "id") Long id, Authentication authentication) {
         Task task = taskService.findById(id);
-        workingSessionService.createWorkingSession(task);
+        workingSessionService.createWorkingSession(task,authentication);
         return "redirect:/task/your-task";
     }
 }
