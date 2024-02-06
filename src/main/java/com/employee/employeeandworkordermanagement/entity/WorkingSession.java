@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -23,9 +25,14 @@ public class WorkingSession {
     private User user;
     @ManyToOne
     private Task task;
+    @NotNull(message = "Active status cannot be null")
+    private boolean isActive;
+    @OneToMany(mappedBy = "workingSession", cascade = CascadeType.ALL)
+    private List<BreakTime> breakTimes = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
         createdAt = Instant.now();
+        isActive = true;
     }
 }

@@ -16,14 +16,14 @@ public class BreakTime {
     @NotNull(message = "Star")
     private Instant startTime;
     private Instant finishTime;
+    @NotNull(message = "Active status cannot be null")
+    private boolean isActive;
+    @ManyToOne
+    private WorkingSession workingSession;
 
     @PrePersist
     protected void onCreate() {
         this.startTime = Instant.now();
-    }
-
-    @PreUpdate
-    private void onUpdate() {
-        this.finishTime = Instant.now();
+        isActive = true;
     }
 }
