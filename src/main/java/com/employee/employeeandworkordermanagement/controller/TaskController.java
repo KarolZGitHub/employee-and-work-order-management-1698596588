@@ -5,10 +5,7 @@ import com.employee.employeeandworkordermanagement.dto.UserDTO;
 import com.employee.employeeandworkordermanagement.entity.ArchivedTask;
 import com.employee.employeeandworkordermanagement.entity.Task;
 import com.employee.employeeandworkordermanagement.entity.User;
-import com.employee.employeeandworkordermanagement.service.ArchivedTaskService;
-import com.employee.employeeandworkordermanagement.service.TaskService;
-import com.employee.employeeandworkordermanagement.service.UserService;
-import com.employee.employeeandworkordermanagement.service.WorkingSessionService;
+import com.employee.employeeandworkordermanagement.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +28,7 @@ public class TaskController {
     private final UserService userService;
     private final ArchivedTaskService archivedTaskService;
     private final WorkingSessionService workingSessionService;
+    private final BreakTimeService breakTimeService;
 
     @ModelAttribute("user")
     public UserDTO userDTO(Authentication authentication) {
@@ -79,6 +77,7 @@ public class TaskController {
         Task task = taskService.findTaskByUser(designer);
         model.addAttribute("hideStopButton", workingSessionService.hideStopButton(task));
         model.addAttribute("task", task);
+        model.addAttribute("showStopBreakButton", breakTimeService.showStopButton(task));
         return "/task/singleTask";
     }
 

@@ -28,6 +28,7 @@ public class WorkingSessionService {
     private final WorkingDurationRepository workingDurationRepository;
     private final TaskRepository taskRepository;
     private final UserService userService;
+    private final BreakTimeService breakTimeService;
 
     public WorkingSession findById(Long id) {
         return workingSessionRepository.findById(id).orElseThrow(() ->
@@ -35,7 +36,7 @@ public class WorkingSessionService {
     }
 
     public void createWorkingSession(Task task, Authentication authentication) {
-        userService.checkCurrentUser(task,authentication);
+        userService.checkCurrentUser(task, authentication);
         List<WorkingSession> workingSessions = workingSessionRepository.findAllByUser(task.getDesigner());
         boolean isWorkActive = workingSessions.stream().anyMatch(WorkingSession::isActive);
         if (isWorkActive) {
@@ -50,17 +51,17 @@ public class WorkingSessionService {
     }
 
     public void stopWorkingSession(Task task, Authentication authentication) {
-        userService.checkCurrentUser(task,authentication);
+        userService.checkCurrentUser(task, authentication);
         List<WorkingSession> workingSessions = workingSessionRepository.findAllByUser(task.getDesigner());
         WorkingSession workingSession = workingSessions.stream().filter(WorkingSession::isActive)
                 .findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT,
                         "Working Session has not been found."));
         workingSession.setWorkFinished(Instant.now());
         WorkingDuration workingDuration = new WorkingDuration();
-        workingDuration.setWorkStarted(workingSession.getWorkStarted());
-        workingDuration.setWorkFinished(workingSession.getWorkFinished());
         workingDuration.setUser(task.getDesigner());
         workingDuration.setTaskName(task.getTaskName());
+        workingDuration.setDuration(breakTimeService.workingSessionDurationWithBreaks(workingSession.getBreakTimes(),
+                workingSession));
         workingDurationRepository.save(workingDuration);
         workingSessionRepository.save(workingSession);
         task.setWorkDuration(task.getWorkDuration().plus(Duration.between(workingSession.getWorkStarted(),

@@ -29,13 +29,18 @@
             <td th:text="${task.workDuration.toMinutes()}"></td>
             <td th:if="${!hideStopButton}">
                 <a
-                   th:href="@{'/work/start-work?id=' + ${task.id}}" class="btn btn-primary"
-                   onclick="return confirm('Are you sure you want to start working time?')">Start Work</a>
+                        th:href="@{'/work/start-work?id=' + ${task.id}}" class="btn btn-primary"
+                        onclick="return confirm('Are you sure you want to start working time?')">Start Work</a>
             </td>
             <td th:if="${hideStopButton}">
-                <a
-                        th:href="@{'/work/finish-work?id=' + ${task.id}}" class="btn btn-primary"
-                        onclick="return confirm('Are you sure you want to stop working time?')">Stop Work</a>
+                <a th:href="@{'/work/finish-work?id=' + ${task.id}}" class="btn btn-primary"
+                   onclick="return confirm('Are you sure you want to stop working time?')">Stop Work</a>
+                <a th:if="${!showStopBreakButton}"
+                   th:href="@{'/break-time/start?id=' + ${task.id}}" class="btn btn-primary"
+                   onclick="return confirm('Are you sure you want to start a break?')">Start Break</a>
+                <a th:if="${showStopBreakButton}"
+                   th:href="@{'/break-time/stop?id=' + ${task.id}}" class="btn btn-primary"
+                   onclick="return confirm('Are you sure you want to stop a break?')">Stop Break</a>
             </td>
             <td>
                 <a th:if="${task.taskStatus != T(com.employee.employeeandworkordermanagement.data.TaskStatus).DONE and

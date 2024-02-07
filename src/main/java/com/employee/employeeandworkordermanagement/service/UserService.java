@@ -164,9 +164,6 @@ public class UserService {
     }
 
     public void checkCurrentUser(Task task, Authentication authentication) {
-        User user = findUserByEmail(authentication.getName());
-        if (user != task.getDesigner()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not right user.");
-        }
+        //TODO
     }
 }

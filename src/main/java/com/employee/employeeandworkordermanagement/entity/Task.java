@@ -42,7 +42,6 @@ public class Task {
 
     @ManyToOne(cascade = CascadeType.ALL)
     private WorkingSession workingSession;
-    @NotNull
     private Duration workDuration;
 
     @PrePersist
