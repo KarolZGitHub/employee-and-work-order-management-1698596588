@@ -31,4 +31,6 @@ public class User {
     private Task assignedTask;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<WorkingDuration> workingDurations;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    List<BreakTime> breakTimes;
 }

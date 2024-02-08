@@ -2,6 +2,7 @@ package com.employee.employeeandworkordermanagement.service;
 
 import com.employee.employeeandworkordermanagement.entity.BreakTime;
 import com.employee.employeeandworkordermanagement.entity.Task;
+import com.employee.employeeandworkordermanagement.entity.User;
 import com.employee.employeeandworkordermanagement.entity.WorkingSession;
 import com.employee.employeeandworkordermanagement.repository.BreakTimeRepository;
 import com.employee.employeeandworkordermanagement.repository.WorkingSessionRepository;
@@ -14,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +25,9 @@ public class BreakTimeService {
     private final UserService userService;
 
     public Duration workingDurationWithBreaks(List<BreakTime> breakTimeList, WorkingSession workingSession) {
-        Duration totalBreaksDuration = breakTimeList.stream()
+        List<BreakTime> filteredList = breakTimeList.stream().filter(b-> b.getStartTime().isAfter(
+                workingSession.getCreatedAt())).toList();
+        Duration totalBreaksDuration = filteredList.stream()
                 .filter(b -> b.getStartTime().isBefore(b.getFinishTime()))
                 .map(b -> Duration.between(b.getStartTime(), b.getFinishTime()))
                 .reduce(Duration.ZERO, Duration::plus);
@@ -38,23 +42,15 @@ public class BreakTimeService {
 
     public void startBreakTime(Task task, Authentication authentication) {
         userService.checkCurrentDesigner(task, authentication);
-        List<WorkingSession> workingSessions = workingSessionRepository.findAllByUser(task.getDesigner());
-        WorkingSession workingSession = workingSessions.stream().filter(WorkingSession::isActive).findFirst()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT,
-                        "Working Session has not been found."));
         BreakTime breakTime = new BreakTime();
         breakTime.setStartTime(Instant.now());
-        breakTime.setWorkingSession(workingSession);
+        breakTime.setUser(task.getDesigner());
         breakTimeRepository.save(breakTime);
     }
 
     public void stopBreakTime(Task task, Authentication authentication) {
         userService.checkCurrentDesigner(task, authentication);
-        List<WorkingSession> workingSessions = workingSessionRepository.findAllByUser(task.getDesigner());
-        WorkingSession workingSession = workingSessions.stream().filter(WorkingSession::isActive).findFirst()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT,
-                        "Working Session has not been found."));
-        List<BreakTime> breakTimeList = workingSession.getBreakTimes();
+        List<BreakTime> breakTimeList = task.getDesigner().getBreakTimes();
         BreakTime breakTime = breakTimeList.stream().filter(BreakTime::isActive).findFirst().orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.CONFLICT, "Breaking time has not been found."));
         breakTime.setFinishTime(Instant.now());
@@ -63,10 +59,12 @@ public class BreakTimeService {
     }
 
     public boolean showStopButton(Task task) {
-        List<WorkingSession> workingSessions = workingSessionRepository.findAllByUser(task.getDesigner());
-        WorkingSession workingSession = workingSessions.stream().filter(WorkingSession::isActive).findFirst()
-                .orElse(new WorkingSession());
-        List<BreakTime> breakTimeList = workingSession.getBreakTimes();
+        List<BreakTime> breakTimeList = task.getDesigner().getBreakTimes();
+        return breakTimeList.stream().anyMatch(BreakTime::isActive);
+    }
+
+    public boolean checkIfBreakIsActive(User user) {
+        List<BreakTime> breakTimeList = user.getBreakTimes();
         return breakTimeList.stream().anyMatch(BreakTime::isActive);
     }
 }

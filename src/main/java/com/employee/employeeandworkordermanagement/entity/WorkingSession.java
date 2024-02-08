@@ -10,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Data
-@Table(name = "working_time")
+@Table(name = "working_session")
 public class WorkingSession {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,11 +24,10 @@ public class WorkingSession {
     @ManyToOne
     private User user;
     @ManyToOne
+    @JoinColumn(name = "task_id")
     private Task task;
     @NotNull(message = "Active status cannot be null")
     private boolean isActive;
-    @OneToMany(mappedBy = "workingSession", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<BreakTime> breakTimes = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {

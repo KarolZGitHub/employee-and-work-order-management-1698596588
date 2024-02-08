@@ -19,7 +19,8 @@ public class BreakTime {
     @NotNull(message = "Active status cannot be null")
     private boolean isActive;
     @ManyToOne
-    private WorkingSession workingSession;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @PrePersist
     protected void onCreate() {

@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Data
@@ -39,8 +40,8 @@ public class Task {
     @OneToOne(mappedBy = "task", cascade = CascadeType.ALL)
     private TaskFeedback taskFeedback;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    private WorkingSession workingSession;
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
+    private List<WorkingSession> workingSessions;
     private Duration workDuration;
 
     @PrePersist

@@ -55,11 +55,14 @@ public class WorkingSessionService {
         WorkingSession workingSession = workingSessions.stream().filter(WorkingSession::isActive)
                 .findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT,
                         "Working Session has not been found."));
+        if (breakTimeService.checkIfBreakIsActive(task.getDesigner())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "You cannot stop your work during a break");
+        }
         workingSession.setWorkFinished(Instant.now());
         WorkingDuration workingDuration = new WorkingDuration();
         workingDuration.setUser(task.getDesigner());
         workingDuration.setTaskName(task.getTaskName());
-        workingDuration.setDuration(breakTimeService.workingDurationWithBreaks(workingSession.getBreakTimes(),
+        workingDuration.setDuration(breakTimeService.workingDurationWithBreaks(task.getDesigner().getBreakTimes(),
                 workingSession));
         workingSession.setActive(false);
         workingDurationRepository.save(workingDuration);

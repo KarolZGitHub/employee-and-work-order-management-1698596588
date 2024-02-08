@@ -118,4 +118,10 @@ public class ManageTaskController {
         taskService.assignDesigner(taskId, authentication, assignmentRequest);
         return "redirect:/task/all-tasks";
     }
+
+    @GetMapping("/delete-task")
+    public String handleDeleteTask(@RequestParam(name = "id") Long id) {
+        taskService.deleteTask(taskService.findById(id));
+        return "redirect:/task/all-tasks";
+    }
 }
