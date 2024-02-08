@@ -6,6 +6,8 @@ import com.employee.employeeandworkordermanagement.entity.User;
 import com.employee.employeeandworkordermanagement.entity.WorkingSession;
 import com.employee.employeeandworkordermanagement.repository.BreakTimeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -53,6 +55,7 @@ public class BreakTimeService {
                 () -> new ResponseStatusException(HttpStatus.CONFLICT, "Breaking time has not been found."));
         breakTime.setFinishTime(Instant.now());
         breakTime.setActive(false);
+        breakTime.setBreakDuration(Duration.between(breakTime.getStartTime(), breakTime.getFinishTime()));
         breakTimeRepository.save(breakTime);
     }
 
@@ -64,5 +67,14 @@ public class BreakTimeService {
     public boolean checkIfBreakIsActive(User user) {
         List<BreakTime> breakTimeList = user.getBreakTimes();
         return breakTimeList.stream().anyMatch(BreakTime::isActive);
+    }
+
+    public Page<BreakTime> getBreakTimesForUser(Authentication authentication, PageRequest pageRequest) {
+        if (authentication != null) {
+            User user = userService.findUserByEmail(authentication.getName());
+            return breakTimeRepository.findAllByUser(user, pageRequest);
+        } else {
+            return Page.empty();
+        }
     }
 }

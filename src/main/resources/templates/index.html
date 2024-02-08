@@ -29,6 +29,9 @@
     <div th:if="${user != null}" class="container mt-5">
         <a th:href="@{/work/work-list}" class="btn btn-primary">Show Work List</a>
     </div>
+    <div th:if="${user != null}" class="container mt-5">
+        <a th:href="@{/break-time/break-time-list-for-user}" class="btn btn-primary">Show Break Time List</a>
+    </div>
 </div>
 <div th:if="${user == null}" class="container-fluid">
     <div class="container-fluid">

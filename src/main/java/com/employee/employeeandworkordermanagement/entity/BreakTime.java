@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.time.Duration;
 import java.time.Instant;
 
 @Entity
@@ -20,6 +21,7 @@ public class BreakTime {
     private Instant finishTime;
     @NotNull(message = "Active status cannot be null")
     private boolean isActive;
+    private Duration breakDuration;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
