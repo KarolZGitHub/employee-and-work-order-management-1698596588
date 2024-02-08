@@ -163,7 +163,16 @@ public class UserService {
         return userRepository.findAllByRole(Role.OPERATOR);
     }
 
-    public void checkCurrentUser(Task task, Authentication authentication) {
-        //TODO
+    public void checkCurrentDesigner(Task task, Authentication authentication) {
+        if (task.getDesigner() == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There is no designer assigned to this task.");
+        }
+        if (authentication == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Authorization needed.");
+        }
+        User user = findUserByEmail(authentication.getName());
+        if (!user.getEmail().equals(authentication.getName())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not right designer");
+        }
     }
 }

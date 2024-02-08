@@ -22,7 +22,7 @@ public class BreakTimeService {
     private final WorkingSessionRepository workingSessionRepository;
     private final UserService userService;
 
-    public Duration workingSessionDurationWithBreaks(List<BreakTime> breakTimeList, WorkingSession workingSession) {
+    public Duration workingDurationWithBreaks(List<BreakTime> breakTimeList, WorkingSession workingSession) {
         Duration totalBreaksDuration = breakTimeList.stream()
                 .filter(b -> b.getStartTime().isBefore(b.getFinishTime()))
                 .map(b -> Duration.between(b.getStartTime(), b.getFinishTime()))
@@ -37,9 +37,7 @@ public class BreakTimeService {
     }
 
     public void startBreakTime(Task task, Authentication authentication) {
-        if(!task.getDesigner().equals(userService.findUserByEmail(authentication.getName()))){
-            throw new ResponseStatusException(HttpStatus.CONFLICT,"Wrong user");
-        }
+        userService.checkCurrentDesigner(task, authentication);
         List<WorkingSession> workingSessions = workingSessionRepository.findAllByUser(task.getDesigner());
         WorkingSession workingSession = workingSessions.stream().filter(WorkingSession::isActive).findFirst()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT,
@@ -51,9 +49,7 @@ public class BreakTimeService {
     }
 
     public void stopBreakTime(Task task, Authentication authentication) {
-        if(!task.getDesigner().equals(userService.findUserByEmail(authentication.getName()))){
-            throw new ResponseStatusException(HttpStatus.CONFLICT,"Wrong user");
-        }
+        userService.checkCurrentDesigner(task, authentication);
         List<WorkingSession> workingSessions = workingSessionRepository.findAllByUser(task.getDesigner());
         WorkingSession workingSession = workingSessions.stream().filter(WorkingSession::isActive).findFirst()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT,

@@ -27,7 +27,7 @@ public class WorkingSession {
     private Task task;
     @NotNull(message = "Active status cannot be null")
     private boolean isActive;
-    @OneToMany(mappedBy = "workingSession", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "workingSession", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<BreakTime> breakTimes = new ArrayList<>();
 
     @PrePersist
