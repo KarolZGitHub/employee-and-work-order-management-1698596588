@@ -5,7 +5,6 @@ import com.employee.employeeandworkordermanagement.entity.Task;
 import com.employee.employeeandworkordermanagement.entity.User;
 import com.employee.employeeandworkordermanagement.entity.WorkingSession;
 import com.employee.employeeandworkordermanagement.repository.BreakTimeRepository;
-import com.employee.employeeandworkordermanagement.repository.WorkingSessionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -15,17 +14,15 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class BreakTimeService {
     private final BreakTimeRepository breakTimeRepository;
-    private final WorkingSessionRepository workingSessionRepository;
     private final UserService userService;
 
     public Duration workingDurationWithBreaks(List<BreakTime> breakTimeList, WorkingSession workingSession) {
-        List<BreakTime> filteredList = breakTimeList.stream().filter(b-> b.getStartTime().isAfter(
+        List<BreakTime> filteredList = breakTimeList.stream().filter(b -> b.getStartTime().isAfter(
                 workingSession.getCreatedAt())).toList();
         Duration totalBreaksDuration = filteredList.stream()
                 .filter(b -> b.getStartTime().isBefore(b.getFinishTime()))
@@ -45,6 +42,7 @@ public class BreakTimeService {
         BreakTime breakTime = new BreakTime();
         breakTime.setStartTime(Instant.now());
         breakTime.setUser(task.getDesigner());
+        breakTime.setWorkingAtTaskName(task.getTaskName());
         breakTimeRepository.save(breakTime);
     }
 
