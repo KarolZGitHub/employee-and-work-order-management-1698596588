@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:insert="~{header.html}">
+    <title>Assigment Request</title>
+</head>
+<body>
+<div class="container mt-5">
+    <h2 th:text="'Assign designer to ' + ${task.taskName}"></h2>
+    <form th:action="@{'/edit/assign-designer?id='+${task.id}}" method="post" th:object="${task}">
+        <div class="form-group">
+            <label for="designer">Designer:</label>
+            <select class="form-control" id="designer" name="designer" th:field="*{designer.id}" required>
+                <option th:each="designer : ${availableDesigners}" th:value="${designer.id}"
+                        th:selected="${designer.id == task.designer.id}"
+                        th:text="${designer.firstName + ' ' + designer.lastName}"></option>
+            </select>
+            <button class="btn btn-primary" onclick="return confirm('Are you sure you want to assign this designer?')">Assign Designer</button>
+        </div>
+    </form>
+</div>
+</body>
+<!-- Footer-->
+<div th:insert="~{footer.html}"></div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</html>

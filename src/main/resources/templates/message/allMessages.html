@@ -10,12 +10,19 @@
     <table class="table table-bordered">
         <thead>
         <tr>
+            <th>Title</th>
             <th>Sender</th>
             <th>Delete</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="message : ${messages}">
+            <td>
+                <a th:class="${message.isRead ? 'normal-font' : 'bold-font'}"
+                   th:href="@{'/message/view?id=' + ${message.id}}">
+                    <span th:text="${message.title}"></span>
+                </a>
+            </td>
             <td>
                 <a th:class="${message.isRead ? 'normal-font' : 'bold-font'}"
                    th:href="@{'/message/view?id=' + ${message.id}}">

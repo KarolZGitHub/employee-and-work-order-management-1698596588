@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:insert="~{header.html}">
+    <title>Task</title>
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Break Times</h2>
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Task Name</th>
+            <th>Start Time</th>
+            <th>Finish Time</th>
+            <th>Status</th>
+            <th>Break Duration</th>
+            <th>User</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Loop through the breakTimes list -->
+        <tr th:each="breakTime : ${breakTimes}">
+            <td th:text="${breakTime.id}"></td>
+            <td th:text="${breakTime.workingAtTaskName}"></td>
+            <td th:text="${#temporals.format(breakTime.startTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+            <td th:text="${breakTime.finishTime != null ? #temporals.format(breakTime.finishTime, 'yyyy-MM-dd HH:mm:ss') : 'N/A'}"></td>
+            <td th:text="${breakTime.isActive ? 'Active' : 'Inactive'}"></td>
+            <td th:text="${breakTime.breakDuration != null ? #dates.format(breakTime.breakDuration.toMinutes(), 'HH:mm') : 'N/A'}"></td>
+            <td th:text="${breakTime.user != null ? breakTime.user.getFirstName() + ' ' + breakTime.user.getLastName() : 'N/A'}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+<!-- Footer-->
+<div th:insert="~{footer.html}"></div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</html>

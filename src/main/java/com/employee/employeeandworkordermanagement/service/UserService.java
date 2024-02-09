@@ -2,12 +2,13 @@ package com.employee.employeeandworkordermanagement.service;
 
 import com.employee.employeeandworkordermanagement.data.Role;
 import com.employee.employeeandworkordermanagement.dto.UserDTO;
+import com.employee.employeeandworkordermanagement.entity.Task;
+import com.employee.employeeandworkordermanagement.entity.User;
 import com.employee.employeeandworkordermanagement.exception.UserAlreadyExistsException;
 import com.employee.employeeandworkordermanagement.registration.RegistrationRequest;
 import com.employee.employeeandworkordermanagement.registration.token.VerificationToken;
 import com.employee.employeeandworkordermanagement.repository.UserRepository;
 import com.employee.employeeandworkordermanagement.repository.VerificationTokenRepository;
-import com.employee.employeeandworkordermanagement.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,20 +24,20 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements IUserService {
+public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final VerificationTokenRepository verificationTokenRepository;
     private final PasswordResetTokenService passwordResetTokenService;
 
-    @Override
+
     public Page<User> getAllUsers(PageRequest pageRequest) {
         return userRepository.findAll(pageRequest);
     }
 
-    @Override
+
     public User registerUser(RegistrationRequest request) {
-        Optional<User> user = this.findByEmail(request.email());
+        Optional<User> user = this.findOptionalUserByEmail(request.email());
         if (user.isPresent()) {
             throw new UserAlreadyExistsException("User with email " + request.email() + " already exists.", "USER_ALREADY_EXISTS");
         }
@@ -49,9 +50,14 @@ public class UserService implements IUserService {
         return userRepository.save(newUser);
     }
 
-    @Override
-    public Optional<User> findByEmail(String email) {
+
+    public Optional<User> findOptionalUserByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not been found."));
     }
 
     public void saveUserVerificationToken(User theUser, String token) {
@@ -59,7 +65,7 @@ public class UserService implements IUserService {
         verificationTokenRepository.save(verificationToken);
     }
 
-    @Override
+
     public String validateToken(String theToken) {
         VerificationToken verificationToken = verificationTokenRepository.findByToken(theToken).orElse(
                 new VerificationToken());
@@ -74,7 +80,7 @@ public class UserService implements IUserService {
         return "valid";
     }
 
-    @Override
+
     public void saveUser(User user, String password, String repeatedPassword) {
         if (password.equals(repeatedPassword)) {
             user.setPassword(passwordEncoder.encode(password));
@@ -82,18 +88,18 @@ public class UserService implements IUserService {
         }
     }
 
-    @Override
+
     public void createPasswordResetTokenForUser(User user, String passwordToken) {
         passwordResetTokenService.createPasswordResetTokenForUser(user, passwordToken);
     }
 
-    @Override
+
     public User findById(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User of this ID has not been found"));
         return user;
     }
 
-    @Override
+
     public void editUserRole(User user, Role role) {
         if (user != null && userRepository.existsById(Long.valueOf(user.getId()))) {
             user.setRole(role);
@@ -103,18 +109,18 @@ public class UserService implements IUserService {
         }
     }
 
-    @Override
+
     public UserDTO convertUserToUserDTO(User user) {
         return new UserDTO(user.getFirstName(), user.getLastName(), user.getEmail(), user.getRole(), user.getProfilePicturePath());
     }
 
-    @Override
+
     public UserDTO getUserDTO(Authentication authentication) {
-        User user = findByEmail(authentication.getName()).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = findOptionalUserByEmail(authentication.getName()).orElseThrow(() -> new RuntimeException("User not found"));
         return convertUserToUserDTO(user);
     }
 
-    @Override
+
     public boolean changePassword(User user, String password, String repeatPassword) {
         if (password.equals(repeatPassword)) {
             user.setPassword(passwordEncoder.encode(password));
@@ -125,32 +131,48 @@ public class UserService implements IUserService {
         }
     }
 
-    @Override
+
     public void changeFirstName(User user, String firstName) {
         user.setFirstName(firstName);
         userRepository.save(user);
     }
 
-    @Override
+
     public void changeLastName(User user, String lastName) {
         user.setLastName(lastName);
         userRepository.save(user);
     }
 
-    @Override
+
     public void saveEmailForUser(User user, String email) {
         user.setEmail(email);
         userRepository.save(user);
     }
 
-    @Override
-    public List<User> getDesigners() {
-        return userRepository.findByRole(Role.DESIGNER);
+
+    public List<User> getAvailableDesigners() {
+        return userRepository.findByAssignedTaskIsNull();
     }
 
-    @Override
+
     public Page<User> designerPage(PageRequest pageRequest) {
         return userRepository.findByRole(Role.DESIGNER, pageRequest);
     }
 
+    public List<User> getAllOperators() {
+        return userRepository.findAllByRole(Role.OPERATOR);
+    }
+
+    public void checkCurrentDesigner(Task task, Authentication authentication) {
+        if (task.getDesigner() == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There is no designer assigned to this task.");
+        }
+        if (authentication == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Authorization needed.");
+        }
+        User user = findUserByEmail(authentication.getName());
+        if (!user.getEmail().equals(authentication.getName())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "You are not right designer");
+        }
+    }
 }

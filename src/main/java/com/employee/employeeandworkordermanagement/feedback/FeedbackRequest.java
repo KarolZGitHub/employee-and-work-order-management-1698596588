@@ -13,5 +13,5 @@ public class FeedbackRequest {
     private String feedback;
     @Min(value = 1, message = "Minimum value is 1.")
     @Max(value = 10, message = "Maximum value is 10.")
-    private int difficulty;
+    private int grade;
 }

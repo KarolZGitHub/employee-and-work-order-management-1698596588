@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:insert="~{header.html}">
+    <title>Task</title>
+</head>
+<body>
+<div class="container">
+    <h1 class="mt-5">Task.</h1>
+    <table class="table mt-3">
+        <thead class="thead-dark">
+        <tr>
+            <th>Task name</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Edited</th>
+            <th>Working Time</th>
+            <th>Work Action</th>
+            <th>Mark As Completed</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td th:text="${task.taskName}"></td>
+            <td th:text="${task.description}"></td>
+            <td th:text="${task.taskStatus}"></td>
+            <td th:text="${task.createdAt}"></td>
+            <td th:text="${task.editedAt}"></td>
+            <td th:text="${task.workDuration.toMinutes()}"></td>
+            <td th:if="${!hideStopButton}">
+                <a
+                        th:href="@{'/work/start-work?id=' + ${task.id}}" class="btn btn-primary"
+                        onclick="return confirm('Are you sure you want to start working time?')">Start Work</a>
+            </td>
+            <td th:if="${hideStopButton}">
+                <a th:href="@{'/work/finish-work?id=' + ${task.id}}" class="btn btn-primary"
+                   onclick="return confirm('Are you sure you want to stop working time?')">Stop Work</a>
+                <a th:if="${!showStopBreakButton}"
+                   th:href="@{'/break-time/start?id=' + ${task.id}}" class="btn btn-primary"
+                   onclick="return confirm('Are you sure you want to start a break?')">Start Break</a>
+                <a th:if="${showStopBreakButton}"
+                   th:href="@{'/break-time/stop?id=' + ${task.id}}" class="btn btn-primary"
+                   onclick="return confirm('Are you sure you want to stop a break?')">Stop Break</a>
+            </td>
+            <td>
+                <a th:if="${task.taskStatus != T(com.employee.employeeandworkordermanagement.data.TaskStatus).DONE and
+                task.designer.email == user.email}"
+                   th:href="@{'/task/complete-task?id=' + ${task.id}}" class="btn btn-primary"
+                   onclick="return confirm('Are you sure you want to mark this task as completed?')">Mark As Done</a>
+                <button th:if="${task.designer.email != user.email or
+                task.taskStatus == T(com.employee.employeeandworkordermanagement.data.TaskStatus).DONE}"
+                        class="btn btn-disabled" disabled>Mark As Done
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+<!-- Footer-->
+<div th:insert="~{footer.html}"></div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</html>

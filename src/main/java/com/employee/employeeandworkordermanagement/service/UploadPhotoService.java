@@ -1,7 +1,7 @@
 package com.employee.employeeandworkordermanagement.service;
 
 import com.employee.employeeandworkordermanagement.repository.UserRepository;
-import com.employee.employeeandworkordermanagement.user.User;
+import com.employee.employeeandworkordermanagement.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;

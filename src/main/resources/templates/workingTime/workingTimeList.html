@@ -2,7 +2,6 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:insert="~{header.html}">
     <title>Working Time List</title>
-    <script src="../../static/js/CurrentWorkingTime.js"></script>
 </head>
 <body>
 <div class="container">
@@ -15,6 +14,9 @@
             <button type="submit" class="btn btn-secondary" name="sortField"
                     value="currentWorkingTime">Sort by Working Time
             </button>
+            <button type="submit" class="btn btn-secondary" name="sortField"
+                    value="task">Sort by Task
+            </button>
         </div>
     </form>
     <table class="table table-striped">
@@ -23,6 +25,8 @@
         <tr>
             <th>ID</th>
             <th>Created Date</th>
+            <th>Task</th>
+            <th>Task Status</th>
             <th>Working Time</th>
             <th>Current Working Time</th>
             <th>Change Status</th>
@@ -30,17 +34,26 @@
         </thead>
         <!-- Table Data -->
         <tbody>
-        <tr th:each="workingTime : ${workingTimePage.content}">
-            <td th:text="${workingTime.id}"></td>
-            <td th:text="${workingTime.createdAt}"></td>
-            <td th:text="${workingTime.overallWorkingTime}" th:id="'overallWorkingTime' + workingTime.id"></td>
-            <td th:if="${workingTime.isWorking}" th:text="${workingTime.currentWorkingTime}" th:id="workingTime"></td>
-            <td th:if="${!workingTime.isWorking}" th:text="Finished"></td>
+        <tr th:each="workingSession : ${workingTimePage.content}">
+            <td th:text="${workingSession.id}"></td>
+            <td th:text="${workingSession.createdAt}"></td>
+            <td th:text="${workingSession.task.taskName}"></td>
+            <td th:text="${workingSession.task.taskStatus}"></td>
+            <td th:text="${workingSession.overallWorkingTime}"
+                th:id="'overallWorkingTime' + workingSession.id"></td>
+            <td th:if="${workingSession.isWorking}"
+                th:text="${workingSession.currentWorkingTime}"
+                th:id="workingSession"></td>
+            <td th:if="${!workingSession.isWorking}"
+                th:text="Finished"></td>
             <td>
-                <a th:if="${workingTime.isWorking == false}" th:href="@{'/work/start-work/' + ${workingTime.id}}"
-                   class="btn btn-primary" onclick="alert('You have just started working time!');">Start Work</a>
-                <a th:if="${workingTime.isWorking == true}" th:href="@{'/work/finish-work/' + ${workingTime.id}}"
-                   class="btn btn-primary" onclick="alert('Your working time is stopped and saved.');">Stop Work</a>
+                <a th:if="${workingSession.isWorking == false}"
+                   class="btn btn primary"
+                   th:href="@{'/work/start-work/' +${workingSession.id}}">Start Work</a>
+                <a th:if="${workingSession.isWorking == true}"
+                   th:href="@{'/work/finish-work/' + ${workingSession.id}}"
+                   class="btn btn-primary"
+                   onclick="alert('Your working time is stopped and added to overall working time.');">Stop Work</a>
             </td>
         </tr>
         </tbody>

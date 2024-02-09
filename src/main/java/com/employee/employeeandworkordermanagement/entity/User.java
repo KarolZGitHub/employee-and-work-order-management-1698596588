@@ -1,4 +1,4 @@
-package com.employee.employeeandworkordermanagement.user;
+package com.employee.employeeandworkordermanagement.entity;
 
 import com.employee.employeeandworkordermanagement.data.Role;
 import jakarta.persistence.*;
@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.NaturalId;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -25,4 +27,10 @@ public class User {
     private Role role;
     private boolean isEnabled = false;
     private String profilePicturePath;
+    @OneToOne(mappedBy = "designer")
+    private Task assignedTask;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<WorkingDuration> workingDurations;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    List<BreakTime> breakTimes;
 }

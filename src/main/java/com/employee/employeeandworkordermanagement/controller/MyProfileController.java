@@ -1,13 +1,13 @@
 package com.employee.employeeandworkordermanagement.controller;
 
 import com.employee.employeeandworkordermanagement.dto.UserDTO;
+import com.employee.employeeandworkordermanagement.entity.User;
 import com.employee.employeeandworkordermanagement.event.ChangeEmailEvent;
 import com.employee.employeeandworkordermanagement.password.PasswordResetProcess;
 import com.employee.employeeandworkordermanagement.profile.ChangeEmailRequest;
 import com.employee.employeeandworkordermanagement.profile.ChangeFirstOrLastName;
 import com.employee.employeeandworkordermanagement.service.ChangeEmailResetTokenService;
 import com.employee.employeeandworkordermanagement.service.UserService;
-import com.employee.employeeandworkordermanagement.user.User;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -52,7 +52,7 @@ public class MyProfileController {
     @PostMapping("/change-password")
     public String handleChangePassword(Authentication authentication, PasswordResetProcess passwordResetProcess,
                                        Model model) {
-        User user = userService.findByEmail(authentication.getName()).orElseThrow(
+        User user = userService.findOptionalUserByEmail(authentication.getName()).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not been found."));
         boolean changePasswordSuccess = userService.changePassword(user, passwordResetProcess.getPassword()
                 , passwordResetProcess.getRepeatPassword());
@@ -77,7 +77,7 @@ public class MyProfileController {
             model.addAttribute("errorList", bindingResult.getAllErrors());
             return "error/error";
         }
-        User user = userService.findByEmail(authentication.getName()).orElseThrow(
+        User user = userService.findOptionalUserByEmail(authentication.getName()).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not been found."));
         user.setFirstName(changeFirstOrLastName.getFirstOrLastName());
         userService.changeFirstName(user, changeFirstOrLastName.getFirstOrLastName());
@@ -92,7 +92,7 @@ public class MyProfileController {
 
     @PostMapping("/change-last-name")
     public String handleLastNameChange(ChangeFirstOrLastName changeFirstOrLastName, Authentication authentication) {
-        User user = userService.findByEmail(authentication.getName()).orElseThrow(
+        User user = userService.findOptionalUserByEmail(authentication.getName()).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User has not been found."));
         user.setLastName(changeFirstOrLastName.getFirstOrLastName());
         userService.changeLastName(user, changeFirstOrLastName.getFirstOrLastName());
@@ -101,7 +101,7 @@ public class MyProfileController {
 
     @GetMapping("/email-change-request")
     public String showEmailChangeForm(Authentication authentication, final HttpServletRequest request) {
-        User user = userService.findByEmail(authentication.getName()).get();
+        User user = userService.findUserByEmail(authentication.getName());
         publisher.publishEvent(new ChangeEmailEvent(user, applicationUrl(request)));
         return "myProfile/emailTokenSent";
     }
@@ -129,12 +129,12 @@ public class MyProfileController {
             model.addAttribute("errorList", bindingResult.getAllErrors());
             return "error/error";
         }
-        Optional<User> userOptional = userService.findByEmail(changeEmailRequest.getEmail());
+        Optional<User> userOptional = userService.findOptionalUserByEmail(changeEmailRequest.getEmail());
         if (userOptional.isPresent()) {
             return "error/emailTaken";
         }
         if (changeEmailRequest.getEmail().equals(changeEmailRequest.getConfirmEmail())) {
-            User user = userService.findByEmail(authentication.getName()).get();
+            User user = userService.findUserByEmail(authentication.getName());
             userService.saveEmailForUser(user, changeEmailRequest.getEmail());
             return "redirect:/logout";
         } else {

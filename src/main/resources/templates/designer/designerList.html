@@ -8,7 +8,14 @@
 
 <div class="container">
     <h1 class="mt-5">Designers List</h1>
-
+    <div class="row">
+        <div class="mt-3">
+            <a th:href="${'/designer/all-designers?sortField=firstName'}" class="btn btn-primary">Sort first name</a>
+        </div>
+        <div class="mt-3">
+            <a th:href="${'/designer/all-designers?sortField=lastName'}" class="btn btn-primary">Sort by last name</a>
+        </div>
+    </div>
     <table class="table mt-3">
         <thead class="thead-dark">
         <tr>

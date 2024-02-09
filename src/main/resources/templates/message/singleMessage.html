@@ -9,6 +9,10 @@
 
     <div class="card">
         <div class="card-header">
+            <h5 class="card-title">Title: <span
+                    th:text="${message.title}"></span></h5>
+        </div>
+        <div class="card-header">
             <h5 class="card-title">From: <span
                     th:text="${message.sender.firstName + ' ' + message.sender.lastName}"></span></h5>
         </div>

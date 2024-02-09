@@ -11,7 +11,7 @@ import com.employee.employeeandworkordermanagement.registration.token.Verificati
 import com.employee.employeeandworkordermanagement.service.PasswordResetTokenService;
 import com.employee.employeeandworkordermanagement.service.UserService;
 import com.employee.employeeandworkordermanagement.service.VerificationTokenService;
-import com.employee.employeeandworkordermanagement.user.User;
+import com.employee.employeeandworkordermanagement.entity.User;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -71,7 +71,7 @@ public class RegistrationController {
             return "/password/resetPasswordRequest";
         }
         if (authentication.isAuthenticated()) {
-            UserDTO userDTO = userService.convertUserToUserDTO(userService.findByEmail(authentication.getName()).get());
+            UserDTO userDTO = userService.convertUserToUserDTO(userService.findUserByEmail(authentication.getName()));
             model.addAttribute("user", userDTO);
         }
         model.addAttribute("passwordResetRequest", new PasswordResetRequest());
@@ -85,7 +85,7 @@ public class RegistrationController {
             model.addAttribute("errorList", bindingResult.getAllErrors());
             return "error/error";
         }
-        Optional<User> user = userService.findByEmail(passwordResetRequest.getEmail());
+        Optional<User> user = userService.findOptionalUserByEmail(passwordResetRequest.getEmail());
         if (user.isPresent()) {
             publisher.publishEvent(new ResetPasswordEvent(user.get(), applicationUrl(request)));
             return "password/passwordTokenSent";

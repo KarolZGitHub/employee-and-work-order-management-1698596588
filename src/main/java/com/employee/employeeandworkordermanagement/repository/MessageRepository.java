@@ -1,7 +1,7 @@
 package com.employee.employeeandworkordermanagement.repository;
 
 import com.employee.employeeandworkordermanagement.entity.Message;
-import com.employee.employeeandworkordermanagement.user.User;
+import com.employee.employeeandworkordermanagement.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

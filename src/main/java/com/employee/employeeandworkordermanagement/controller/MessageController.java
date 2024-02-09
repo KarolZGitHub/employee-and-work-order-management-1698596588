@@ -31,7 +31,7 @@ public class MessageController {
     @GetMapping("/all-messages")
     public String showAllMessagesForUser(Model model, Authentication authentication) {
         List<Message> messageList = messageService.getMessagesForUser(
-                userService.findByEmail(authentication.getName()).get());
+                userService.findUserByEmail(authentication.getName()));
         model.addAttribute("messages", messageList);
         return "message/allMessages";
     }

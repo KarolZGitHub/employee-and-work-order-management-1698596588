@@ -7,7 +7,7 @@
 <div class="container mt-5">
     <h2>Create Task</h2>
 
-    <form th:action="@{/api/tasks}" method="post" th:object="${task}">
+    <form th:action="@{/edit/add}" method="post" th:object="${task}">
         <div class="form-group">
             <label for="taskName">Task Name:</label>
             <input type="text" class="form-control" id="taskName" name="taskName" th:field="*{taskName}" required/>
@@ -22,17 +22,6 @@
             <small th:if="${#fields.hasErrors('description')}" th:errors="*{description}"
                    class="form-text text-danger"></small>
         </div>
-
-        <div class="form-group">
-            <label for="designer">Assigned Designer:</label>
-            <select class="form-control" id="designer" name="designer" th:field="*{designer}" required>
-                <option th:each="designer : ${designers}" th:value="${designer.id}"
-                        th:text="${designer.firstName}"></option>
-            </select>
-            <small th:if="${#fields.hasErrors('designer')}" th:errors="*{designer}"
-                   class="form-text text-danger"></small>
-        </div>
-
         <button type="submit" class="btn btn-primary">Create Task</button>
     </form>
 </div>
